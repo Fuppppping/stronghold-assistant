@@ -33,6 +33,8 @@ class Overlay:
         self.previous = state
         left, top, right, bottom = rect
         width, height = right - left, bottom - top
+        font_size = min(18, max(10, round(height / 105)))
+        label_offset = round(font_size * 2.8)
         self.canvas.delete("all")
         scale_x, scale_y = width / source_size[0], height / source_size[1]
         for hit, note in callouts:
@@ -41,17 +43,17 @@ class Overlay:
             color = {"干员": "#57edd4", "装备": "#ffd087", "策略": "#9cb4ff", "盟约": "#9cb4ff"}[hit.kind]
             self.canvas.create_rectangle(x1 - 2, y1 - 2, x2 + 3, y2 + 3, outline=color, width=2)
             title = f"★ {hit.name}" if note == "核心干员" else hit.name
-            self.label(x1, max(0, y1 - 28), title, color, width)
+            self.label(x1, max(0, y1 - label_offset), title, color, width, font_size)
         if banner:
-            self.label(22, max(18, round(height * .13)), banner, "#57edd4", width)
+            self.label(22, max(18, round(height * .13)), banner, "#57edd4", width, font_size)
         if not self.shown:
             self.window.deiconify()
             self.shown = True
         windows.move_overlay(self.hwnd, rect)
 
-    def label(self, x, y, text, color, width):
+    def label(self, x, y, text, color, width, font_size):
         text_id = self.canvas.create_text(x + 9, y + 3, text=text, fill=color,
-                                          anchor="nw", font=("Microsoft YaHei UI", 10, "bold"))
+                                          anchor="nw", font=("Microsoft YaHei UI", font_size, "bold"))
         bx1, by1, bx2, by2 = self.canvas.bbox(text_id)
         if bx2 + 9 > width:
             shift = width - bx2 - 9

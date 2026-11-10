@@ -14,7 +14,7 @@ import webbrowser
 from PIL import Image, ImageTk
 
 from . import windows
-from .domain import Reading, Season, alerts, key
+from .domain import MatchState, Reading, Season, alerts, key
 from .overlay import Overlay
 from .pc_input import operate_shop
 from .vision import Recognizer
@@ -135,15 +135,11 @@ class Dashboard:
         self.last_windows = 0
         self.frame = None
         self.preview = False
-        self.auto_states = {}
-        self.manual_states = {}
-        self.excluded = set()
-        self.group = None
-        self.groups = []
-        self.partial_groups = False
-        self.partial_pacts = set()
-        self.last_bans = None
-        self.observed_shop = False
+        self.match = MatchState()
+        self.live_match = None
+        self.strategy_advice = None
+        self.banner = ""
+        self.confirmed_only = tk.BooleanVar(value=False)
         self.configure_styles()
         self.build()
         self.overlay = Overlay(root)
@@ -160,7 +156,7 @@ class Dashboard:
 
     @property
     def states(self):
-        return self.auto_states | self.manual_states
+        return self.match.states
 
     def configure_styles(self):
         style = ttk.Style()
@@ -253,6 +249,8 @@ class Dashboard:
         self.button(line, "识别截图", self.open_image).pack(side="right")
         self.scene_text = self.label(self.monitor, "等待客户端画面", style="Sub.TLabel")
         self.scene_text.pack(anchor="w", pady=(8, 5))
+        self.advice_text = self.label(self.monitor, style="Accent.TLabel", wraplength=900)
+        self.advice_text.pack(anchor="w")
         self.monitor_tree = self.tree(self.monitor, ("kind", "name", "hint"), ("类型", "识别结果", "阵容提示"),
                                       (95, 210, 490))
         self.raw_text = self.label(self.monitor, style="Sub.TLabel", wraplength=900)
@@ -270,6 +268,8 @@ class Dashboard:
         bar = ttk.Frame(self.pool)
         bar.pack(fill="x")
         self.button(bar, "新一局 / 清除 BAN", self.reset_bans).pack(side="right")
+        ttk.Checkbutton(bar, text="仅显示已确认", variable=self.confirmed_only,
+                        command=self.update_pool_operators).pack(side="right", padx=8)
         self.group_buttons = ttk.Frame(bar)
         self.group_buttons.pack(side="left", fill="x")
         self.pool_summary = self.label(self.pool, style="Sub.TLabel", wraplength=880)
@@ -402,15 +402,7 @@ class Dashboard:
         self.invalidate()
 
     def reset_bans(self):
-        self.auto_states.clear()
-        self.manual_states.clear()
-        self.excluded.clear()
-        self.groups.clear()
-        self.group = None
-        self.partial_groups = False
-        self.partial_pacts.clear()
-        self.last_bans = None
-        self.observed_shop = False
+        self.match = MatchState()
         self.update_views()
 
     def cycle_pact(self, _):
@@ -418,23 +410,17 @@ class Dashboard:
         if not selected:
             return
         name = selected[0]
-        value = self.manual_states.get(name)
+        value = self.match.manual.get(name)
         if value is False:
-            self.manual_states.pop(name, None)
+            self.match.manual.pop(name, None)
         else:
-            self.manual_states[name] = value is None
+            self.match.manual[name] = value is None
         self.update_views()
 
     def use_group(self, index):
-        self.group = index
-        self.partial_pacts.clear()
-        for i, group in enumerate(self.groups):
-            for name in group:
-                if self.partial_groups and i != index:
-                    self.auto_states.pop(name, None)
-                    self.partial_pacts.add(name)
-                else:
-                    self.auto_states[name] = i == index
+        if not 0 <= index < len(self.match.groups):
+            return
+        self.match.choose(index)
         self.update_views()
 
     def select_guide(self):
@@ -489,6 +475,8 @@ class Dashboard:
         path = filedialog.askopenfilename(filetypes=[("图像", "*.png *.jpg *.jpeg *.webp *.bmp")])
         if not path:
             return
+        if not self.preview:
+            self.live_match = self.match
         self.preview = True
         self.reset_bans()
         self.invalidate()
@@ -498,7 +486,8 @@ class Dashboard:
     def end_preview(self):
         if self.preview:
             self.preview = False
-            self.reset_bans()
+            self.match = self.live_match or MatchState()
+            self.live_match = None
             self.invalidate()
 
     def show_frame(self):
@@ -583,31 +572,14 @@ class Dashboard:
             self.update_views()
             return
         self.reading, self.frame = reading, frame
-        if reading.scene == "调度中心":
-            self.observed_shop = True
-        if reading.scene == "盟约选择" and (reading.groups or reading.pacts or reading.excluded):
-            if self.observed_shop and (reading.groups or reading.pacts != self.auto_states):
-                self.reset_bans()
-            fingerprint = (reading.pacts, reading.excluded, reading.groups,
-                           reading.selected_group, reading.partial_groups)
-            if self.preview or self.last_bans == fingerprint:
-                self.auto_states.update(reading.pacts)
-                self.excluded.update(reading.excluded)
-                if reading.groups:
-                    self.groups = reading.groups
-                    self.partial_groups = reading.partial_groups
-                if reading.selected_group is not None:
-                    self.use_group(reading.selected_group)
-            self.last_bans = fingerprint
-        else:
-            self.last_bans = None
+        self.match.observe(reading, self.preview)
         source = "截图回放" if self.preview else self.window.title
         self.status.set(f"{source}   /   {reading.scene or '等待卫戍协议界面'}")
         self.update_views()
 
     def callouts(self):
         return alerts(self.reading, self.guide, self.enabled, self.muted,
-                      self.states, self.season, self.excluded)
+                      self.states, self.season, self.match.excluded, self.strategy_advice)
 
     def paint_overlay(self):
         if (self.preview or not self.running or not self.frame or not self.window
@@ -619,28 +591,31 @@ class Dashboard:
             self.overlay.hide()
             return
         callouts = self.callouts()
-        banner = ""
-        if self.reading.scene == "盟约选择":
-            if self.groups:
-                ranked = []
-                for i, group in enumerate(self.groups):
-                    other = self.groups[1-i]
-                    ranked_guide = self.season.rank(self.states | dict.fromkeys(other, False)
-                                                    | dict.fromkeys(group, True), self.excluded)[0]
-                    ranked.append(f"{i+1}组 {ranked_guide['name']}")
-                banner = "  /  ".join(ranked)
-            elif self.states:
-                guide = self.season.rank(self.states, self.excluded)[0]
-                banner = f"阵容建议  {guide['name']}"
-        elif self.reading.scene == "策略轮选" and self.guide:
-            picks = self.guide["strategies"]
-            if picks:
-                visible = [name for name in picks if any(hit.name == name for hit, _ in callouts)]
-                banner = ("当前可见  " if visible else "攻略优先  ") + "  →  ".join(visible or picks)
-        if callouts or banner:
-            self.overlay.show(region, self.frame.size, callouts, banner)
+        if callouts or self.banner:
+            self.overlay.show(region, self.frame.size, callouts, self.banner)
         else:
             self.overlay.hide()
+
+    def recommendation_banner(self, ranked):
+        if self.reading.scene == "盟约选择":
+            if self.match.groups:
+                choices = []
+                for i, group in enumerate(self.match.groups):
+                    other = self.match.groups[1-i]
+                    ranked_guide = self.season.rank(self.states | dict.fromkeys(other, False)
+                                                    | dict.fromkeys(group, True), self.match.excluded)[0]
+                    choices.append(f"{i+1}组 {ranked_guide['name']}")
+                return "  /  ".join(choices)
+            if self.states and ranked:
+                return f"阵容建议  {ranked[0]['name']}"
+        if self.reading.scene == "策略轮选" and self.strategy_advice:
+            picks = self.strategy_advice["strategies"]
+            if picks:
+                visible = {hit.name for hit in self.reading.hits if hit.kind == "策略"}
+                current = [name for name in picks if name in visible]
+                caption = "当前可见" if current else "攻略优先"
+                return f"{self.strategy_advice['name']}  ·  {caption}  " + "  →  ".join(current or picks)
+        return ""
 
     @staticmethod
     def fill(tree, rows):
@@ -661,6 +636,15 @@ class Dashboard:
         tree.yview_moveto(offset)
 
     def update_views(self):
+        visible = [hit.name for hit in self.reading.hits
+                   if hit.kind == "干员" and self.reading.scene in {"调度中心", "自选编队"}]
+        ranked = self.season.rank(self.states, self.match.excluded, visible, self.match.seen)
+        self.strategy_advice = self.guide
+        if not self.strategy_advice and self.reading.scene == "策略轮选":
+            self.strategy_advice = self.season.strategy_guide(
+                ranked, self.states, self.reading.hits, self.match.excluded, self.match.seen)
+        self.banner = self.recommendation_banner(ranked)
+        self.advice_text.configure(text=self.banner)
         if self.guide:
             self.guide_text.set(f"已选阵容  /  {self.guide['name']}")
         else:
@@ -672,7 +656,7 @@ class Dashboard:
                 for i, hit in enumerate(self.reading.hits)]
         self.fill(self.monitor_tree, rows)
         self.update_pool()
-        self.update_guides()
+        self.update_guides(ranked)
         self.update_equipment()
 
     def update_pool(self):
@@ -680,52 +664,58 @@ class Dashboard:
         rows = []
         for name, pact in self.season.pacts.items():
             status, tag = labels[self.states.get(name)]
-            if status == "未确认" and name in self.partial_pacts:
+            if status == "未确认" and name in self.match.incomplete:
                 status = "阵容不完整"
-            if name in self.manual_states:
+            if name in self.match.manual:
                 status += " · 手动"
             rows.append((name, (name, ("核心" if pact["core"] else "附加") + " / " + status), tag))
         self.fill(self.pact_tree, rows)
         if not self.pact_tree.selection() and rows:
             self.pact_tree.selection_set(rows[0][0])
-        group_buttons = tuple((i, "第 " + str(i+1) + " 组" + (" ✓" if i == self.group else ""))
-                              for i in range(len(self.groups)))
+        group_buttons = tuple((i, "第 " + str(i+1) + " 组" + (" ✓" if i == self.match.selected else ""))
+                              for i in range(len(self.match.groups)))
         if group_buttons != getattr(self, "shown_group_buttons", ()):
             self.shown_group_buttons = group_buttons
             for widget in self.group_buttons.winfo_children():
                 widget.destroy()
             for i, name in group_buttons:
-                self.button(self.group_buttons, name, lambda i=i: self.use_group(i), i == self.group).pack(
+                self.button(self.group_buttons, name, lambda i=i: self.use_group(i), i == self.match.selected).pack(
                     side="left", padx=(0, 6))
-        if self.groups:
-            group_text = "  /  ".join(f"{i+1}组 {'、'.join(sorted(group))}" for i, group in enumerate(self.groups))
-            self.pool_summary.configure(text=group_text)
-        else:
-            self.pool_summary.configure(text=f"已确认 {len(self.states)} 项盟约 · 已识别禁用干员 {len(self.excluded)} 名")
+        group_text = "  /  ".join(f"{i+1}组 {'、'.join(sorted(group))}" for i, group in enumerate(self.match.groups))
+        counts = (f"已确认 {len(self.states)} 项盟约 · 本局商店已见 {len(self.match.seen)} 名 · "
+                  f"读到禁用干员 {len(self.match.excluded - self.match.seen)} 名")
+        self.pool_summary.configure(text="\n".join(filter(None, (group_text, counts))))
         self.update_pool_operators()
 
     def update_pool_operators(self):
         if not self.pact_tree.selection():
             return
         name = self.pact_tree.selection()[0]
-        members = self.season.grouped(self.states, self.excluded)[name]
+        members = self.season.grouped(self.states, self.match.excluded, self.match.seen)[name]
         labels = {True: ("可用", "yes"), None: ("待确认", "maybe")}
         rows = []
         for operator in sorted(members, key=lambda name: (self.season.operators[name]["tier"], name)):
-            status, tag = labels[self.season.status(operator, self.states, self.excluded)]
+            available = self.season.status(operator, self.states, self.match.excluded, self.match.seen)
+            if self.confirmed_only.get() and available is not True:
+                continue
+            status, tag = labels[available]
+            if operator in self.match.seen:
+                status = "本局已见"
             data = self.season.operators[operator]
             rows.append((operator, (data["tier"], operator, status, " · ".join(data["pacts"])), tag))
         self.fill(self.operator_tree, rows)
 
-    def update_guides(self):
-        names = [hit.name for hit in self.reading.hits if hit.kind == "干员" and hit.name not in self.excluded]
+    def update_guides(self, ranked):
         rows = []
-        for guide in self.season.rank(self.states, self.excluded, names):
+        pool = self.season.grouped(self.states, self.match.excluded, self.match.seen)
+        for guide in ranked:
             core = set(guide["targets"]) & self.season.core
             blocked = any(self.states.get(pact) is False for pact in core)
             open_core = bool(core) and all(self.states.get(pact) is True for pact in core)
             state, tag = ("已禁用", "no") if blocked else ("已确认", "yes") if open_core else ("待确认", "maybe")
-            if state == "待确认" and core & self.partial_pacts:
+            if not blocked and not self.season.core_viable(guide, self.states, pool):
+                state, tag = "常规池不足", "no"
+            if state == "待确认" and core & self.match.incomplete:
                 state = "阵容不完整"
             selected = "✓  " if guide["id"] == self.guide_id else ""
             rows.append((guide["id"], (selected + guide["name"], state, " → ".join(guide["strategies"])), tag))
@@ -744,7 +734,8 @@ class Dashboard:
             lines.append("策略顺位  " + " → ".join(guide["strategies"]))
         for stage in guide["stages"]:
             heading = "  ".join(filter(None, [stage["name"], str(stage.get("timing", ""))]))
-            viable = lambda name: self.season.status(name, self.states, self.excluded) is not False
+            viable = lambda name: self.season.status(
+                name, self.states, self.match.excluded, self.match.seen) is not False
             core = [name for name in stage.get("core", []) if viable(name)]
             other = [name for name in stage.get("operators", []) if name not in core and viable(name)]
             lines.append(f"{heading}  核心 {'、'.join(core) or '—'}")

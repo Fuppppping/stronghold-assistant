@@ -146,9 +146,11 @@ class Recognizer:
         lines = self.ocr(frame, roi or (0, 0, WIDTH, HEIGHT), 1.1)
         reading.text = [line.text for line in lines]
         text = " ".join(key(line.text) for line in lines)
+        reading.setup = any(line.box[1] < 85 and "13确认本局信息" in key(line.text) for line in lines)
+        info_panel = "本局信息" in text and ("核心盟约" in text or "附加盟约" in text)
         if not forced and "客户端版本已过时" in text:
             reading.scene = "游戏客户端需要更新"
-        elif forced == "盟约选择" or any(anchor in text for anchor in (
+        elif forced == "盟约选择" or info_panel or any(anchor in text for anchor in (
             "盟约选择", "选择盟约", "盟约随机", "禁用干员", "不可用干员", "盟约结果", "确认本局信息", "可选型核心盟约组",
         )):
             reading.scene = "盟约选择"
@@ -209,15 +211,15 @@ class Recognizer:
         status = None
         group_rows = {}
         group_boxes = {}
-        excluded = False
+        ban_scope = None
         pacts = self.season.names["盟约"]
         for line in sorted(lines, key=lambda line: (line.box[1] // 18, line.box[0])):
             value = key(line.text)
             if re.search(r"禁用干员|不可用干员|不会出现的干员|干员禁用", value):
-                excluded, status = True, None
+                ban_scope, status = line.box, None
                 continue
             if "核心盟约" in value or "附加盟约" in value:
-                excluded, status = False, None
+                ban_scope, status = None, None
             group = re.search(r"(?:方案|分组|第)([12一二ABab])(?:组)?|([12一二ABab])组", value)
             if group:
                 token = (group.group(1) or group.group(2)).casefold()
@@ -229,10 +231,10 @@ class Recognizer:
             match = re.search(r"禁用盟约|不可用盟约|盟约禁用|已禁用|未开放|可用盟约|已启用|已开放|已选盟约", value)
             if match:
                 status = not any(mark in match[0] for mark in ("禁用", "不可用", "未开放"))
-                excluded = False
+                ban_scope = None
                 value = value[:match.start()] + value[match.end():]
-            if excluded:
-                name = find_name(value, self.season.names["干员"])
+            if ban_scope and ban_scope[1] < line.box[1] and ban_scope[0]-65 <= line.box[0] <= ban_scope[0]+800:
+                name = self.roster_names.get(value)
                 if name:
                     reading.excluded.add(name)
                     reading.hits.append(Hit("干员", name, line.box, line.confidence))
@@ -271,10 +273,11 @@ class Recognizer:
                 headers.setdefault("extra", line.box)
             elif "本局禁用干员" in value:
                 headers.setdefault("ban", line.box)
-        if "core" not in headers:
+        if "core" not in headers and "extra" not in headers:
             return
-        core = headers["core"]
+        core = headers.get("core")
         extra = headers.get("extra")
+        panel = core or extra
         hsv = np.asarray(frame.convert("HSV"))
         rows = []
         for line in lines:
@@ -284,9 +287,11 @@ class Recognizer:
                 continue
             x1, y1, x2, y2 = line.box
             x, y = (x1+x2)//2, (y1+y2)//2
-            if not core[0]-65 <= x <= min(1175, core[0]+800):
+            if not panel[0]-65 <= x <= min(1175, panel[0]+800):
                 continue
             if name in self.season.core:
+                if not core:
+                    continue
                 upper = extra[1] if extra else core[1]+365
                 if not core[1]+55 <= y < upper:
                     continue
@@ -330,6 +335,8 @@ class Recognizer:
             if not selectable or name not in self.season.core:
                 reading.pacts[name] = state
             reading.hits.append(Hit("盟约", name, line.box, line.confidence))
+        # Only the labeled panel has enough independent text and color evidence for a single frame.
+        reading.verified_panel = bool(reading.pacts or reading.groups)
 
     @staticmethod
     def pact_labels(value, pacts):

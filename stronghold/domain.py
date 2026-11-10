@@ -29,7 +29,68 @@ class Reading:
     groups: list[set[str]] = field(default_factory=list)
     selected_group: int | None = None
     partial_groups: bool = False
+    setup: bool = False
+    verified_panel: bool = False
     text: list[str] = field(default_factory=list)
+
+
+@dataclass
+class MatchState:
+    auto: dict[str, bool] = field(default_factory=dict)
+    manual: dict[str, bool] = field(default_factory=dict)
+    excluded: set[str] = field(default_factory=set)
+    seen: set[str] = field(default_factory=set)
+    groups: list[set[str]] = field(default_factory=list)
+    selected: int | None = None
+    partial: bool = False
+    incomplete: set[str] = field(default_factory=set)
+    last_bans: tuple | None = None
+    played: bool = False
+
+    @property
+    def states(self):
+        return self.auto | self.manual
+
+    def choose(self, index):
+        self.selected = index
+        self.incomplete.clear()
+        for i, group in enumerate(self.groups):
+            for name in group:
+                if self.partial and i != index:
+                    self.auto.pop(name, None)
+                    self.incomplete.add(name)
+                else:
+                    self.auto[name] = i == index
+
+    def observe(self, reading, replay=False):
+        if reading.scene == "调度中心":
+            self.played = True
+            self.seen.update(hit.name for hit in reading.hits if hit.kind == "干员" and hit.confidence >= .83)
+        if reading.scene != "盟约选择":
+            self.last_bans = None
+            return
+        signature = (reading.pacts, reading.excluded, reading.groups, reading.selected_group, reading.partial_groups)
+        confirmed = replay or reading.verified_panel or self.last_bans == signature
+        self.last_bans = signature
+        if not confirmed or not (reading.pacts or reading.groups or reading.excluded):
+            return
+        if reading.setup and self.played:
+            self.auto.clear()
+            self.manual.clear()
+            self.excluded.clear()
+            self.seen.clear()
+            self.groups.clear()
+            self.selected = None
+            self.partial = False
+            self.incomplete.clear()
+            self.played = False
+        self.auto.update(reading.pacts)
+        self.excluded.update(reading.excluded)
+        if reading.groups:
+            self.groups = [set(group) for group in reading.groups]
+            self.partial = reading.partial_groups
+            if reading.selected_group is not None:
+                self.choose(reading.selected_group)
 
 
 class Season:
@@ -91,7 +152,9 @@ class Season:
         self.lineups[guide["id"]] = guide
         return guide
 
-    def status(self, name, states, excluded=()):
+    def status(self, name, states, excluded=(), seen=()):
+        if name in seen:
+            return True
         if name in excluded:
             return False
         pacts = self.operators[name]["pacts"]
@@ -108,28 +171,41 @@ class Season:
             return True
         return False if all(value is False for value in values) else None
 
-    def grouped(self, states, excluded=()):
+    def grouped(self, states, excluded=(), seen=()):
         groups = {pact: [] for pact in self.pacts}
         for name, operator in self.operators.items():
-            if self.status(name, states, excluded) is not False:
+            if self.status(name, states, excluded, seen) is not False:
                 for pact in operator["pacts"]:
                     groups[pact].append(name)
         return groups
 
-    def rank(self, states, excluded=(), current=()):
-        pool = self.grouped(states, excluded)
+    def rank(self, states, excluded=(), current=(), seen=()):
+        pool = self.grouped(states, excluded, seen)
+        visible = set(current)
 
         def score(guide):
-            blocked = any(states.get(pact) is False for pact in guide["targets"] if pact in self.core)
-            can_build = all(len(pool[pact]) >= self.pacts[pact]["need"]
-                            for pact in guide["targets"] if pact in self.core)
             main = set(guide["targets"]) & self.core
+            viable = self.core_viable(guide, states, pool)
             confirmed = sum(states.get(pact) is True for pact in main)
             priorities = priority(guide)
-            available = sum(self.status(name, states, excluded) is True for name in priorities)
-            on_screen = sum(priorities.get(name, 0) for name in set(current))
-            return (not blocked and can_build, confirmed, on_screen, available)
+            available = sum(weight for name, weight in priorities.items()
+                            if self.status(name, states, excluded, seen) is True)
+            on_screen = sum(priorities.get(name, 0) for name in visible)
+            coverage = sum(min(len(pool[pact]), count) / count for pact, count in guide["targets"].items())
+            return (viable, confirmed, on_screen, available / max(sum(priorities.values()), 1),
+                    coverage / len(guide["targets"]))
         return sorted(self.lineups.values(), key=score, reverse=True)
+
+    def core_viable(self, guide, states, pool):
+        return all(states.get(pact) is not False and len(pool[pact]) >= self.pacts[pact]["need"]
+                   for pact in guide["targets"] if pact in self.core)
+
+    def strategy_guide(self, ranked, states, hits, excluded=(), seen=()):
+        pool = self.grouped(states, excluded, seen)
+        usable = [guide for guide in ranked if guide["strategies"] and self.core_viable(guide, states, pool)]
+        visible = {hit.name for hit in hits if hit.kind == "策略"}
+        return next((guide for guide in usable if visible.intersection(guide["strategies"])),
+                    usable[0] if usable else None)
 
 
 def priority(guide):
@@ -142,15 +218,16 @@ def priority(guide):
     return result
 
 
-def alerts(reading, guide, enabled, muted, states, season, excluded=()):
+def alerts(reading, guide, enabled, muted, states, season, excluded=(), strategy_guide=None):
     operators = priority(guide) if guide else {}
     gear = guide["equipment"] if guide else {}
-    strategies = guide["strategies"] if guide else []
+    advice = guide or strategy_guide
+    strategies = advice["strategies"] if advice else []
     result = []
     for hit in reading.hits:
         note = None
         if hit.kind == "干员" and hit.name in operators and reading.scene in {"调度中心", "自选编队"}:
-            if season.status(hit.name, states, excluded) is not False:
+            if reading.scene == "调度中心" or season.status(hit.name, states, excluded) is not False:
                 note = "核心干员" if operators[hit.name] == 2 else "阵容干员"
         elif hit.kind == "装备" and reading.scene in {"调度中心", "装备选择"}:
             if hit.name not in muted and (hit.name in enabled or hit.name in gear):
