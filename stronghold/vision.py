@@ -1,5 +1,6 @@
 """ROI OCR and icon detection for the simplified Chinese client."""
 from dataclasses import dataclass
+import json
 import re
 
 import cv2
@@ -55,6 +56,8 @@ class Recognizer:
         })
         self.icons = self.load_pacts()
         self.strategy_templates = self.load_strategies()
+        roster = json.loads((DATA / "operator_names.json").read_text(encoding="utf-8"))
+        self.roster_names = self.season.names["干员"] | {key(name): name for name in roster}
 
     def load_strategies(self):
         templates = {}
@@ -127,7 +130,11 @@ class Recognizer:
         if not forced:
             buttons = self.ocr(frame, (980, 375, 1280, 560), 1.5)
             controls = " ".join(key(line.text) for line in buttons)
-            if "刷新" in controls and "冻结" in controls:
+            visible_buttons = sum(button in controls for button in ("刷新", "冻结"))
+            if visible_buttons == 1:
+                collapse = self.ocr(frame, (1110, 610, 1280, 710), 1.5)
+                visible_buttons += any("收起" in key(line.text) for line in collapse)
+            if visible_buttons == 2:
                 forced = "调度中心"
         if forced == "调度中心":
             reading.scene = forced
@@ -153,29 +160,40 @@ class Recognizer:
             reading.hits = self.read_strategies(frame, lines)
         elif forced == "自选编队" or any(anchor in text for anchor in ("自选编队", "选择自选干员")):
             reading.scene = "自选编队"
-            reading.hits = self.hits(lines, ("干员",))
+            reading.hits = self.read_roster(lines)
         elif forced == "装备选择" or any(anchor in text for anchor in ("装备选择", "道具补给", "选择装备")):
             reading.scene = "装备选择"
             reading.hits = self.hits(lines, ("装备",))
         return reading
 
+    def read_roster(self, lines):
+        disabled = [line.box for line in lines if key(line.text) == "本局禁用"]
+        hits = []
+        for line in lines:
+            name = self.roster_names.get(key(line.text))
+            if not name or line.box[0] < 350:
+                continue
+            cx, cy = box_center(line.box)
+            if any(abs(cx - x) < 65 and 7 <= y - cy <= 44 for x, y in map(box_center, disabled)):
+                continue
+            hits.append(Hit("干员", name, line.box, line.confidence))
+        return hits
+
     def read_strategies(self, frame, lines):
         # Match the artwork inside each card, leaving borders, hover highlights and text outside.
-        x1, y1, x2, y2 = 320, 70, 995, 663
+        x1, y1, x2, y2 = 320, 70, 1230, 710
         gray = portrait_features(np.asarray(frame.convert("L").crop((x1, y1, x2, y2))))
         candidates = []
         for name, template in self.strategy_templates.items():
-            for size in (94, 102, 110, 118, 126):
+            for size in (98, 110, 118, 122, 130):
                 image = cv2.resize(template, (size, size), interpolation=cv2.INTER_AREA)
                 margin = size // 5
                 center = portrait_features(image)[margin:-margin, margin:-margin]
                 response = cv2.matchTemplate(gray, center, cv2.TM_CCOEFF_NORMED)
-                for column in (408, 535, 661, 787, 913):
-                    x_start = column - x1 - size//2 + margin - 13
-                    _, score, _, (x, y) = cv2.minMaxLoc(response[:, x_start:x_start+27])
-                    if score >= .80:
-                        left, top = x1+x+x_start-margin, y1+y-margin
-                        candidates.append(Hit("策略", name, (left, top, left+size, top+size), score))
+                _, score, _, (x, y) = cv2.minMaxLoc(response)
+                if score >= .84:
+                    left, top = x1+x-margin, y1+y-margin
+                    candidates.append(Hit("策略", name, (left, top, left+size, top+size), score))
         result = []
         for hit in sorted(candidates, key=lambda hit: hit.confidence, reverse=True):
             if not any(hit.name == other.name or box_distance(hit.box, other.box) < 50 for other in result):
@@ -266,10 +284,11 @@ class Recognizer:
                 continue
             x1, y1, x2, y2 = line.box
             x, y = (x1+x2)//2, (y1+y2)//2
-            if not (core[0]-60 <= x <= min(1175, core[0]+760) and 55 <= y-core[1] <= 515):
+            if not core[0]-65 <= x <= min(1175, core[0]+800):
                 continue
             if name in self.season.core:
-                if (extra and y >= extra[1]) or y-core[1] > 200:
+                upper = extra[1] if extra else core[1]+365
+                if not core[1]+55 <= y < upper:
                     continue
             elif not extra or not (55 <= y-extra[1] <= 310) or ("ban" in headers and y >= headers["ban"][1]):
                 continue
@@ -284,11 +303,12 @@ class Recognizer:
                 rows.append((name, state, line))
         if len(rows) < 3 or not any(state for _, state, _ in rows):
             return
-        selectable = any(
-            re.search(r"可选择?一组激活|可选型核心盟约组|另(?:外)?一组.*阵容.*不完整",
-                      key(line.text))
-            for line in lines
-        )
+        panel_text = " ".join(key(line.text) for line in lines)
+        full_ban = bool(re.search(r"未被选择的盟约.*不会出现", panel_text))
+        selectable = bool(re.search(
+            r"请选择一组.*激活.*盟约|可选择?一组激活|可选型核心盟约组|另(?:外)?一组.*阵容.*不完整",
+            panel_text,
+        ))
         core_rows = [(name, state, line) for name, state, line in rows if name in self.season.core]
         if selectable:
             # In the personal-simulation panel the two groups are separated horizontally.
@@ -299,7 +319,10 @@ class Recognizer:
                 if 2 <= index <= len(centers)-2:
                     parts = (ordered[:index], ordered[index:])
                     reading.groups = [{name for name, _, _ in part} for part in parts]
-                    reading.partial_groups = True
+                    reading.partial_groups = not full_ban
+                    if full_ban and len(parts[0]) == len(parts[1]) >= 4:
+                        offered = set().union(*reading.groups)
+                        reading.pacts.update(dict.fromkeys(self.season.core - offered, False))
                     bright = [sum(state for _, state, _ in part) for part in parts]
                     if min(bright) == 0 and max(bright) >= 2:
                         reading.selected_group = bright.index(max(bright))
@@ -369,9 +392,13 @@ class Recognizer:
 
 
 def box_distance(first, second):
-    x = ((first[0]+first[2]) - (second[0]+second[2])) / 2
-    y = ((first[1]+first[3]) - (second[1]+second[3])) / 2
-    return (x*x + y*y) ** .5
+    x1, y1 = box_center(first)
+    x2, y2 = box_center(second)
+    return ((x1-x2)**2 + (y1-y2)**2) ** .5
+
+
+def box_center(box):
+    return (box[0]+box[2])/2, (box[1]+box[3])/2
 
 
 def portrait_features(image):

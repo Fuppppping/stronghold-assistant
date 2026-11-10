@@ -14,6 +14,8 @@
 
 目前按简中界面、横屏和常见终端主题校准。边缘被裁切、被其他窗口遮住、低分辨率或第三方主题可能影响识别。少量只显示头像的禁用干员需要在游戏内查看名单。可用池按本局盟约和已识别禁用名单推算，预备干员替换和自选编队中的个人选择以游戏为准。后台 GPU 抓屏与独占全屏的行为取决于客户端，推荐窗口化或无边框窗口。
 
+官方 Windows 客户端 `Arknights.exe` 可直接抓取窗口，采集设置保持默认即可。PC 端已用 3840×2160 的「极速模拟」实机验证盟约二选一、四列策略、调度中心和穿透浮层。自选编队页会单独识别本局可选的账号干员。
+
 ## 自定义攻略
 
 在「阵容与攻略」导入 [攻略示例](guide.example.json)。修改 `id` 为唯一标识后，可指定成型羁绊、阶段、干员、策略顺位和装备备注。名称使用游戏内简中全名。装备提醒可以在界面继续覆盖。
@@ -38,6 +40,6 @@ py -3.12 -m venv .venv
 
 ## 资料
 
-- 客户端识别设计参考 MAA 的截图、ROI 和图像模板工作流。项目使用 RapidOCR 的 PP-OCR 模型。 [MAA](https://github.com/MaaAssistantArknights/MaaAssistantArknights) · [MaaFramework](https://github.com/MaaXYZ/MaaFramework/blob/main/docs/en_us/1.1-QuickStarted.md) · [RapidOCR](https://github.com/RapidAI/RapidOCR)
+- 客户端识别设计参考 MAA 的截图、ROI 和图像模板工作流。项目使用 RapidOCR 的 PP-OCR 模型，自选编队识别使用 MAA 战斗图鉴的简中干员名称。 [MAA](https://github.com/MaaAssistantArknights/MaaAssistantArknights) · [MAA 战斗图鉴](https://github.com/MaaAssistantArknights/MaaAssistantArknights/blob/dev-v2/resource/battle_data.json) · [MaaFramework](https://github.com/MaaXYZ/MaaFramework/blob/main/docs/en_us/1.1-QuickStarted.md) · [RapidOCR](https://github.com/RapidAI/RapidOCR)
 - 序列 I 的规则与图鉴来自游戏说明和 PRTS。阵容阶段、策略建议及装备提示参考社区图鉴和各阵容的实战攻略，出处可在应用中打开。盟约和策略图标用于画面识别，游戏素材版权归其权利人。 [官方公告](https://ak.hypergryph.com/news/0787.html) · [PRTS 盟约记录](https://prts.wiki/w/卫戍协议·规程/PRTS盟约记录) · [战场说明](https://prts.wiki/w/卫戍协议·规程/战场一览) · [SquadPool 阵容索引](https://squad-pool.com/arknights-pacts)
 - 商店实战样本包含默认与定制终端主题。战前验证样本取自先行试玩和官方机制演示。 [阿戈尔实战](https://www.bilibili.com/video/BV1FnWn6XEA5/) · [炎国实战](https://www.bilibili.com/video/BV1BPWJ6yE3P/) · [先行试玩](https://www.bilibili.com/video/BV19P4w6aEk3/) · [前瞻演示](https://www.bilibili.com/video/BV18RHN64EZV?p=2)
