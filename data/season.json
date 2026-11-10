@@ -1,0 +1,3079 @@
+{
+  "season": "规程 · 序列 I",
+  "operators": [
+    {
+      "name": "折桠",
+      "tier": 1,
+      "pacts": [
+        "乌萨斯",
+        "不屈"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "艾丝黛尔",
+      "tier": 1,
+      "pacts": [
+        "萨尔贡",
+        "独行"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "幽灵鲨",
+      "tier": 1,
+      "pacts": [
+        "阿戈尔"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "野鬃",
+      "tier": 1,
+      "pacts": [
+        "卡西米尔",
+        "助力"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "慕斯",
+      "tier": 1,
+      "pacts": [
+        "维多利亚"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "角峰",
+      "tier": 1,
+      "pacts": [
+        "谢拉格",
+        "坚守"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "灰喉",
+      "tier": 1,
+      "pacts": [
+        "精准"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "深靛",
+      "tier": 1,
+      "pacts": [
+        "伊比利亚"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "卡达",
+      "tier": 1,
+      "pacts": [
+        "奥术"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "摆渡人",
+      "tier": 1,
+      "pacts": [
+        "坚守",
+        "不屈"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "夏栎",
+      "tier": 1,
+      "pacts": [
+        "助力"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "杰克",
+      "tier": 1,
+      "pacts": [
+        "突袭"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "霜叶",
+      "tier": 1,
+      "pacts": [
+        "灵巧"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "拜松",
+      "tier": 1,
+      "pacts": [
+        "炎"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "褐果",
+      "tier": 1,
+      "pacts": [
+        "聚合"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "烈夏",
+      "tier": 1,
+      "pacts": [
+        "乌萨斯"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "陨星",
+      "tier": 1,
+      "pacts": [
+        "迅捷"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "拉普兰德",
+      "tier": 1,
+      "pacts": [
+        "叙拉古"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "地灵",
+      "tier": 1,
+      "pacts": [
+        "莱塔尼亚",
+        "独行"
+      ],
+      "price": 2,
+      "proto": ""
+    },
+    {
+      "name": "折光",
+      "tier": 2,
+      "pacts": [
+        "莱塔尼亚"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "蓝毒",
+      "tier": 2,
+      "pacts": [
+        "伊比利亚"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "泡泡",
+      "tier": 2,
+      "pacts": [
+        "萨尔贡",
+        "坚守"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "莎草",
+      "tier": 2,
+      "pacts": [
+        "萨尔贡",
+        "聚合"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "雪猎",
+      "tier": 2,
+      "pacts": [
+        "谢拉格",
+        "精准"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "砾",
+      "tier": 2,
+      "pacts": [
+        "卡西米尔",
+        "不屈"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "复奏",
+      "tier": 2,
+      "pacts": [
+        "莱塔尼亚",
+        "叙拉古",
+        "奇迹"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "奥斯塔",
+      "tier": 2,
+      "pacts": [
+        "叙拉古"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "Miss.Christine",
+      "tier": 2,
+      "pacts": [
+        "维多利亚",
+        "奥术"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "哈洛德",
+      "tier": 2,
+      "pacts": [
+        "维多利亚",
+        "谢拉格"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "云迹",
+      "tier": 2,
+      "pacts": [
+        "灵巧",
+        "奇迹"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "蛇屠箱",
+      "tier": 2,
+      "pacts": [
+        "坚守"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "波登可",
+      "tier": 2,
+      "pacts": [
+        "聚合",
+        "迅捷"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "承曦格雷伊",
+      "tier": 2,
+      "pacts": [
+        "精准",
+        "灵巧"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "锡人",
+      "tier": 2,
+      "pacts": [
+        "投资人"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "宴",
+      "tier": 2,
+      "pacts": [
+        "不屈"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "渡桥",
+      "tier": 2,
+      "pacts": [
+        "远见"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "矩",
+      "tier": 2,
+      "pacts": [
+        "炎"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "星极",
+      "tier": 2,
+      "pacts": [
+        "奇迹"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "瑰盐",
+      "tier": 2,
+      "pacts": [
+        "伊比利亚",
+        "聚合"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "真理",
+      "tier": 2,
+      "pacts": [
+        "乌萨斯"
+      ],
+      "price": 1,
+      "proto": ""
+    },
+    {
+      "name": "铸铁",
+      "tier": 2,
+      "pacts": [
+        "突袭"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "星源",
+      "tier": 2,
+      "pacts": [
+        "助力"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "安哲拉",
+      "tier": 2,
+      "pacts": [
+        "阿戈尔",
+        "助力"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "车尔尼",
+      "tier": 3,
+      "pacts": [
+        "莱塔尼亚",
+        "坚守"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "卡涅利安",
+      "tier": 3,
+      "pacts": [
+        "莱塔尼亚",
+        "萨尔贡",
+        "迅捷"
+      ],
+      "price": 3,
+      "proto": "Pith"
+    },
+    {
+      "name": "乌啾",
+      "tier": 3,
+      "pacts": [
+        "乌萨斯",
+        "聚合"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "海沫",
+      "tier": 3,
+      "pacts": [
+        "伊比利亚",
+        "不屈"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "旅骨",
+      "tier": 3,
+      "pacts": [
+        "伊比利亚",
+        "精准"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "风絮",
+      "tier": 3,
+      "pacts": [
+        "炎",
+        "聚合"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "极光",
+      "tier": 3,
+      "pacts": [
+        "谢拉格"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "耶拉",
+      "tier": 3,
+      "pacts": [
+        "谢拉格",
+        "奇迹"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "初雪",
+      "tier": 3,
+      "pacts": [
+        "谢拉格",
+        "协防干员"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "深巡",
+      "tier": 3,
+      "pacts": [
+        "阿戈尔",
+        "坚守"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "斯卡蒂",
+      "tier": 3,
+      "pacts": [
+        "阿戈尔",
+        "突袭"
+      ],
+      "price": 3,
+      "proto": "Sharp"
+    },
+    {
+      "name": "瑕光",
+      "tier": 3,
+      "pacts": [
+        "卡西米尔",
+        "突袭"
+      ],
+      "price": 3,
+      "proto": "预备干员-重装"
+    },
+    {
+      "name": "忍冬",
+      "tier": 3,
+      "pacts": [
+        "叙拉古",
+        "迅捷"
+      ],
+      "price": 3,
+      "proto": "郁金香"
+    },
+    {
+      "name": "伺夜",
+      "tier": 3,
+      "pacts": [
+        "叙拉古",
+        "精准"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "水灯心",
+      "tier": 3,
+      "pacts": [
+        "维多利亚",
+        "独行",
+        "灵巧"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "空弦",
+      "tier": 3,
+      "pacts": [
+        "精准",
+        "远见"
+      ],
+      "price": 3,
+      "proto": "Stormeye"
+    },
+    {
+      "name": "吉星",
+      "tier": 3,
+      "pacts": [
+        "奇迹"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "伊桑",
+      "tier": 3,
+      "pacts": [
+        "奥术",
+        "突袭"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "罗比菈塔",
+      "tier": 3,
+      "pacts": [
+        "坚守",
+        "助力"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "乌有",
+      "tier": 3,
+      "pacts": [
+        "炎"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "历阵锐枪芬",
+      "tier": 3,
+      "pacts": [
+        "卡西米尔",
+        "远见"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "凯瑟琳",
+      "tier": 3,
+      "pacts": [
+        "维多利亚",
+        "远见"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "盟约·辅助干员",
+      "tier": 3,
+      "pacts": [
+        "调和"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "风丸",
+      "tier": 3,
+      "pacts": [
+        "不屈"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "至简",
+      "tier": 3,
+      "pacts": [
+        "萨尔贡"
+      ],
+      "price": 1,
+      "proto": ""
+    },
+    {
+      "name": "奥尔佳",
+      "tier": 3,
+      "pacts": [
+        "乌萨斯",
+        "灵巧"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "青枳",
+      "tier": 3,
+      "pacts": [
+        "坚守",
+        "迅捷"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "黑键",
+      "tier": 4,
+      "pacts": [
+        "莱塔尼亚",
+        "精准"
+      ],
+      "price": 3,
+      "proto": "Pith"
+    },
+    {
+      "name": "艾雅法拉",
+      "tier": 4,
+      "pacts": [
+        "莱塔尼亚",
+        "奥术"
+      ],
+      "price": 3,
+      "proto": "预备干员-术师"
+    },
+    {
+      "name": "赫拉格",
+      "tier": 4,
+      "pacts": [
+        "乌萨斯",
+        "突袭"
+      ],
+      "price": 3,
+      "proto": "预备干员-近卫"
+    },
+    {
+      "name": "维伊",
+      "tier": 4,
+      "pacts": [
+        "乌萨斯",
+        "奥术"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "温蒂",
+      "tier": 4,
+      "pacts": [
+        "伊比利亚",
+        "坚守"
+      ],
+      "price": 3,
+      "proto": "Misery"
+    },
+    {
+      "name": "流明",
+      "tier": 4,
+      "pacts": [
+        "伊比利亚",
+        "聚合"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "余",
+      "tier": 4,
+      "pacts": [
+        "炎",
+        "坚守"
+      ],
+      "price": 3,
+      "proto": "Mechanist"
+    },
+    {
+      "name": "森蚺",
+      "tier": 4,
+      "pacts": [
+        "萨尔贡",
+        "不屈"
+      ],
+      "price": 3,
+      "proto": "Sharp"
+    },
+    {
+      "name": "灵知",
+      "tier": 4,
+      "pacts": [
+        "谢拉格",
+        "迅捷"
+      ],
+      "price": 3,
+      "proto": "Raidian"
+    },
+    {
+      "name": "归溟幽灵鲨",
+      "tier": 4,
+      "pacts": [
+        "阿戈尔",
+        "不屈"
+      ],
+      "price": 3,
+      "proto": "Misery"
+    },
+    {
+      "name": "水月",
+      "tier": 4,
+      "pacts": [
+        "阿戈尔",
+        "灵巧"
+      ],
+      "price": 3,
+      "proto": "Misery"
+    },
+    {
+      "name": "远牙",
+      "tier": 4,
+      "pacts": [
+        "卡西米尔",
+        "精准"
+      ],
+      "price": 3,
+      "proto": "Stormeye"
+    },
+    {
+      "name": "玛恩纳",
+      "tier": 4,
+      "pacts": [
+        "卡西米尔"
+      ],
+      "price": 3,
+      "proto": "领主·Sharp"
+    },
+    {
+      "name": "涤火杰西卡",
+      "tier": 4,
+      "pacts": [
+        "维多利亚",
+        "坚守"
+      ],
+      "price": 3,
+      "proto": "Mechanist"
+    },
+    {
+      "name": "白铁",
+      "tier": 4,
+      "pacts": [
+        "维多利亚",
+        "助力"
+      ],
+      "price": 3,
+      "proto": "Raidian"
+    },
+    {
+      "name": "斥罪",
+      "tier": 4,
+      "pacts": [
+        "叙拉古",
+        "不屈"
+      ],
+      "price": 3,
+      "proto": "Mechanist"
+    },
+    {
+      "name": "W",
+      "tier": 4,
+      "pacts": [
+        "迅捷"
+      ],
+      "price": 3,
+      "proto": "Stormeye"
+    },
+    {
+      "name": "霍尔海雅",
+      "tier": 4,
+      "pacts": [
+        "奥术",
+        "精准"
+      ],
+      "price": 3,
+      "proto": "Pith"
+    },
+    {
+      "name": "山",
+      "tier": 4,
+      "pacts": [
+        "投资人"
+      ],
+      "price": 3,
+      "proto": "预备干员-近卫"
+    },
+    {
+      "name": "淬羽赫默",
+      "tier": 4,
+      "pacts": [
+        "助力"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "赫德雷",
+      "tier": 4,
+      "pacts": [
+        "突袭"
+      ],
+      "price": 3,
+      "proto": "Sharp"
+    },
+    {
+      "name": "夜莺",
+      "tier": 4,
+      "pacts": [
+        "聚合",
+        "协防干员"
+      ],
+      "price": 3,
+      "proto": "Touch"
+    },
+    {
+      "name": "仇白",
+      "tier": 4,
+      "pacts": [
+        "炎",
+        "灵巧"
+      ],
+      "price": 3,
+      "proto": "Sharp"
+    },
+    {
+      "name": "异客",
+      "tier": 4,
+      "pacts": [
+        "萨尔贡",
+        "奥术"
+      ],
+      "price": 3,
+      "proto": "Pith"
+    },
+    {
+      "name": "安洁莉娜",
+      "tier": 4,
+      "pacts": [
+        "叙拉古",
+        "奇迹"
+      ],
+      "price": 3,
+      "proto": "Raidian"
+    },
+    {
+      "name": "华法琳",
+      "tier": 4,
+      "pacts": [
+        "灵巧",
+        "聚合"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "寒檀",
+      "tier": 4,
+      "pacts": [
+        "远见"
+      ],
+      "price": 3,
+      "proto": ""
+    },
+    {
+      "name": "纯烬艾雅法拉",
+      "tier": 5,
+      "pacts": [
+        "聚合",
+        "莱塔尼亚",
+        "远见"
+      ],
+      "price": 4,
+      "proto": "Touch"
+    },
+    {
+      "name": "怒潮凛冬",
+      "tier": 5,
+      "pacts": [
+        "乌萨斯",
+        "奇迹"
+      ],
+      "price": 4,
+      "proto": "领主·Sharp"
+    },
+    {
+      "name": "艾丽妮",
+      "tier": 5,
+      "pacts": [
+        "伊比利亚"
+      ],
+      "price": 4,
+      "proto": "预备干员-近卫"
+    },
+    {
+      "name": "棘刺",
+      "tier": 5,
+      "pacts": [
+        "伊比利亚",
+        "奥术"
+      ],
+      "price": 4,
+      "proto": "领主·Sharp"
+    },
+    {
+      "name": "黍",
+      "tier": 5,
+      "pacts": [
+        "炎",
+        "远见"
+      ],
+      "price": 4,
+      "proto": "Mechanist"
+    },
+    {
+      "name": "佩佩",
+      "tier": 5,
+      "pacts": [
+        "萨尔贡",
+        "灵巧"
+      ],
+      "price": 4,
+      "proto": "Sharp"
+    },
+    {
+      "name": "圣聆初雪",
+      "tier": 5,
+      "pacts": [
+        "谢拉格",
+        "奥术"
+      ],
+      "price": 4,
+      "proto": "Pith"
+    },
+    {
+      "name": "凛御银灰",
+      "tier": 5,
+      "pacts": [
+        "谢拉格",
+        "灵巧",
+        "投资人"
+      ],
+      "price": 4,
+      "proto": "郁金香"
+    },
+    {
+      "name": "歌蕾蒂娅",
+      "tier": 5,
+      "pacts": [
+        "阿戈尔"
+      ],
+      "price": 4,
+      "proto": ""
+    },
+    {
+      "name": "乌尔比安",
+      "tier": 5,
+      "pacts": [
+        "阿戈尔"
+      ],
+      "price": 4,
+      "proto": "预备干员-近卫"
+    },
+    {
+      "name": "薇薇安娜",
+      "tier": 5,
+      "pacts": [
+        "莱塔尼亚",
+        "卡西米尔",
+        "奥术"
+      ],
+      "price": 4,
+      "proto": "郁金香"
+    },
+    {
+      "name": "铃兰",
+      "tier": 5,
+      "pacts": [
+        "叙拉古"
+      ],
+      "price": 4,
+      "proto": "Raidian"
+    },
+    {
+      "name": "贝洛内",
+      "tier": 5,
+      "pacts": [
+        "叙拉古",
+        "突袭"
+      ],
+      "price": 4,
+      "proto": "Sharp"
+    },
+    {
+      "name": "维娜·维多利亚",
+      "tier": 5,
+      "pacts": [
+        "维多利亚",
+        "奇迹"
+      ],
+      "price": 4,
+      "proto": "领主·Sharp"
+    },
+    {
+      "name": "迷迭香",
+      "tier": 5,
+      "pacts": [
+        "精准",
+        "助力"
+      ],
+      "price": 4,
+      "proto": "Stormeye"
+    },
+    {
+      "name": "隐德来希",
+      "tier": 5,
+      "pacts": [
+        "灵巧",
+        "不屈"
+      ],
+      "price": 4,
+      "proto": "Sharp"
+    },
+    {
+      "name": "塞雷娅",
+      "tier": 5,
+      "pacts": [
+        "坚守",
+        "协防干员"
+      ],
+      "price": 4,
+      "proto": "Mechanist"
+    },
+    {
+      "name": "溯光星源",
+      "tier": 5,
+      "pacts": [
+        "奥术"
+      ],
+      "price": 4,
+      "proto": ""
+    },
+    {
+      "name": "老鲤",
+      "tier": 5,
+      "pacts": [
+        "投资人",
+        "炎"
+      ],
+      "price": 4,
+      "proto": "Misery"
+    },
+    {
+      "name": "Mon3tr",
+      "tier": 5,
+      "pacts": [
+        "协防干员"
+      ],
+      "price": 4,
+      "proto": "Touch"
+    },
+    {
+      "name": "可露希尔",
+      "tier": 5,
+      "pacts": [
+        "投资人"
+      ],
+      "price": 4,
+      "proto": "郁金香"
+    },
+    {
+      "name": "“暴躁铁皮”",
+      "tier": 5,
+      "pacts": [
+        "协防干员"
+      ],
+      "price": 4,
+      "proto": ""
+    },
+    {
+      "name": "鸿雪",
+      "tier": 5,
+      "pacts": [
+        "萨尔贡",
+        "精准"
+      ],
+      "price": 4,
+      "proto": "Stormeye"
+    },
+    {
+      "name": "焰尾",
+      "tier": 5,
+      "pacts": [
+        "卡西米尔",
+        "迅捷"
+      ],
+      "price": 4,
+      "proto": "预备干员-先锋"
+    },
+    {
+      "name": "冻河",
+      "tier": 5,
+      "pacts": [
+        "乌萨斯",
+        "迅捷"
+      ],
+      "price": 4,
+      "proto": "Stormeye"
+    },
+    {
+      "name": "阿米娅",
+      "tier": 5,
+      "pacts": [
+        "奇迹"
+      ],
+      "price": 4,
+      "proto": ""
+    },
+    {
+      "name": "引星棘刺",
+      "tier": 6,
+      "pacts": [
+        "伊比利亚",
+        "迅捷"
+      ],
+      "price": 4,
+      "proto": "Misery"
+    },
+    {
+      "name": "烛煌",
+      "tier": 6,
+      "pacts": [
+        "炎",
+        "维多利亚",
+        "迅捷"
+      ],
+      "price": 4,
+      "proto": "预备干员-术师"
+    },
+    {
+      "name": "浊心斯卡蒂",
+      "tier": 6,
+      "pacts": [
+        "阿戈尔",
+        "聚合"
+      ],
+      "price": 4,
+      "proto": "Raidian"
+    },
+    {
+      "name": "克莱门莎",
+      "tier": 6,
+      "pacts": [
+        "阿戈尔"
+      ],
+      "price": 4,
+      "proto": "领主·Sharp"
+    },
+    {
+      "name": "耀骑士临光",
+      "tier": 6,
+      "pacts": [
+        "卡西米尔",
+        "突袭"
+      ],
+      "price": 4,
+      "proto": "预备干员-近卫"
+    },
+    {
+      "name": "荒芜拉普兰德",
+      "tier": 6,
+      "pacts": [
+        "叙拉古"
+      ],
+      "price": 4,
+      "proto": "Pith"
+    },
+    {
+      "name": "酒神",
+      "tier": 6,
+      "pacts": [
+        "维多利亚"
+      ],
+      "price": 4,
+      "proto": "Raidian"
+    },
+    {
+      "name": "逻各斯",
+      "tier": 6,
+      "pacts": [
+        "奥术",
+        "远见"
+      ],
+      "price": 4,
+      "proto": "Pith"
+    },
+    {
+      "name": "真言",
+      "tier": 6,
+      "pacts": [
+        "萨尔贡"
+      ],
+      "price": 4,
+      "proto": "预备干员-术师"
+    },
+    {
+      "name": "妮芙",
+      "tier": 6,
+      "pacts": [
+        "迅捷",
+        "远见"
+      ],
+      "price": 4,
+      "proto": "预备干员-术师"
+    },
+    {
+      "name": "遥",
+      "tier": 6,
+      "pacts": [
+        "聚合",
+        "奇迹"
+      ],
+      "price": 4,
+      "proto": "Raidian"
+    },
+    {
+      "name": "魔王",
+      "tier": 6,
+      "pacts": [
+        "调和"
+      ],
+      "price": 4,
+      "proto": ""
+    },
+    {
+      "name": "史尔特尔",
+      "tier": 6,
+      "pacts": [
+        "突袭",
+        "不屈"
+      ],
+      "price": 4,
+      "proto": "Sharp"
+    },
+    {
+      "name": "锏",
+      "tier": 6,
+      "pacts": [
+        "卡西米尔",
+        "谢拉格",
+        "莱塔尼亚"
+      ],
+      "price": 4,
+      "proto": "Sharp"
+    },
+    {
+      "name": "机械师",
+      "tier": 6,
+      "pacts": [
+        "协防干员",
+        "坚守"
+      ],
+      "price": 4,
+      "proto": ""
+    },
+    {
+      "name": "塔露拉",
+      "tier": 6,
+      "pacts": [
+        "乌萨斯",
+        "奥术",
+        "协防干员"
+      ],
+      "price": 4,
+      "proto": "Sharp"
+    },
+    {
+      "name": "夕",
+      "tier": 6,
+      "pacts": [
+        "炎",
+        "奥术"
+      ],
+      "price": 4,
+      "proto": "Pith"
+    },
+    {
+      "name": "蕾缪安",
+      "tier": 6,
+      "pacts": [
+        "精准"
+      ],
+      "price": 4,
+      "proto": "Stormeye"
+    },
+    {
+      "name": "缪尔赛思",
+      "tier": 6,
+      "pacts": [
+        "协防干员"
+      ],
+      "price": 4,
+      "proto": "郁金香"
+    },
+    {
+      "name": "帕拉斯",
+      "tier": 6,
+      "pacts": [
+        "灵巧",
+        "助力"
+      ],
+      "price": 4,
+      "proto": "Mechanist"
+    }
+  ],
+  "pacts": [
+    {
+      "name": "炎",
+      "id": "yan",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "萨尔贡",
+      "id": "sargon",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "维多利亚",
+      "id": "victoria",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "谢拉格",
+      "id": "kjerag",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "阿戈尔",
+      "id": "egir",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "叙拉古",
+      "id": "siracusa",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "卡西米尔",
+      "id": "kazimierz",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "乌萨斯",
+      "id": "ursus",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "伊比利亚",
+      "id": "iberia",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "莱塔尼亚",
+      "id": "lethania",
+      "core": true,
+      "need": 3
+    },
+    {
+      "name": "精准",
+      "id": "preci",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "迅捷",
+      "id": "swift",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "灵巧",
+      "id": "skillful",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "坚守",
+      "id": "stead",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "助力",
+      "id": "deput",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "远见",
+      "id": "visi",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "奇迹",
+      "id": "mira",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "投资人",
+      "id": "invest",
+      "core": false,
+      "need": 3
+    },
+    {
+      "name": "突袭",
+      "id": "raid",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "不屈",
+      "id": "indom",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "调和",
+      "id": "mani",
+      "core": false,
+      "need": 1
+    },
+    {
+      "name": "协防干员",
+      "id": "empty",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "独行",
+      "id": "solo",
+      "core": false,
+      "need": 1
+    },
+    {
+      "name": "绝技",
+      "id": "sunt",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "聚合",
+      "id": "doc",
+      "core": false,
+      "need": 2
+    },
+    {
+      "name": "奥术",
+      "id": "arcane",
+      "core": false,
+      "need": 2
+    }
+  ],
+  "strategies": [
+    {
+      "name": "众志合一",
+      "by": "阿米娅",
+      "icon": "s01",
+      "hp": "25"
+    },
+    {
+      "name": "坚不可摧",
+      "by": "歌利亚",
+      "icon": "s02",
+      "hp": "40"
+    },
+    {
+      "name": "加急调派",
+      "by": "大帝",
+      "icon": "s03",
+      "hp": "26"
+    },
+    {
+      "name": "食腐之蝶",
+      "by": "卡莱莎",
+      "icon": "s04",
+      "hp": "26"
+    },
+    {
+      "name": "统御号令",
+      "by": "伊奥莱塔·罗素",
+      "icon": "s05",
+      "hp": "29"
+    },
+    {
+      "name": "意志鼓舞",
+      "by": "百炼嘉维尔",
+      "icon": "s06",
+      "hp": "27"
+    },
+    {
+      "name": "内部货源",
+      "by": "天空盒",
+      "icon": "s07",
+      "hp": "28"
+    },
+    {
+      "name": "纸片替身",
+      "by": "风丸",
+      "icon": "s08",
+      "hp": "25"
+    },
+    {
+      "name": "溃心领域",
+      "by": "妮芙",
+      "icon": "s09",
+      "hp": "28"
+    },
+    {
+      "name": "幻画为真",
+      "by": "夕",
+      "icon": "s10",
+      "hp": "28"
+    },
+    {
+      "name": "条文修正",
+      "by": "但书",
+      "icon": "s11",
+      "hp": "26"
+    },
+    {
+      "name": "全场聚焦",
+      "by": "大嘴莫布",
+      "icon": "s12",
+      "hp": "26"
+    },
+    {
+      "name": "集结指示",
+      "by": "杰西卡",
+      "icon": "s13",
+      "hp": "22"
+    },
+    {
+      "name": "重点监护",
+      "by": "华法琳",
+      "icon": "s14",
+      "hp": "24"
+    },
+    {
+      "name": "药枚实验",
+      "by": "桑葚",
+      "icon": "s15",
+      "hp": "24"
+    },
+    {
+      "name": "全力熔铸",
+      "by": "奥达",
+      "icon": "s16",
+      "hp": "26"
+    },
+    {
+      "name": "以己之长",
+      "by": "陈",
+      "icon": "s17",
+      "hp": "26"
+    },
+    {
+      "name": "得闲饮茶",
+      "by": "老鲤",
+      "icon": "s18",
+      "hp": "27"
+    },
+    {
+      "name": "协力共进",
+      "by": "芬",
+      "icon": "s19",
+      "hp": "24"
+    },
+    {
+      "name": "外勤医疗",
+      "by": "Touch",
+      "icon": "s20",
+      "hp": "28"
+    },
+    {
+      "name": "暴躁铁皮",
+      "by": "森蚺",
+      "icon": "s21",
+      "hp": "29"
+    },
+    {
+      "name": "宝藏探机",
+      "by": "寻宝人",
+      "icon": "s22",
+      "hp": "22"
+    },
+    {
+      "name": "至纯凝结",
+      "by": "缪尔赛思",
+      "icon": "s23",
+      "hp": "28"
+    },
+    {
+      "name": "消解空间",
+      "by": "Misery",
+      "icon": "s24",
+      "hp": "27"
+    },
+    {
+      "name": "变形同构",
+      "by": "“变形者集群”",
+      "icon": "s25",
+      "hp": "22"
+    },
+    {
+      "name": "私募基金",
+      "by": "小贾斯汀",
+      "icon": "s26",
+      "hp": "23"
+    },
+    {
+      "name": "御守之力",
+      "by": "铃兰",
+      "icon": "s27",
+      "hp": "20"
+    },
+    {
+      "name": "强制休整",
+      "by": "苏苏洛",
+      "icon": "s28",
+      "hp": "21"
+    },
+    {
+      "name": "不稳定要素",
+      "by": "昆图斯",
+      "icon": "s29",
+      "hp": "24"
+    },
+    {
+      "name": "献身护卫",
+      "by": "信仰搅拌机",
+      "icon": "s30",
+      "hp": "27"
+    },
+    {
+      "name": "好多委托！",
+      "by": "“追随者们”",
+      "icon": "s31",
+      "hp": "21"
+    },
+    {
+      "name": "利滚利",
+      "by": "坎诺特",
+      "icon": "s32",
+      "hp": "27"
+    },
+    {
+      "name": "“神秘顾客”",
+      "by": "鸭爵",
+      "icon": "s33",
+      "hp": "29"
+    },
+    {
+      "name": "最佳品味",
+      "by": "琳琅诗怀雅",
+      "icon": "s34",
+      "hp": "24"
+    },
+    {
+      "name": "替身娃娃",
+      "by": "巫恋",
+      "icon": "s35",
+      "hp": "25"
+    },
+    {
+      "name": "东之极道",
+      "by": "三船光平",
+      "icon": "s36",
+      "hp": "22"
+    },
+    {
+      "name": "人才锁定",
+      "by": "雅拉",
+      "icon": "s37",
+      "hp": "24"
+    },
+    {
+      "name": "专享情报",
+      "by": "渡桥",
+      "icon": "s38",
+      "hp": "30"
+    },
+    {
+      "name": "精巧设计",
+      "by": "Mechanist",
+      "icon": "s39",
+      "hp": "29"
+    },
+    {
+      "name": "电气化！",
+      "by": "布丁",
+      "icon": "s40",
+      "hp": "23"
+    },
+    {
+      "name": "打包速递",
+      "by": "拜松",
+      "icon": "s41",
+      "hp": "23"
+    },
+    {
+      "name": "优等生",
+      "by": "Pith",
+      "icon": "s42",
+      "hp": "24"
+    },
+    {
+      "name": "正直教官",
+      "by": "坚雷",
+      "icon": "s43",
+      "hp": "25"
+    },
+    {
+      "name": "二重奏",
+      "by": "复奏",
+      "icon": "s44",
+      "hp": "24"
+    },
+    {
+      "name": "黑白相易",
+      "by": "望",
+      "icon": "s45",
+      "hp": "23"
+    },
+    {
+      "name": "广交豪杰",
+      "by": "杜遥夜",
+      "icon": "s46",
+      "hp": "26"
+    },
+    {
+      "name": "沙洲梦魇",
+      "by": "娜仁图亚",
+      "icon": "s47",
+      "hp": "24"
+    },
+    {
+      "name": "博学多通",
+      "by": "佩佩",
+      "icon": "s48",
+      "hp": "23"
+    },
+    {
+      "name": "自发制造",
+      "by": "洛洛",
+      "icon": "s49",
+      "hp": "25"
+    },
+    {
+      "name": "人才盲盒",
+      "by": "哈洛德",
+      "icon": "s50",
+      "hp": "23"
+    },
+    {
+      "name": "猎人战法",
+      "by": "歌蕾蒂娅",
+      "icon": "s51",
+      "hp": "23"
+    },
+    {
+      "name": "崇高牺牲",
+      "by": "克莱门莎",
+      "icon": "s52",
+      "hp": "26"
+    },
+    {
+      "name": "骑士团长",
+      "by": "焰尾",
+      "icon": "s53",
+      "hp": "25"
+    },
+    {
+      "name": "业务指标",
+      "by": "玛恩纳",
+      "icon": "s54",
+      "hp": "28"
+    },
+    {
+      "name": "不融信念",
+      "by": "耶拉",
+      "icon": "s55",
+      "hp": "23"
+    },
+    {
+      "name": "雪域礼赠",
+      "by": "休露丝",
+      "icon": "s56",
+      "hp": "23"
+    },
+    {
+      "name": "量体裁衣",
+      "by": "裁度",
+      "icon": "s57",
+      "hp": "26"
+    },
+    {
+      "name": "团伙行动",
+      "by": "贾维",
+      "icon": "s58",
+      "hp": "24"
+    },
+    {
+      "name": "流动乐章",
+      "by": "车尔尼",
+      "icon": "s59",
+      "hp": "24"
+    },
+    {
+      "name": "无惧风雪",
+      "by": "怒潮凛冬",
+      "icon": "s60",
+      "hp": "26"
+    },
+    {
+      "name": "出航时刻",
+      "by": "引星棘刺",
+      "icon": "s61",
+      "hp": "23"
+    }
+  ],
+  "equipment": [
+    {
+      "name": "维式重锤",
+      "tier": 1,
+      "price": 1
+    },
+    {
+      "name": "坚守盾牌",
+      "tier": 1,
+      "price": 1
+    },
+    {
+      "name": "盟约之币",
+      "tier": 1,
+      "price": 1
+    },
+    {
+      "name": "随身身份牌",
+      "tier": 1,
+      "price": 1
+    },
+    {
+      "name": "源石溶剂",
+      "tier": 1,
+      "price": 1
+    },
+    {
+      "name": "虹彩活血饮料",
+      "tier": 1,
+      "price": 1
+    },
+    {
+      "name": "雪祀之衣",
+      "tier": 1,
+      "price": 1
+    },
+    {
+      "name": "不屈弹射器",
+      "tier": 2,
+      "price": 1
+    },
+    {
+      "name": "紧急调度券",
+      "tier": 2,
+      "price": 2
+    },
+    {
+      "name": "战栗维式重锤",
+      "tier": 2,
+      "price": 2
+    },
+    {
+      "name": "萨尔贡浓茶",
+      "tier": 2,
+      "price": 2
+    },
+    {
+      "name": "精打细算玩偶",
+      "tier": 2,
+      "price": 3
+    },
+    {
+      "name": "简易通讯机",
+      "tier": 2,
+      "price": 2
+    },
+    {
+      "name": "见钱眼开玩偶",
+      "tier": 2,
+      "price": 1
+    },
+    {
+      "name": "卫戍推荐信",
+      "tier": 2,
+      "price": 2
+    },
+    {
+      "name": "聚合急救箱",
+      "tier": 2,
+      "price": 2
+    },
+    {
+      "name": "灵巧涡轮手套",
+      "tier": 2,
+      "price": 2
+    },
+    {
+      "name": "叙拉古正装",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "精准狙击镜",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "炎国短刀",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "迅捷作战粮",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "歌利亚头盔",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "阿戈尔重刃",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "奥术法阵",
+      "tier": 3,
+      "price": 1
+    },
+    {
+      "name": "坚固维式重锤",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "加速维式重锤",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "突袭手雷",
+      "tier": 3,
+      "price": 1
+    },
+    {
+      "name": "驮兽储蓄罐",
+      "tier": 3,
+      "price": 3
+    },
+    {
+      "name": "乌萨斯呼吸器",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "多功能补剂",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "伊比利亚骨刺刀",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "定期存折",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "不退者之盾",
+      "tier": 3,
+      "price": 2
+    },
+    {
+      "name": "寻呼模块",
+      "tier": 4,
+      "price": 4
+    },
+    {
+      "name": "蜂鸣器",
+      "tier": 4,
+      "price": 1
+    },
+    {
+      "name": "伪装服",
+      "tier": 4,
+      "price": 1
+    },
+    {
+      "name": "卡西米尔竞技旗",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "灼燃维式重锤",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "护盾无人机",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "M3茧甲",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "莱塔尼亚小鼓",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "谢拉格不融冰",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "可靠怀表",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "一次性促销券",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "驱逐者警棍",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "动能单手弩",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "汲取者之喙",
+      "tier": 4,
+      "price": 2
+    },
+    {
+      "name": "双模机械臂",
+      "tier": 5,
+      "price": 3
+    },
+    {
+      "name": "信标",
+      "tier": 5,
+      "price": 3
+    },
+    {
+      "name": "拟态物质",
+      "tier": 5,
+      "price": 4
+    },
+    {
+      "name": "博士投影",
+      "tier": 5,
+      "price": 5
+    },
+    {
+      "name": "天马之盔",
+      "tier": 5,
+      "price": 3
+    },
+    {
+      "name": "电流维式重锤",
+      "tier": 5,
+      "price": 2
+    },
+    {
+      "name": "佣兵名牌",
+      "tier": 5,
+      "price": 2
+    },
+    {
+      "name": "人事部记录",
+      "tier": 5,
+      "price": 3
+    },
+    {
+      "name": "瓶装烈性反应",
+      "tier": 5,
+      "price": 2
+    },
+    {
+      "name": "不退者力场",
+      "tier": 5,
+      "price": 3
+    },
+    {
+      "name": "驱逐者瓦斯",
+      "tier": 5,
+      "price": 3
+    },
+    {
+      "name": "投机骰子",
+      "tier": 5,
+      "price": 3
+    },
+    {
+      "name": "天马之枪",
+      "tier": 6,
+      "price": 3
+    },
+    {
+      "name": "人事部文档",
+      "tier": 6,
+      "price": 4
+    },
+    {
+      "name": "变形同构体",
+      "tier": 6,
+      "price": 3
+    },
+    {
+      "name": "动能加速器",
+      "tier": 6,
+      "price": 3
+    },
+    {
+      "name": "汲取者之心",
+      "tier": 6,
+      "price": 3
+    },
+    {
+      "name": "终极维式重锤",
+      "tier": 6,
+      "price": 3
+    },
+    {
+      "name": "不退者卫护系统",
+      "tier": 6,
+      "price": 6
+    },
+    {
+      "name": "动能轰击弩",
+      "tier": 6,
+      "price": 6
+    },
+    {
+      "name": "汲取者之镰",
+      "tier": 6,
+      "price": 6
+    },
+    {
+      "name": "驱逐者防暴装备",
+      "tier": 6,
+      "price": 6
+    },
+    {
+      "name": "天马之耀",
+      "tier": 6,
+      "price": 6
+    }
+  ],
+  "lineups": [
+    {
+      "id": "ursus",
+      "name": "乌萨斯 · 奥术迅捷",
+      "targets": {
+        "乌萨斯": 6,
+        "奥术": 3,
+        "迅捷": 2
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R5 · 1–3 本",
+          "core": [
+            "折桠",
+            "乌啾"
+          ],
+          "operators": [
+            "折桠",
+            "烈夏",
+            "乌啾",
+            "真理",
+            "卡达",
+            "Miss.Christine",
+            "陨星",
+            "波登可",
+            "青枳",
+            "空弦",
+            "渡桥"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R6–R9 · 3–4 本",
+          "core": [
+            "维伊",
+            "霍尔海雅",
+            "冻河"
+          ],
+          "operators": [
+            "维伊",
+            "霍尔海雅",
+            "赫拉格",
+            "伊桑",
+            "溯光星源",
+            "冻河",
+            "怒潮凛冬"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 5–6 本",
+          "core": [
+            "塔露拉",
+            "霍尔海雅",
+            "冻河",
+            "乌啾",
+            "维伊"
+          ],
+          "operators": [
+            "塔露拉",
+            "乌啾",
+            "维伊",
+            "冻河",
+            "怒潮凛冬",
+            "霍尔海雅",
+            "青枳",
+            "折桠"
+          ]
+        }
+      ],
+      "strategies": [
+        "集结指示",
+        "不稳定要素"
+      ],
+      "equipment": {
+        "乌萨斯呼吸器": "塔露拉",
+        "佣兵名牌": "塔露拉",
+        "寻呼模块": "寻找冻河"
+      },
+      "sources": [
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/video/BV1CwWW6aEjh/"
+        },
+        {
+          "label": "自在道爷",
+          "url": "https://www.bilibili.com/video/BV1VfWH61E6B/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "lethania",
+      "name": "莱塔尼亚 · 精准奥术",
+      "targets": {
+        "莱塔尼亚": 6,
+        "精准": 3,
+        "奥术": 3,
+        "远见": 2
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R5 · 1–3 本",
+          "core": [
+            "地灵",
+            "折光",
+            "复奏",
+            "空弦",
+            "渡桥"
+          ],
+          "operators": [
+            "地灵",
+            "折光",
+            "复奏",
+            "渡桥",
+            "空弦",
+            "车尔尼",
+            "承曦格雷伊",
+            "Miss.Christine",
+            "卡达"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R6–R9 · 4 本",
+          "core": [
+            "黑键",
+            "霍尔海雅"
+          ],
+          "operators": [
+            "黑键",
+            "霍尔海雅",
+            "艾雅法拉",
+            "温蒂",
+            "车尔尼",
+            "地灵",
+            "折光",
+            "空弦"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 4–5 本",
+          "core": [
+            "黑键",
+            "霍尔海雅",
+            "薇薇安娜",
+            "纯烬艾雅法拉"
+          ],
+          "operators": [
+            "折光",
+            "空弦",
+            "霍尔海雅",
+            "黑键",
+            "薇薇安娜",
+            "纯烬艾雅法拉",
+            "艾雅法拉",
+            "车尔尼"
+          ]
+        }
+      ],
+      "strategies": [
+        "集结指示",
+        "不稳定要素"
+      ],
+      "equipment": {
+        "精准狙击镜": "补精准",
+        "变形同构体": "折光可作载体",
+        "莱塔尼亚小鼓": "补莱塔尼亚"
+      },
+      "sources": [
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/video/BV1UhWW6kE6t/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "egir",
+      "name": "阿戈尔 · 一字长蛇",
+      "targets": {
+        "阿戈尔": 6
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R5 · 1–3 本",
+          "core": [
+            "斯卡蒂",
+            "深巡"
+          ],
+          "operators": [
+            "深巡",
+            "幽灵鲨",
+            "安哲拉",
+            "斯卡蒂",
+            "歌蕾蒂娅"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R6–R9 · 3–4 本",
+          "core": [
+            "歌蕾蒂娅",
+            "乌尔比安"
+          ],
+          "operators": [
+            "斯卡蒂",
+            "歌蕾蒂娅",
+            "乌尔比安",
+            "归溟幽灵鲨",
+            "水月",
+            "深巡",
+            "灵知",
+            "蓝毒"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 4–5 本",
+          "core": [
+            "浊心斯卡蒂",
+            "乌尔比安"
+          ],
+          "operators": [
+            "浊心斯卡蒂",
+            "乌尔比安",
+            "歌蕾蒂娅",
+            "克莱门莎",
+            "帕拉斯",
+            "空弦"
+          ]
+        }
+      ],
+      "strategies": [
+        "得闲饮茶"
+      ],
+      "equipment": {
+        "变形同构体": "帕拉斯",
+        "阿戈尔重刃": "补阿戈尔",
+        "炎国短刀": "额外输出",
+        "突袭手雷": "补突袭"
+      },
+      "sources": [
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV1FnWn6XEA5/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "sargon",
+      "name": "萨尔贡 · 跳本高阶",
+      "targets": {
+        "萨尔贡": 6
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R6 · 1–3 本",
+          "core": [
+            "艾丝黛尔"
+          ],
+          "operators": [
+            "异客",
+            "泡泡",
+            "艾丝黛尔",
+            "莎草",
+            "至简"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R7–R10 · 4–5 本",
+          "core": [
+            "鸿雪",
+            "佩佩"
+          ],
+          "operators": [
+            "鸿雪",
+            "佩佩",
+            "异客",
+            "森蚺",
+            "泡泡",
+            "艾丝黛尔",
+            "乌啾"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R11–R14 · 5 本",
+          "core": [
+            "鸿雪",
+            "佩佩"
+          ],
+          "operators": [
+            "鸿雪",
+            "佩佩",
+            "真言",
+            "帕拉斯",
+            "逻各斯",
+            "W"
+          ]
+        }
+      ],
+      "strategies": [
+        "得闲饮茶",
+        "私募基金"
+      ],
+      "equipment": {
+        "萨尔贡浓茶": "本家叠层",
+        "迅捷作战粮": "补迅捷",
+        "维式重锤": "补输出",
+        "坚守盾牌": "补承伤"
+      },
+      "sources": [
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV11CWx6GELy/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "kjerag",
+      "name": "谢拉格 · 外援叠层",
+      "targets": {
+        "谢拉格": 6
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R5 · 1–3 本",
+          "core": [
+            "初雪",
+            "灵知"
+          ],
+          "operators": [
+            "角峰",
+            "雪猎",
+            "初雪",
+            "灵知",
+            "哈洛德",
+            "华法琳"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R6–R9 · 3–4 本",
+          "core": [
+            "圣聆初雪",
+            "灵知"
+          ],
+          "operators": [
+            "灵知",
+            "华法琳",
+            "空弦",
+            "耶拉",
+            "初雪",
+            "圣聆初雪"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 4–5 本",
+          "core": [
+            "锏",
+            "圣聆初雪"
+          ],
+          "operators": [
+            "圣聆初雪",
+            "凛御银灰",
+            "锏",
+            "帕拉斯",
+            "空弦",
+            "魔王"
+          ]
+        }
+      ],
+      "strategies": [
+        "得闲饮茶",
+        "私募基金"
+      ],
+      "equipment": {
+        "萨尔贡浓茶": "圣聆初雪",
+        "双模机械臂": "配合装备收益",
+        "奥术法阵": "补奥术"
+      },
+      "sources": [
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV1cTWW6FEAS/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "kazimierz",
+      "name": "卡西米尔 · 部署叠层",
+      "targets": {
+        "卡西米尔": 6
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R6 · 1–3 本",
+          "core": [
+            "砾",
+            "瑕光"
+          ],
+          "operators": [
+            "砾",
+            "瑕光",
+            "野鬃",
+            "华法琳",
+            "流明"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R7–R10 · 4 本",
+          "core": [
+            "玛恩纳",
+            "远牙"
+          ],
+          "operators": [
+            "玛恩纳",
+            "远牙",
+            "瑕光",
+            "砾",
+            "焰尾",
+            "薇薇安娜"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R11–R14 · 6 本",
+          "core": [
+            "玛恩纳",
+            "耀骑士临光"
+          ],
+          "operators": [
+            "耀骑士临光",
+            "锏",
+            "玛恩纳",
+            "远牙",
+            "焰尾",
+            "薇薇安娜",
+            "魔王",
+            "迷迭香"
+          ]
+        }
+      ],
+      "strategies": [
+        "坚不可摧",
+        "变形同构"
+      ],
+      "equipment": {
+        "卡西米尔竞技旗": "补卡西米尔",
+        "天马之枪": "本家输出",
+        "天马之盔": "本家承伤"
+      },
+      "sources": [
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV1nRWt6kEtd/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "iberia",
+      "name": "伊比利亚 · 精奥 / 迅捷",
+      "targets": {
+        "伊比利亚": 6,
+        "精准": 3,
+        "奥术": 2
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R5 · 1–3 本",
+          "core": [
+            "旅骨",
+            "蓝毒"
+          ],
+          "operators": [
+            "深靛",
+            "蓝毒",
+            "瑰盐",
+            "海沫",
+            "旅骨",
+            "温蒂",
+            "空弦",
+            "青枳"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R6–R9 · 4–5 本",
+          "core": [
+            "霍尔海雅"
+          ],
+          "operators": [
+            "霍尔海雅",
+            "旅骨",
+            "温蒂",
+            "流明",
+            "海沫",
+            "冻河",
+            "妮芙"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 5–6 本",
+          "core": [
+            "引星棘刺",
+            "棘刺"
+          ],
+          "operators": [
+            "引星棘刺",
+            "棘刺",
+            "艾丽妮",
+            "蓝毒",
+            "霍尔海雅",
+            "迷迭香",
+            "鸿雪"
+          ]
+        }
+      ],
+      "strategies": [
+        "变形同构"
+      ],
+      "equipment": {
+        "伊比利亚骨刺刀": "补伊比利亚",
+        "可靠怀表": "调整技能循环",
+        "迅捷作战粮": "棘刺",
+        "精准狙击镜": "蓝毒"
+      },
+      "sources": [
+        {
+          "label": "白绮Infinity",
+          "url": "https://www.bilibili.com/video/BV1k1WW6AEx7/"
+        },
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV1FnWn6XE5H/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "victoria",
+      "name": "维多利亚 · 装备叠层",
+      "targets": {
+        "维多利亚": 6
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R3 · 1–3 本",
+          "core": [
+            "凯瑟琳",
+            "Miss.Christine",
+            "涤火杰西卡"
+          ],
+          "operators": [
+            "凯瑟琳",
+            "慕斯",
+            "Miss.Christine",
+            "涤火杰西卡",
+            "哈洛德",
+            "水灯心"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R4–R9 · 4 本",
+          "core": [
+            "维娜·维多利亚",
+            "涤火杰西卡"
+          ],
+          "operators": [
+            "维娜·维多利亚",
+            "涤火杰西卡",
+            "白铁",
+            "华法琳",
+            "阿米娅",
+            "玛恩纳",
+            "塞雷娅"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 5–6 本",
+          "core": [
+            "烛煌",
+            "酒神"
+          ],
+          "operators": [
+            "烛煌",
+            "酒神",
+            "维娜·维多利亚",
+            "涤火杰西卡",
+            "慕斯",
+            "白铁"
+          ]
+        }
+      ],
+      "strategies": [
+        "坚不可摧",
+        "得闲饮茶"
+      ],
+      "equipment": {
+        "维式重锤": "维多利亚叠层",
+        "突袭手雷": "补突袭",
+        "炎国短刀": "输出",
+        "变形同构体": "补阵容"
+      },
+      "sources": [
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV1m1W864ErS/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "siracusa",
+      "name": "叙拉古 · 大变精准",
+      "targets": {
+        "叙拉古": 6,
+        "精准": 3,
+        "聚合": 2
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R4 · 1–2 本",
+          "core": [
+            "复奏"
+          ],
+          "operators": [
+            "拉普兰德",
+            "复奏",
+            "奥斯塔",
+            "忍冬"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "R5–R9 · 3 本",
+          "core": [
+            "空弦",
+            "伺夜"
+          ],
+          "operators": [
+            "空弦",
+            "伺夜",
+            "安洁莉娜",
+            "霍尔海雅",
+            "寒檀",
+            "夜莺"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 5 本",
+          "core": [
+            "贝洛内",
+            "空弦",
+            "伺夜"
+          ],
+          "operators": [
+            "贝洛内",
+            "空弦",
+            "伺夜",
+            "铃兰",
+            "魔王",
+            "夜莺"
+          ]
+        }
+      ],
+      "strategies": [
+        "变形同构",
+        "量体裁衣"
+      ],
+      "equipment": {
+        "叙拉古正装": "补叙拉古",
+        "变形同构体": "补阵容",
+        "精准狙击镜": "补精准"
+      },
+      "sources": [
+        {
+          "label": "春分只想说乐",
+          "url": "https://www.bilibili.com/video/BV1uJWb6xEEi/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/video/BV1BTWH6nEXK/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    },
+    {
+      "id": "yan",
+      "name": "炎 · 走地吃经济",
+      "targets": {
+        "炎": 6,
+        "灵巧": 2,
+        "远见": 2
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "1–3 本",
+          "core": [],
+          "operators": [
+            "拜松",
+            "矩",
+            "风絮",
+            "乌有",
+            "云迹"
+          ]
+        },
+        {
+          "name": "中期",
+          "timing": "4 本",
+          "core": [
+            "仇白"
+          ],
+          "operators": [
+            "仇白",
+            "余",
+            "乌有",
+            "风絮",
+            "云迹"
+          ]
+        },
+        {
+          "name": "成型",
+          "timing": "4–5 本",
+          "core": [
+            "仇白"
+          ],
+          "operators": [
+            "仇白",
+            "黍",
+            "老鲤",
+            "夕",
+            "烛煌"
+          ]
+        }
+      ],
+      "strategies": [
+        "御守之力"
+      ],
+      "equipment": {
+        "炎国短刀": "补炎",
+        "寻呼模块": "补本家",
+        "盟约之币": "早期经济"
+      },
+      "sources": [
+        {
+          "label": "转瞬即逝Elapse",
+          "url": "https://www.bilibili.com/video/BV1BPWJ6yE3P/"
+        },
+        {
+          "label": "博士摸鱼ing",
+          "url": "https://www.bilibili.com/video/BV1npWp6FEL7/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        }
+      ]
+    }
+  ]
+}
