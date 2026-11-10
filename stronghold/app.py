@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from queue import Empty, Queue
 from threading import Thread
@@ -15,6 +16,7 @@ from PIL import Image, ImageTk
 from . import windows
 from .domain import Reading, Season, alerts, key
 from .overlay import Overlay
+from .pc_input import operate_shop
 from .vision import Recognizer
 
 BG = "#0e1720"
@@ -46,17 +48,34 @@ def save_json(path, obj):
     temp.replace(path)
 
 
+@dataclass(frozen=True)
+class ShopRequest:
+    hwnd: int
+    action: str
+
+
 class Scanner(Thread):
     def __init__(self, season):
         super().__init__(daemon=True)
         self.season = season
         self.requests = Queue()
         self.responses = Queue()
+        self.shop_responses = Queue()
 
     def run(self):
         recognizer = None
         while True:
             generation, source, scene = self.requests.get()
+            if isinstance(source, ShopRequest):
+                try:
+                    if recognizer is None:
+                        recognizer = Recognizer(self.season)
+                    result = operate_shop(source.hwnd, source.action, recognizer, SETTINGS_DIR / "maa")
+                    self.shop_responses.put(result)
+                except Exception as exc:
+                    logging.exception("PC single-step input failed")
+                    self.shop_responses.put(f"PC 单步操作失败 · {exc}")
+                continue
             try:
                 if isinstance(source, Path):
                     with Image.open(source) as image:
@@ -102,6 +121,9 @@ class Dashboard:
         self.win_name = tk.StringVar()
         self.status = tk.StringVar(value="正在寻找客户端")
         self.guide_text = tk.StringVar(value="尚未选定阵容")
+        self.pc_status = tk.StringVar(value="PC 单步操作 · 回合整备期" if windows.is_admin()
+                                      else "PC 单步操作需以管理员身份运行助手")
+        self.pc_pending = False
         self.reading = Reading()
         self.window = None
         self.windows = {}
@@ -236,6 +258,13 @@ class Dashboard:
         self.raw_text = self.label(self.monitor, style="Sub.TLabel", wraplength=900)
         self.raw_text.pack(anchor="w", pady=(7, 0))
         self.button(self.monitor, "查看最近一帧", self.show_frame).pack(anchor="w", pady=(6, 0))
+        controls = ttk.Frame(self.monitor)
+        controls.pack(fill="x", pady=(8, 0))
+        self.open_shop_button = self.button(controls, "展开商店", lambda: self.pc_shop("open"))
+        self.close_shop_button = self.button(controls, "收起商店", lambda: self.pc_shop("close"))
+        self.open_shop_button.pack(side="left")
+        self.close_shop_button.pack(side="left", padx=(6, 8))
+        self.label(controls, textvariable=self.pc_status, style="Sub.TLabel", wraplength=580).pack(side="left")
 
     def build_pool(self):
         bar = ttk.Frame(self.pool)
@@ -489,6 +518,25 @@ class Dashboard:
         scene = self.scene.get()
         self.scanner.requests.put((self.generation, source, "" if scene == SCENES[0] else scene))
 
+    def pc_shop(self, action):
+        if self.pc_pending:
+            return
+        if not windows.is_admin():
+            self.pc_status.set("请以管理员身份运行助手，再使用 PC 单步操作")
+            return
+        if self.preview or not self.window or self.window.process.casefold() != "arknights.exe":
+            self.pc_status.set("请先绑定官方 PC 客户端并结束截图回放")
+            return
+        hwnd = self.window.hwnd
+        if not windows.bounds(hwnd) or (windows.foreground() != hwnd and not windows.activate(hwnd)):
+            self.pc_status.set("无法激活游戏窗口")
+            return
+        self.pc_pending = True
+        self.pc_status.set("正在检查游戏画面并执行单步操作")
+        self.open_shop_button.state(["disabled"])
+        self.close_shop_button.state(["disabled"])
+        self.scanner.requests.put((self.generation, ShopRequest(hwnd, action), ""))
+
     def tick(self):
         now = time.monotonic()
         if now - self.last_windows > 2.5 and not self.preview:
@@ -502,8 +550,17 @@ class Dashboard:
                     self.accept(reading, frame, error)
         except Empty:
             pass
+        if self.pc_pending:
+            try:
+                self.pc_status.set(self.scanner.shop_responses.get_nowait())
+                self.pc_pending = False
+                self.open_shop_button.state(["!disabled"])
+                self.close_shop_button.state(["!disabled"])
+            except Empty:
+                pass
 
-        if not self.preview and self.running and self.active_job is None and self.scanner.requests.empty():
+        if (not self.preview and self.running and not self.pc_pending
+                and self.active_job is None and self.scanner.requests.empty()):
             if now - self.last_scan > .85:
                 self.last_scan = now
                 if self.window and windows.bounds(self.window.hwnd):
@@ -723,6 +780,9 @@ class Dashboard:
         self.fill(self.equipment_tree, rows)
 
     def close(self):
+        if self.pc_pending:
+            self.pc_status.set("等待本次单步操作结束")
+            return
         self.save()
         self.root.destroy()
 

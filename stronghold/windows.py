@@ -13,6 +13,7 @@ from PIL import Image, ImageGrab, ImageStat
 
 user32 = c.WinDLL("user32", use_last_error=True)
 kernel32 = c.WinDLL("kernel32", use_last_error=True)
+shell32 = c.WinDLL("shell32", use_last_error=True)
 ENUM = c.WINFUNCTYPE(w.BOOL, w.HWND, w.LPARAM)
 HWND_TOPMOST = -1
 GWL_EXSTYLE = -20
@@ -31,6 +32,8 @@ visible = signature(user32, "IsWindowVisible", [w.HWND])
 is_window = signature(user32, "IsWindow", [w.HWND])
 minimized = signature(user32, "IsIconic", [w.HWND])
 foreground = signature(user32, "GetForegroundWindow", [], w.HWND)
+activate = signature(user32, "SetForegroundWindow", [w.HWND])
+is_admin = signature(shell32, "IsUserAnAdmin", [])
 ancestor = signature(user32, "GetAncestor", [w.HWND, w.UINT], w.HWND)
 related_window = signature(user32, "GetWindow", [w.HWND, w.UINT], w.HWND)
 class_name = signature(user32, "GetClassNameW", [w.HWND, w.LPWSTR, c.c_int], c.c_int)
