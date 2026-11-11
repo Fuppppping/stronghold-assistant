@@ -1,7 +1,11 @@
 """ROI OCR and icon detection for the simplified Chinese client."""
 from dataclasses import dataclass
+from collections import OrderedDict
+from copy import deepcopy
+import hashlib
 import json
 import re
+import time
 
 import cv2
 import numpy as np
@@ -11,6 +15,7 @@ from rapidocr import RapidOCR
 from .domain import DATA, Hit, Reading, key
 from .stock import Holding
 from .portraits import PortraitReader
+from .strategy_grid import cells as strategy_cells
 
 WIDTH, HEIGHT = 1280, 720
 
@@ -25,7 +30,7 @@ class Line:
 def game_region(image):
     """Strip solid letterboxing before mapping to canonical game coordinates."""
     width, height = image.size
-    thumb = np.asarray(image.resize((128, 72)))
+    thumb = np.asarray(image.resize((128, 72), Image.Resampling.NEAREST))
     dark = thumb.max(axis=2) < 15
     good_x = np.where(dark.mean(axis=0) < .97)[0]
     good_y = np.where(dark.mean(axis=1) < .97)[0]
@@ -55,6 +60,8 @@ class Recognizer:
         self.engine = RapidOCR(params={
             "EngineConfig.onnxruntime.intra_op_num_threads": 3,
             "EngineConfig.onnxruntime.inter_op_num_threads": 1,
+            "Det.limit_type": "max",
+            "Det.limit_side_len": 1600,
         })
         self.icons = self.load_pacts()
         self.strategy_templates = self.load_strategies()
@@ -63,6 +70,31 @@ class Recognizer:
         self.last_scene = "盟约选择"
         self.ban_continuation = False
         self.portraits = PortraitReader(season)
+        self.strategy_variants = None
+        self.reset_cache()
+
+    def reset_cache(self):
+        self.ocr_cache = OrderedDict()
+        self.frame_key = None
+        self.frame_reading = None
+        if hasattr(self, 'portraits'):
+            self.portraits.matches.clear()
+
+    @staticmethod
+    def scene_key(frame, scene, forced, roi):
+        regions = {
+            "调度中心": [(90, 655, 1150, 710), (900, 85, 1280, 710), (350, 0, 1100, 100)],
+            "盟约选择": [(0, 100, 1280, 720), (350, 0, 1100, 100)],
+            "策略轮选": [(320, 95, 1230, 720), (350, 0, 1100, 95)],
+            "自选编队": [(300, 85, 1280, 720), (350, 0, 1100, 95)],
+            "队友阵容": [(550, 90, 1268, 680), (350, 0, 1100, 95)],
+        }.get(scene, [(0, 0, WIDTH, HEIGHT)])
+        if roi:
+            regions = [roi, (0, 0, WIDTH, 100)]
+        digest = hashlib.blake2b(digest_size=16)
+        for rect in regions:
+            digest.update(frame.crop(rect).tobytes())
+        return scene, forced, roi, digest.digest()
 
     def load_strategies(self):
         templates = {}
@@ -89,6 +121,10 @@ class Recognizer:
     def ocr(self, frame, rect, zoom=1):
         x1, y1, x2, y2 = rect
         crop = frame.crop(rect)
+        cache_key = rect, zoom, hashlib.blake2b(crop.tobytes(), digest_size=16).digest()
+        if cache_key in self.ocr_cache:
+            self.ocr_cache.move_to_end(cache_key)
+            return list(self.ocr_cache[cache_key])
         if zoom != 1:
             crop = crop.resize((round(crop.width * zoom), round(crop.height * zoom)), Image.Resampling.BICUBIC)
         # RapidOCR interprets NumPy inputs as BGR.
@@ -103,7 +139,10 @@ class Recognizer:
             xb, yb = box.max(axis=0)
             lines.append(Line(text, (x1 + round(xa / zoom), y1 + round(ya / zoom),
                                      x1 + round(xb / zoom), y1 + round(yb / zoom)), float(score)))
-        return lines
+        self.ocr_cache[cache_key] = lines
+        if len(self.ocr_cache) > 32:
+            self.ocr_cache.popitem(last=False)
+        return list(lines)
 
     def hits(self, lines, kinds):
         result = []
@@ -116,13 +155,21 @@ class Recognizer:
         return result
 
     def inspect(self, image, forced="", roi=None):
+        start = time.perf_counter()
         region = game_region(image)
         frame = image.crop(region).convert("RGB").resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
-        reading = self.read(frame, forced, roi)
+        cache_key = self.scene_key(frame, self.last_scene, forced, roi)
+        reused = cache_key == self.frame_key and self.frame_reading is not None
+        reading = deepcopy(self.frame_reading) if reused else self.read(frame, forced, roi)
         if reading.scene:
             self.last_scene = reading.scene
             if reading.scene != "盟约选择":
                 self.ban_continuation = False
+            if not reused:
+                self.frame_key = self.scene_key(frame, self.last_scene, forced, roi)
+                self.frame_reading = deepcopy(reading)
+        else:
+            self.frame_key, self.frame_reading = None, None
         x, y, x2, y2 = region
 
         def real_box(box):
@@ -130,6 +177,8 @@ class Recognizer:
                          + (x if i % 2 == 0 else y) for i, value in enumerate(box))
 
         reading.hits = [Hit(hit.kind, hit.name, real_box(hit.box), hit.confidence) for hit in reading.hits]
+        reading.elapsed_ms = round((time.perf_counter()-start)*1000)
+        reading.reused = reused
         return reading
 
     def read(self, frame, forced="", roi=None):
@@ -138,11 +187,24 @@ class Recognizer:
             return reading
         cards = self.portraits.cards(frame) if not forced or forced == "队友阵容" else []
         team_hits, teams = self.portraits.team(frame, cards)
-        if teams and not forced:
+        if teams and (not forced or forced == "队友阵容"):
             reading.scene = "队友阵容"
             reading.hits, reading.team_holdings = team_hits, teams
             return reading
-        if not forced and self.last_scene not in {"盟约选择", "策略轮选", "自选编队", "队友阵容"}:
+        header = []
+        if not forced and self.last_scene in {"盟约选择", "策略轮选", "自选编队"}:
+            header = self.ocr(frame, (350, 0, 1100, 100), 1.2)
+            if any("确认本局信息" in key(line.text) for line in header):
+                forced = "盟约选择"
+            elif any("自选编队" in key(line.text) or "选择自选干员" in key(line.text) for line in header):
+                forced = "自选编队"
+            elif any("选择策略" in key(line.text) or "请选择策略" in key(line.text) for line in header):
+                reading.hits = self.read_strategies(frame, [])
+                if len(reading.hits) >= 6:
+                    reading.scene = "策略轮选"
+                    reading.text = [line.text for line in header]
+                    return reading
+        if not forced:
             buttons = self.ocr(frame, (980, 375, 1280, 560), 1.5)
             controls = " ".join(key(line.text) for line in buttons)
             visible_buttons = sum(button in controls for button in ("刷新", "冻结"))
@@ -158,7 +220,25 @@ class Recognizer:
             reading.hits = self.hits(lines, ("装备", "干员"))
             return reading
 
-        lines = self.ocr(frame, roi or (0, 0, WIDTH, HEIGHT), 1.1)
+        if not forced and not header:
+            header = self.ocr(frame, (350, 0, 1100, 100), 1.2)
+            if any("选择策略" in key(line.text) or "请选择策略" in key(line.text) for line in header):
+                reading.hits = self.read_strategies(frame, [])
+                if len(reading.hits) >= 6:
+                    reading.scene = "策略轮选"
+                    reading.text = [line.text for line in header]
+                    return reading
+
+        if forced == "盟约选择" and header and not roi:
+            panel = self.ocr(frame, (0, 100, 915, HEIGHT), 1.1)
+            if any("核心盟约" in key(line.text) or "附加盟约" in key(line.text) for line in panel):
+                lines = header + panel
+            else:
+                lines = self.ocr(frame, (0, 0, WIDTH, HEIGHT), 1.1)
+        elif forced == "自选编队" and header and not roi:
+            lines = header + self.ocr(frame, (350, 85, WIDTH, HEIGHT), 1.1)
+        else:
+            lines = self.ocr(frame, roi or (0, 0, WIDTH, HEIGHT), 1.1)
         reading.text = [line.text for line in lines]
         text = " ".join(key(line.text) for line in lines)
         reading.setup = any(line.box[1] < 100 and re.search(r"(?:13)?确认本局信息", key(line.text))
@@ -248,22 +328,47 @@ class Recognizer:
         # Match the artwork inside each card, leaving borders, hover highlights and text outside.
         x1, y1, x2, y2 = 320, 70, 1230, 710
         gray = portrait_features(np.asarray(frame.convert("L").crop((x1, y1, x2, y2))))
+        if self.strategy_variants is None:
+            self.strategy_variants = []
+            for name, template in self.strategy_templates.items():
+                for size in (98, 110, 118, 122, 130):
+                    image = cv2.resize(template, (size, size), interpolation=cv2.INTER_AREA)
+                    margin = size//5
+                    self.strategy_variants.append((name, size, margin, portrait_features(image)[margin:-margin, margin:-margin]))
+        cells = strategy_cells(frame)
+        def match(regions, sizes=None):
+            candidates = []
+            for xa, ya, xb, yb in regions:
+                search = gray[ya-y1:yb-y1, xa-x1:xb-x1]
+                for name, size, margin, center in self.strategy_variants:
+                    if sizes and size not in sizes:
+                        continue
+                    if min(search.shape) < max(center.shape):
+                        continue
+                    response = cv2.matchTemplate(search, center, cv2.TM_CCOEFF_NORMED)
+                    _, score, _, (x, y) = cv2.minMaxLoc(response)
+                    if score >= .84:
+                        left, top = xa+x-margin, ya+y-margin
+                        candidates.append(Hit("策略", name, (left, top, left+size, top+size), score))
+            return candidates
         candidates = []
-        for name, template in self.strategy_templates.items():
-            for size in (98, 110, 118, 122, 130):
-                image = cv2.resize(template, (size, size), interpolation=cv2.INTER_AREA)
-                margin = size // 5
-                center = portrait_features(image)[margin:-margin, margin:-margin]
-                response = cv2.matchTemplate(gray, center, cv2.TM_CCOEFF_NORMED)
-                _, score, _, (x, y) = cv2.minMaxLoc(response)
-                if score >= .84:
-                    left, top = x1+x-margin, y1+y-margin
-                    candidates.append(Hit("策略", name, (left, top, left+size, top+size), score))
+        if cells:
+            expected = float(np.median([cell[2]-cell[0]-28 for cell in cells]))
+            dominant = min((98, 110, 118, 122, 130), key=lambda size: (abs(size-expected), -size))
+            candidates = match(cells, {dominant})
+            missing = [cell for cell in cells if not any(
+                cell[0] <= box_center(hit.box)[0] <= cell[2] and cell[1] <= box_center(hit.box)[1] <= cell[3]
+                for hit in candidates)]
+            candidates.extend(match(missing, {98, 110, 118, 122, 130}-{dominant}))
+        if len({hit.name for hit in candidates}) < 6:
+            candidates = match([(x1, y1, x2, y2)])
         result = []
         for hit in sorted(candidates, key=lambda hit: hit.confidence, reverse=True):
             if not any(hit.name == other.name or box_distance(hit.box, other.box) < 50 for other in result):
                 result.append(hit)
         labels = self.hits(lines, ("策略",))
+        if cells and max(cell[2] for cell in cells) < 1020:
+            labels.extend(self.hits(self.ocr(frame, (990, 330, 1280, 510), 1.2), ("策略",)))
         for label in labels:
             if not any(label.name == hit.name for hit in result):
                 result.append(label)

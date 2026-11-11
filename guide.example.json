@@ -57,5 +57,23 @@
       "label": "阿戈尔实战参考",
       "url": "https://www.bilibili.com/video/BV1FnWn6XEA5/"
     }
+  ],
+  "requirements": [
+    {
+      "name": "前期本家叠层",
+      "operators": [
+        "斯卡蒂",
+        "安哲拉",
+        "幽灵鲨"
+      ],
+      "minimum": 1
+    },
+    {
+      "name": "中期本家叠层",
+      "operators": [
+        "歌蕾蒂娅"
+      ],
+      "minimum": 1
+    }
   ]
 }

@@ -19,6 +19,12 @@
         "operator": {"type": "string"}, "role": {"enum": ["core", "available"]}, "note": {"type": "string"}
       }
     }},
+    "requirements": {"type": "array", "items": {
+      "type": "object", "required": ["name", "operators"], "properties": {
+        "name": {"type": "string"}, "operators": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "minimum": {"type": "integer", "minimum": 1}
+      }
+    }},
     "strategies": {"$ref": "#/$defs/names"},
     "equipment": {"type": "object", "additionalProperties": {"type": "string"}},
     "sources": {"type": "array", "items": {

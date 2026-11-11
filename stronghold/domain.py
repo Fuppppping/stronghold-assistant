@@ -6,6 +6,7 @@ import re
 import unicodedata
 
 from .stock import StockLedger
+from .recommendation import assess
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 
@@ -38,6 +39,9 @@ class Reading:
     holdings: list = field(default_factory=list)
     team_holdings: dict = field(default_factory=dict)
     text: list[str] = field(default_factory=list)
+    elapsed_ms: int = 0
+    capture_ms: int = 0
+    reused: bool = False
 
 
 @dataclass
@@ -167,6 +171,17 @@ class Season:
                 if not isinstance(stage.get(field_name, ""), str):
                     raise ValueError(f"阶段 {field_name} 需要文字")
         stacking = guide.get("stacking", [])
+        requirements = guide.get("requirements", [])
+        if not isinstance(requirements, list):
+            raise ValueError("requirements 需要关键功能位数组")
+        for role in requirements:
+            if (not isinstance(role, dict) or not isinstance(role.get("name"), str)
+                    or not isinstance(role.get("operators"), list) or not role['operators']
+                    or any(not isinstance(name, str) or name not in self.operators for name in role['operators'])
+                    or len(set(role['operators'])) != len(role['operators'])
+                    or type(role.get('minimum', 1)) is not int
+                    or not 1 <= role.get('minimum', 1) <= len(role['operators'])):
+                raise ValueError("requirements 需要 name、有效 operators 候选数组和 minimum 人数")
         if not isinstance(stacking, list) or any(
             not isinstance(item, dict) or not isinstance(item.get("operator"), str)
             or item["operator"] not in self.operators or not isinstance(item.get("role"), str)
@@ -212,10 +227,11 @@ class Season:
             return True
         return False if all(value is False for value in values) else None
 
-    def grouped(self, states, excluded=(), seen=()):
+    def grouped(self, states, excluded=(), seen=(), statuses=None):
         groups = {pact: [] for pact in self.pacts}
         for name, operator in self.operators.items():
-            if self.status(name, states, excluded, seen) is not False:
+            available = statuses[name] if statuses is not None else self.status(name, states, excluded, seen)
+            if available is not False:
                 for pact in operator["pacts"]:
                     groups[pact].append(name)
         return groups
@@ -227,29 +243,30 @@ class Season:
                     name: "名单识别" for name in set(excluded)-set(seen) if name not in self.operators}
 
     def rank(self, states, excluded=(), current=(), seen=()):
-        pool = self.grouped(states, excluded, seen)
-        visible = set(current)
+        return self.evaluate(states, excluded, current, seen)[0]
 
+    def evaluate(self, states, excluded=(), current=(), seen=()):
+        statuses = {name: self.status(name, states, excluded, seen) for name in self.operators}
+        pool = self.grouped(states, excluded, seen, statuses)
+        fits = {guide['id']: assess(self, guide, states, excluded, seen, current, pool, statuses)
+                for guide in self.lineups.values()}
         def score(guide):
-            main = set(guide["targets"]) & self.core
-            viable = self.core_viable(guide, states, pool)
-            confirmed = sum(states.get(pact) is True for pact in main)
-            priorities = priority(guide)
-            available = sum(weight for name, weight in priorities.items()
-                            if self.status(name, states, excluded, seen) is True)
-            on_screen = sum(priorities.get(name, 0) for name in visible)
-            coverage = sum(min(len(pool[pact]), count) / count for pact, count in guide["targets"].items())
-            return (viable, confirmed, on_screen, available / max(sum(priorities.values()), 1),
-                    coverage / len(guide["targets"]))
-        return sorted(self.lineups.values(), key=score, reverse=True)
+            fit = fits[guide['id']]
+            return (fit.viable, not fit.blocked_targets, fit.score, fit.confirmed_core/max(fit.total_core, 1))
+        return sorted(self.lineups.values(), key=score, reverse=True), fits
+
+    def assess(self, guide, states, excluded=(), seen=(), current=(), pool=None):
+        return assess(self, guide, states, excluded, seen, current, pool)
 
     def core_viable(self, guide, states, pool):
         return all(states.get(pact) is not False and len(pool[pact]) >= self.pacts[pact]["need"]
                    for pact in guide["targets"] if pact in self.core)
 
-    def strategy_guide(self, ranked, states, hits, excluded=(), seen=()):
-        pool = self.grouped(states, excluded, seen)
-        usable = [guide for guide in ranked if guide["strategies"] and self.core_viable(guide, states, pool)]
+    def strategy_guide(self, ranked, states, hits, excluded=(), seen=(), fits=None):
+        if fits is None:
+            _, fits = self.evaluate(states, excluded, seen=seen)
+        usable = [guide for guide in ranked if guide["strategies"]
+                  and fits[guide['id']].viable]
         visible = {hit.name for hit in hits if hit.kind == "策略"}
         return next((guide for guide in usable if visible.intersection(guide["strategies"])),
                     usable[0] if usable else None)

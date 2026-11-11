@@ -84,6 +84,7 @@ class Scanner(Thread):
                     self.shop_responses.put(f"PC 单步操作失败 · {exc}")
                 continue
             try:
+                capture_start = time.perf_counter()
                 if isinstance(source, RosterRequest):
                     frame = source.frame
                 elif isinstance(source, Path):
@@ -93,9 +94,11 @@ class Scanner(Thread):
                     frame = windows.adb_capture(*source)
                 else:
                     frame = windows.capture(source)
+                capture_ms = round((time.perf_counter()-capture_start)*1000)
                 if recognizer is None:
                     recognizer = Recognizer(self.season)
                 reading = recognizer.inspect(frame, "队友阵容" if isinstance(source, RosterRequest) else scene)
+                reading.capture_ms = capture_ms
                 if isinstance(source, RosterRequest):
                     reading.roster_slot = source.slot
                 self.responses.put((generation, reading, frame, None))
@@ -107,7 +110,7 @@ class Scanner(Thread):
 class Dashboard:
     def __init__(self, root):
         self.root = root
-        root.title("卫戍协议助手 0.3.0")
+        root.title("卫戍协议助手 0.3.1")
         root.geometry("1120x860")
         root.minsize(900, 740)
         root.configure(bg=BG)
@@ -311,8 +314,9 @@ class Dashboard:
         self.button(bar, "导入攻略 JSON", self.import_guide).pack(side="left", padx=8)
         self.button(bar, "打开攻略来源", self.open_guide_source).pack(side="left")
         self.button(bar, "JSON 格式与模板", self.guide_format).pack(side="left", padx=8)
-        self.guide_tree = self.tree(self.guides, ("name", "viability", "strategies"),
-                                    ("阵容 · 按当前可用池排序", "核心盟约", "推荐策略"), (220, 125, 440), height=5)
+        self.guide_tree = self.tree(self.guides, ("name", "viability", "reason", "strategies"),
+                                    ("阵容 · 按整套卡牌适配排序", "整套适配", "缺牌 / 替代依据", "推荐策略"),
+                                    (220, 130, 340, 180), height=5)
         self.guide_tree.bind("<<TreeviewSelect>>", lambda _: self.guide_detail())
         self.guide_tree.bind("<Double-1>", lambda _: self.select_guide())
         self.details = tk.Text(self.guides, height=8, relief="flat", wrap="word", background=PANEL,
@@ -525,8 +529,9 @@ class Dashboard:
         text.insert("end", "UTF-8 JSON 对象，名称必须使用游戏简中全名。\n"
                     "必填：id（唯一）、name、targets（盟约→人数）、stages（至少一个阶段）。\n"
                     "阶段：name、timing（可选）、plan（可选）、core（必拿）、operators（可选干员）。\n"
-                    "可选：plan（常驻思路）、stacking（叠层角色）、strategies（按优先级）、equipment（装备→备注）、sources。\n"
+                    "可选：plan（常驻思路）、stacking（叠层角色）、requirements（关键功能位候选）、strategies、equipment、sources。\n"
                     "stacking.role：core=核心叠层，available=可用叠层；note 写触发条件或站位。\n"
+                    "requirements：name 为功能位，operators 为替代候选，minimum 为至少可用人数（默认1）；候选不代表等强。\n"
                     "策略、装备、干员、盟约均校验名称。下面是完整可导入模板：\n\n")
         text.insert("end", json.dumps(sample, ensure_ascii=False, indent=2))
         def export():
@@ -705,7 +710,7 @@ class Dashboard:
 
         if (not self.preview and self.running and not self.pc_pending
                 and self.active_job is None and self.scanner.requests.empty()):
-            if now - self.last_scan > (.25 if self.reading.scene == "盟约选择" else .85):
+            if now - self.last_scan > .25:
                 self.last_scan = now
                 if self.window and windows.bounds(self.window.hwnd):
                     if self.use_adb.get():
@@ -729,7 +734,9 @@ class Dashboard:
         self.reading, self.frame = reading, frame
         self.match.observe(reading, self.preview)
         source = "截图回放" if self.preview else self.window.title
-        self.status.set(f"{source}   /   {reading.scene or '等待卫戍协议界面'}")
+        reuse = " · 关键区域复用" if reading.reused else ""
+        self.status.set(f"{source}   /   {reading.scene or '等待卫戍协议界面'}   /   "
+                        f"采集 {reading.capture_ms} ms · 识别 {reading.elapsed_ms} ms{reuse}")
         self.update_views()
         if reading.roster_slot and not reading.holdings:
             self.stock_summary.configure(text="此帧没有读到可靠干员姓名，原记录保留。头像阵容可先手动补录；未识别项不视为0。")
@@ -759,6 +766,9 @@ class Dashboard:
             return context
         guide = self.guide
         lines = [f"当前攻略  {guide['name']}", "思路  " + guide.get("plan", "按阶段补齐核心，结合可用池选择替代。")]
+        fit = self.fits[guide['id']]
+        if fit.blocked_core or fit.missing_roles or fit.blocked_targets:
+            lines.append("适配  " + fit.reason)
         for role, title in (("core", "核心叠层"), ("available", "可用叠层")):
             names = []
             for item in guide.get("stacking", []):
@@ -779,12 +789,15 @@ class Dashboard:
                 choices = []
                 for i, group in enumerate(self.match.groups):
                     other = self.match.groups[1-i]
-                    ranked_guide = self.season.rank(self.states | dict.fromkeys(other, False)
-                                                    | dict.fromkeys(group, True), self.match.excluded)[0]
-                    choices.append(f"{i+1}组 {ranked_guide['name']}")
+                    states = self.states | dict.fromkeys(other, False) | dict.fromkeys(group, True)
+                    group_ranked, group_fits = self.season.evaluate(states, self.match.excluded, seen=self.match.seen)
+                    ranked_guide = group_ranked[0]
+                    fit = group_fits[ranked_guide['id']]
+                    choices.append(f"{i+1}组 {ranked_guide['name']} · {fit.label}")
                 return "  /  ".join(choices)
             if self.states and ranked:
-                return f"阵容建议  {ranked[0]['name']}"
+                fit = self.fits[ranked[0]['id']]
+                return f"阵容建议  {ranked[0]['name']} · {fit.label}\n{fit.reason}"
         if self.reading.scene == "策略轮选" and self.strategy_advice:
             picks = self.strategy_advice["strategies"]
             if picks:
@@ -815,11 +828,11 @@ class Dashboard:
     def update_views(self):
         visible = [hit.name for hit in self.reading.hits
                    if hit.kind == "干员" and self.reading.scene in {"调度中心", "自选编队"}]
-        ranked = self.season.rank(self.states, self.match.excluded, visible, self.match.seen)
+        ranked, self.fits = self.season.evaluate(self.states, self.match.excluded, visible, self.match.seen)
         self.strategy_advice = self.guide
         if not self.strategy_advice and self.reading.scene == "策略轮选":
             self.strategy_advice = self.season.strategy_guide(
-                ranked, self.states, self.reading.hits, self.match.excluded, self.match.seen)
+                ranked, self.states, self.reading.hits, self.match.excluded, self.match.seen, self.fits)
         self.banner = self.recommendation_banner(ranked)
         self.advice_text.configure(text=self.banner)
         if self.guide:
@@ -900,18 +913,11 @@ class Dashboard:
 
     def update_guides(self, ranked):
         rows = []
-        pool = self.season.grouped(self.states, self.match.excluded, self.match.seen)
         for guide in ranked:
-            core = set(guide["targets"]) & self.season.core
-            blocked = any(self.states.get(pact) is False for pact in core)
-            open_core = bool(core) and all(self.states.get(pact) is True for pact in core)
-            state, tag = ("已禁用", "no") if blocked else ("已确认", "yes") if open_core else ("待确认", "maybe")
-            if not blocked and not self.season.core_viable(guide, self.states, pool):
-                state, tag = "常规池不足", "no"
-            if state == "待确认" and core & self.match.incomplete:
-                state = "阵容不完整"
+            fit = self.fits[guide['id']]
+            tag = "no" if not fit.viable else "maybe" if fit.blocked_core or fit.unknown_core or fit.pending_roles else "yes"
             selected = "✓  " if guide["id"] == self.guide_id else ""
-            rows.append((guide["id"], (selected + guide["name"], state, " → ".join(guide["strategies"])), tag))
+            rows.append((guide["id"], (selected + guide["name"], fit.label, fit.reason, " → ".join(guide["strategies"])), tag))
         self.fill(self.guide_tree, rows)
         if not self.guide_tree.selection() and rows:
             self.guide_tree.selection_set(self.guide_id or rows[0][0])
@@ -923,6 +929,13 @@ class Dashboard:
             return
         guide = self.season.lineups[choice[0]]
         lines = ["成型目标  " + " · ".join(f"{pact} ×{count}" for pact, count in guide["targets"].items())]
+        fit = self.fits[guide['id']]
+        lines.append("整套适配  " + fit.label + "；" + fit.reason)
+        lines.append("分数是当前 BAN 与可用池的适配分，不是胜率；? 为待确认，功能位候选不代表等强替换。")
+        for role in guide.get("requirements", []):
+            candidates = [name for name in role['operators'] if self.season.status(
+                name, self.states, self.match.excluded, self.match.seen) is not False]
+            lines.append(f"关键位 {role['name']}（至少{role.get('minimum', 1)}名）：{'、'.join(candidates) or '已全部禁用'}")
         if guide.get("plan"):
             lines.append("常驻思路  " + guide["plan"])
         for item in guide.get("stacking", []):

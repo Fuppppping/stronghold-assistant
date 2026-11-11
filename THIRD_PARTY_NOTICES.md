@@ -1,6 +1,6 @@
 # 第三方来源与许可
 
-本文件记录 0.3.0 的参考项目、实际依赖、模型、规则和素材来源。原始许可文本位于 [licenses/](licenses/)，构建环境中的版本与许可文件校验值见 [DEPENDENCIES.json](DEPENDENCIES.json)。应用原创代码采用 [MIT](LICENSE)，该许可不覆盖下面列出的第三方作品。
+本文件记录 0.3.x 的参考项目、实际依赖、模型、规则和素材来源。原始许可文本位于 [licenses/](licenses/)，构建环境中的版本与许可文件校验值见 [DEPENDENCIES.json](DEPENDENCIES.json)。应用原创代码采用 [MIT](LICENSE)，该许可不覆盖下面列出的第三方作品。
 
 ## 参考代码与 SDK
 

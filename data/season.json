@@ -2597,6 +2597,30 @@
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
         }
+      ],
+      "requirements": [
+        {
+          "name": "固定层数起步",
+          "operators": [
+            "折桠",
+            "乌啾"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "中期范围叠层",
+          "operators": [
+            "冻河"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期主输出",
+          "operators": [
+            "塔露拉"
+          ],
+          "minimum": 1
+        }
       ]
     },
     {
@@ -2783,6 +2807,31 @@
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
         }
+      ],
+      "requirements": [
+        {
+          "name": "低阶本家叠层",
+          "operators": [
+            "地灵",
+            "折光",
+            "复奏"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "中期本家叠层",
+          "operators": [
+            "黑键"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "奥术叠层",
+          "operators": [
+            "霍尔海雅"
+          ],
+          "minimum": 1
+        }
       ]
     },
     {
@@ -2945,6 +2994,32 @@
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
         }
+      ],
+      "requirements": [
+        {
+          "name": "前期本家叠层",
+          "operators": [
+            "斯卡蒂",
+            "安哲拉",
+            "幽灵鲨"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "中期本家叠层",
+          "operators": [
+            "歌蕾蒂娅"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期层数支援",
+          "operators": [
+            "浊心斯卡蒂",
+            "淬羽赫默"
+          ],
+          "minimum": 1
+        }
       ]
     },
     {
@@ -3105,6 +3180,24 @@
           "operator": "Mon3tr",
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
+        }
+      ],
+      "requirements": [
+        {
+          "name": "前期叠层",
+          "operators": [
+            "艾丝黛尔",
+            "泡泡"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "高阶叠层",
+          "operators": [
+            "鸿雪",
+            "佩佩"
+          ],
+          "minimum": 1
         }
       ]
     },
@@ -3287,6 +3380,31 @@
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
         }
+      ],
+      "requirements": [
+        {
+          "name": "前期本家叠层",
+          "operators": [
+            "初雪",
+            "灵知"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期本家叠层",
+          "operators": [
+            "圣聆初雪"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期输出",
+          "operators": [
+            "锏",
+            "凛御银灰"
+          ],
+          "minimum": 1
+        }
       ]
     },
     {
@@ -3463,6 +3581,32 @@
           "operator": "Mon3tr",
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
+        }
+      ],
+      "requirements": [
+        {
+          "name": "部署叠层",
+          "operators": [
+            "砾",
+            "瑕光",
+            "野鬃"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "中期主输出",
+          "operators": [
+            "玛恩纳"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期本家",
+          "operators": [
+            "耀骑士临光",
+            "锏"
+          ],
+          "minimum": 1
         }
       ]
     },
@@ -3649,6 +3793,31 @@
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
         }
+      ],
+      "requirements": [
+        {
+          "name": "前期叠层",
+          "operators": [
+            "旅骨",
+            "深靛"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "精奥叠层",
+          "operators": [
+            "霍尔海雅"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期本家叠层",
+          "operators": [
+            "棘刺",
+            "引星棘刺"
+          ],
+          "minimum": 1
+        }
       ]
     },
     {
@@ -3827,6 +3996,32 @@
           "operator": "Mon3tr",
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
+        }
+      ],
+      "requirements": [
+        {
+          "name": "装备供给",
+          "operators": [
+            "凯瑟琳"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "本家叠层",
+          "operators": [
+            "Miss.Christine",
+            "慕斯",
+            "涤火杰西卡"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期输出",
+          "operators": [
+            "烛煌",
+            "酒神"
+          ],
+          "minimum": 1
         }
       ]
     },
@@ -4018,6 +4213,32 @@
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
         }
+      ],
+      "requirements": [
+        {
+          "name": "刷新叠层起步",
+          "operators": [
+            "复奏"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "中期层数",
+          "operators": [
+            "伺夜",
+            "安洁莉娜"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期本家",
+          "operators": [
+            "贝洛内",
+            "荒芜拉普兰德",
+            "斥罪"
+          ],
+          "minimum": 1
+        }
       ]
     },
     {
@@ -4190,6 +4411,33 @@
           "operator": "Mon3tr",
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
+        }
+      ],
+      "requirements": [
+        {
+          "name": "前期层数",
+          "operators": [
+            "拜松",
+            "矩",
+            "风絮"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "中期战斗叠层",
+          "operators": [
+            "仇白"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期层数",
+          "operators": [
+            "黍",
+            "夕",
+            "烛煌"
+          ],
+          "minimum": 1
         }
       ]
     },
@@ -4386,6 +4634,33 @@
           "role": "core",
           "note": "战斗中触发叠层"
         }
+      ],
+      "requirements": [
+        {
+          "name": "前期叠层",
+          "operators": [
+            "旅骨",
+            "深靛"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "迅捷叠层",
+          "operators": [
+            "引星棘刺",
+            "冻河",
+            "妮芙"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "后期本家叠层",
+          "operators": [
+            "棘刺",
+            "引星棘刺"
+          ],
+          "minimum": 1
+        }
       ]
     },
     {
@@ -4482,6 +4757,26 @@
         {
           "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
           "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "requirements": [
+        {
+          "name": "低阶通用叠层",
+          "operators": [
+            "渡桥",
+            "空弦",
+            "青枳"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "外援层数支援",
+          "operators": [
+            "星源",
+            "夏栎",
+            "淬羽赫默"
+          ],
+          "minimum": 1
         }
       ]
     },
@@ -4649,6 +4944,34 @@
           "operator": "Mon3tr",
           "role": "available",
           "note": "支援周围八格的战斗叠层上限"
+        }
+      ],
+      "requirements": [
+        {
+          "name": "本家过渡",
+          "operators": [
+            "斯卡蒂",
+            "安哲拉",
+            "幽灵鲨"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "助力支援",
+          "operators": [
+            "淬羽赫默",
+            "星源",
+            "夏栎"
+          ],
+          "minimum": 1
+        },
+        {
+          "name": "本家中后期",
+          "operators": [
+            "歌蕾蒂娅",
+            "浊心斯卡蒂"
+          ],
+          "minimum": 1
         }
       ]
     }

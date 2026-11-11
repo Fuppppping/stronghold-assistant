@@ -1,4 +1,6 @@
 """Conservative matching of small operator heads in BAN and teammate panels."""
+from collections import OrderedDict
+import hashlib
 import cv2
 import numpy as np
 from PIL import Image
@@ -15,6 +17,7 @@ def features(gray):
 class PortraitReader:
     def __init__(self, season):
         self.images, self.cache = {}, {}
+        self.matches = OrderedDict()
         for name, operator in season.operators.items():
             path = DATA/'head'/(operator.get('head', '')+'.webp')
             if not path.is_file():
@@ -69,6 +72,15 @@ class PortraitReader:
         hits = []
         for box in boxes:
             x1, y1, x2, y2 = box
+            fingerprint = hashlib.blake2b(frame.crop((max(0, x1-5), max(0, y1-5), x2+5, y2+5)).tobytes(), digest_size=16).digest()
+            cache_key = x2-x1, y2-y1, fingerprint
+            if cache_key in self.matches:
+                self.matches.move_to_end(cache_key)
+                result = self.matches[cache_key]
+                if result:
+                    name, score = result
+                    hits.append(Hit('干员', name, box, score))
+                continue
             region = gray[max(0, y1-5):y2+5, max(0, x1-5):x2+5]
             scores = []
             sizes = sorted({round((x2-x1)*ratio) for ratio in (.80, .88, .96, 1.04)})
@@ -82,9 +94,13 @@ class PortraitReader:
                     best = max(best, cv2.minMaxLoc(response)[1])
                 scores.append((best, name))
             scores.sort(reverse=True)
+            self.matches[cache_key] = None
             if len(scores) >= 2 and scores[0][0] >= .94 and scores[0][0]-scores[1][0] >= .025:
                 score, name = scores[0]
                 hits.append(Hit('干员', name, box, float(score)))
+                self.matches[cache_key] = name, float(score)
+            if len(self.matches) > 256:
+                self.matches.popitem(last=False)
         return hits
 
     def team(self, frame, boxes):
