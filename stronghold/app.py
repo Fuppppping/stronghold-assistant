@@ -125,6 +125,10 @@ class Dashboard:
         self.capacities = {int(k): v for k, v in settings.get("pool_capacity", {}).items()
                            if str(k) in {"1", "2", "3", "4", "5", "6"} and type(v) is int and v > 0}
         self.show_overlay = tk.BooleanVar(value=settings.get("overlay", True))
+        scale = settings.get("overlay_scale", 1.35)
+        scale = max(.8, min(2., scale)) if isinstance(scale, (int, float)) else 1.35
+        self.overlay_scale = tk.DoubleVar(value=scale)
+        self.overlay_font_text = tk.StringVar(value=f"浮层字号  {round(scale * 100)}%")
         self.scene = tk.StringVar(value=SCENES[0])
         self.adb = tk.StringVar(value=settings.get("adb") or windows.find_adb())
         self.serial = tk.StringVar(value=settings.get("serial", ""))
@@ -532,6 +536,15 @@ class Dashboard:
                    style="Sub.TLabel").pack(anchor="w")
         ttk.Checkbutton(parent, text="开启游戏内置顶浮层", variable=self.show_overlay,
                         command=self.save).pack(anchor="w", pady=7)
+        row = ttk.Frame(parent)
+        row.pack(fill="x", pady=(0, 10))
+        self.label(row, textvariable=self.overlay_font_text, width=18).pack(side="left")
+        slider = self.overlay_font_slider = ttk.Scale(row, from_=80, to=200,
+                           value=self.overlay_scale.get() * 100, command=self.change_overlay_font)
+        slider.pack(side="left", fill="x", expand=True, padx=8)
+        slider.bind("<ButtonRelease-1>", lambda _: self.save())
+        slider.bind("<KeyRelease>", lambda _: self.save())
+        self.button(row, "恢复默认", self.reset_overlay_font).pack(side="left")
         ttk.Checkbutton(parent, text="通过 ADB 抓取模拟器画面", variable=self.use_adb,
                         command=self.invalidate).pack(anchor="w")
         for title, var in [("ADB 程序路径", self.adb), ("设备序列号", self.serial)]:
@@ -558,11 +571,20 @@ class Dashboard:
                 "guide": self.guide_id, "enabled": sorted(self.enabled), "muted": sorted(self.muted),
                 "pool_capacity": self.capacities,
                 "overlay": self.show_overlay.get(), "adb": self.adb.get(), "serial": self.serial.get(),
+                "overlay_scale": self.overlay_scale.get(),
                 "use_adb": self.use_adb.get(),
                 "auto_update_check": self.updater.auto.get(),
             })
         except OSError as exc:
             self.status.set(f"无法保存设置 · {exc}")
+
+    def change_overlay_font(self, value):
+        self.overlay_scale.set(round(float(value)) / 100)
+        self.overlay_font_text.set(f"浮层字号  {round(float(value))}%")
+
+    def reset_overlay_font(self):
+        self.overlay_font_slider.set(135)
+        self.save()
 
     def refresh_windows(self):
         items = windows.list_windows()
@@ -910,7 +932,8 @@ class Dashboard:
             return
         callouts = self.callouts()
         if callouts or self.banner:
-            self.overlay.show(region, self.frame.size, callouts, self.banner, self.reading.scene)
+            self.overlay.show(region, self.frame.size, callouts, self.banner, self.reading.scene,
+                              self.overlay_scale.get())
         else:
             self.overlay.hide()
 

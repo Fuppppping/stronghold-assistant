@@ -27,23 +27,23 @@ class Overlay:
             self.shown = False
         self.previous = None
 
-    def show(self, rect, source_size, callouts, banner="", scene=""):
-        state = (rect, source_size, tuple(callouts), banner, scene)
+    def show(self, rect, source_size, callouts, banner="", scene="", font_scale=1.35):
+        state = (rect, source_size, tuple(callouts), banner, scene, font_scale)
         if state == self.previous:
             return
         self.previous = state
         left, top, right, bottom = rect
         width, height = right - left, bottom - top
-        self.draw(width, height, source_size, callouts, banner, scene)
+        self.draw(width, height, source_size, callouts, banner, scene, font_scale)
         if not self.shown:
             self.window.deiconify()
             self.shown = True
         windows.move_overlay(self.hwnd, rect)
 
-    def draw(self, width, height, source_size, callouts, banner="", scene=""):
+    def draw(self, width, height, source_size, callouts, banner="", scene="", font_scale=1.35):
         # Negative Tk sizes are physical pixels: Windows scaling must not enlarge
         # these labels into a second HUD. Reserve the top 18% for game counters.
-        font_size = min(17, max(9, round(height / 140)))
+        font_size = round(min(17, max(9, round(height / 140))) * max(.8, min(2., font_scale)))
         label_offset = round(font_size * 2.0)
         protected_top = round(height * .18)
         self.canvas.delete("all")
@@ -84,7 +84,7 @@ class Overlay:
             # Keep the guide within its reserved rail even for imported essays.
             while self.canvas.bbox(text_id)[3] - self.canvas.bbox(text_id)[1] > max_height - 10:
                 index = max(range(len(lines)), key=lambda i: len(lines[i]))
-                if len(lines[index]) > 12:
+                if len(lines[index]) > 8:
                     lines[index] = lines[index].rstrip("…")[:-5] + "…"
                 elif len(lines) > 1:
                     lines.pop()

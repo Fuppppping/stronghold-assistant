@@ -6,6 +6,33 @@ from stronghold.overlay import Overlay
 
 
 class OverlayLayoutTests(unittest.TestCase):
+    def test_adjustable_font_keeps_transparent_rail_within_reserved_area(self):
+        root = tk.Tk()
+        root.withdraw()
+        overlay = Overlay(root)
+        sizes = []
+        try:
+            for scale in (.8, 1.35, 2.):
+                overlay.draw(1280, 720, (1280, 720), [],
+                             "当前攻略  伊比利亚 · 精奥 / 迅捷\n思路  " + "长攻略" * 100
+                             + "\n核心叠层  棘刺、旅骨\n可用叠层  深靛、流明", "调度中心", scale)
+                root.update_idletasks()
+                plan = overlay.canvas.bbox("plan")
+                self.assertGreater(plan[1], 720 * .18)
+                self.assertLess(plan[2], 1280 * .16)
+                self.assertLess(plan[3], 720 * .46)
+                text_ids = [item for item in overlay.canvas.find_withtag("plan")
+                            if overlay.canvas.type(item) == "text"]
+                text = overlay.canvas.itemcget(text_ids[0], "text")
+                self.assertIn("核心叠层", text)
+                self.assertIn("可用叠层", text)
+                sizes.append(abs(int(root.tk.splitlist(overlay.canvas.itemcget(text_ids[0], "font"))[-1])))
+                self.assertTrue(all(overlay.canvas.type(item) == "text" for item in overlay.canvas.find_all()))
+            self.assertLess(sizes[0], sizes[1])
+            self.assertLess(sizes[1], sizes[2])
+        finally:
+            root.destroy()
+
     def test_compact_rail_reserves_top_and_battlefield_at_all_resolutions(self):
         root = tk.Tk()
         root.withdraw()
