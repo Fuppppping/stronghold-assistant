@@ -10,10 +10,16 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--inspect", type=Path, help="离线识别一张截图并输出 JSON")
     mode.add_argument("--pc-shop", choices=("open", "close"), help="单步展开或收起前台 PC 客户端的调度中心")
+    mode.add_argument("--apply-update", type=Path, help=argparse.SUPPRESS)
+    mode.add_argument("--update-health", type=Path, help=argparse.SUPPRESS)
+    mode.add_argument("--update-result", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--scene", default="", help="为 --inspect 指定场景")
     parser.add_argument("--output", type=Path, help="将命令结果写入 UTF-8 JSON 文件")
     args = parser.parse_args()
-    if args.inspect:
+    if args.apply_update:
+        from stronghold.update_install import helper_main
+        raise SystemExit(helper_main(args.apply_update))
+    elif args.inspect:
         from PIL import Image
         from stronghold.domain import Season
         from stronghold.vision import Recognizer
@@ -42,7 +48,7 @@ def main():
         write_result({"ok": True, "message": result}, args.output)
     else:
         from stronghold.app import run
-        run()
+        run(args.update_health, args.update_result)
 
 
 def write_result(payload, output):

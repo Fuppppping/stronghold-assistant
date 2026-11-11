@@ -14,6 +14,8 @@ import webbrowser
 from PIL import Image, ImageTk
 
 from . import windows
+from . import VERSION
+from .updates_ui import UpdateController, complete_startup
 from .domain import MatchState, Reading, Season, alerts, key
 from .overlay import Overlay
 from .pc_input import operate_shop
@@ -103,7 +105,7 @@ class Scanner(Thread):
 class Dashboard:
     def __init__(self, root):
         self.root = root
-        root.title("卫戍协议助手 0.3.2 · 规程终端")
+        root.title(f"卫戍协议助手 {VERSION} · 规程终端")
         root.geometry("1280x900")
         root.minsize(1080, 800)
         root.configure(bg=BG)
@@ -149,6 +151,7 @@ class Dashboard:
         self.strategy_advice = None
         self.banner = ""
         self.confirmed_only = tk.BooleanVar(value=False)
+        self.updater = UpdateController(self, SETTINGS_DIR, settings.get("auto_update_check", True))
         self.configure_styles()
         self.build()
         self.overlay = Overlay(root)
@@ -251,7 +254,7 @@ class Dashboard:
         footer.pack(side='bottom', fill='x', pady=(8,0))
         self.footer_status = self.label(footer, textvariable=self.status, style="Sub.TLabel", font=("Microsoft YaHei UI",8))
         self.footer_status.pack(side='left', fill='x', expand=True)
-        self.label(footer, 'LOCAL ASSISTANT  /  v0.3.2', style='Sub.TLabel', font=('Consolas',8)).pack(side='right')
+        ttk.Button(footer, textvariable=self.updater.badge, command=self.updater.check).pack(side='right')
         body = ttk.Frame(main)
         body.pack(fill='both', expand=True)
         sidebar = ttk.Frame(body, width=172)
@@ -521,29 +524,33 @@ class Dashboard:
                                        ("等阶", "装备", "提示状态", "攻略建议"), (65, 190, 125, 380))
 
     def build_settings(self):
-        self.label(self.settings, "采集方式", font=("Microsoft YaHei UI", 13, "bold")).pack(anchor="w", pady=(0, 8))
-        self.label(self.settings, "默认读取游戏窗口。窗口在前台时会显示鼠标穿透提示。",
+        scroller = ScrollColumn(self.settings)
+        scroller.pack(fill="both", expand=True)
+        parent = scroller.body
+        self.label(parent, "采集方式", font=("Microsoft YaHei UI", 13, "bold")).pack(anchor="w", pady=(0, 8))
+        self.label(parent, "默认读取游戏窗口。窗口在前台时会显示鼠标穿透提示。",
                    style="Sub.TLabel").pack(anchor="w")
-        ttk.Checkbutton(self.settings, text="开启游戏内置顶浮层", variable=self.show_overlay,
+        ttk.Checkbutton(parent, text="开启游戏内置顶浮层", variable=self.show_overlay,
                         command=self.save).pack(anchor="w", pady=7)
-        ttk.Checkbutton(self.settings, text="通过 ADB 抓取模拟器画面", variable=self.use_adb,
+        ttk.Checkbutton(parent, text="通过 ADB 抓取模拟器画面", variable=self.use_adb,
                         command=self.invalidate).pack(anchor="w")
         for title, var in [("ADB 程序路径", self.adb), ("设备序列号", self.serial)]:
-            row = ttk.Frame(self.settings)
+            row = ttk.Frame(parent)
             row.pack(fill="x", pady=4)
             self.label(row, title, width=15).pack(side="left")
             entry = ttk.Entry(row, textvariable=var)
             entry.pack(fill="x", expand=True)
             entry.bind("<Return>", lambda _: self.invalidate())
             entry.bind("<FocusOut>", lambda _: self.save())
-        row = ttk.Frame(self.settings)
+        row = ttk.Frame(parent)
         row.pack(fill="x", pady=7)
         self.label(row, "识别场景", width=15).pack(side="left")
         selector = ttk.Combobox(row, values=SCENES, textvariable=self.scene, state="readonly", width=20)
         selector.pack(side="left")
         selector.bind("<<ComboboxSelected>>", lambda _: self.invalidate())
-        self.label(self.settings, "默认自动识别。特殊皮肤或布局下可手动指定场景，或在盟约页校正。",
+        self.label(parent, "默认自动识别。特殊皮肤或布局下可手动指定场景，或在盟约页校正。",
                    style="Sub.TLabel").pack(anchor="w", pady=8)
+        self.updater.settings(parent)
 
     def save(self):
         try:
@@ -552,6 +559,7 @@ class Dashboard:
                 "pool_capacity": self.capacities,
                 "overlay": self.show_overlay.get(), "adb": self.adb.get(), "serial": self.serial.get(),
                 "use_adb": self.use_adb.get(),
+                "auto_update_check": self.updater.auto.get(),
             })
         except OSError as exc:
             self.status.set(f"无法保存设置 · {exc}")
@@ -811,6 +819,9 @@ class Dashboard:
         self.scanner.requests.put((self.generation, source, "" if scene == SCENES[0] else scene))
 
     def pc_shop(self, action):
+        if self.updater.installing:
+            self.pc_status.set("正在准备程序更新，请稍后再进行 PC 单步操作")
+            return
         if self.pc_pending:
             return
         if not windows.is_admin():
@@ -899,7 +910,7 @@ class Dashboard:
             return
         callouts = self.callouts()
         if callouts or self.banner:
-            self.overlay.show(region, self.frame.size, callouts, self.banner)
+            self.overlay.show(region, self.frame.size, callouts, self.banner, self.reading.scene)
         else:
             self.overlay.hide()
 
@@ -1166,6 +1177,9 @@ class Dashboard:
         self.fill(self.equipment_tree, rows)
 
     def close(self):
+        if self.updater.installing:
+            self.status.set("更新准备中，完成后会自动重启")
+            return
         if self.pc_pending:
             self.pc_status.set("等待本次单步操作结束")
             return
@@ -1173,11 +1187,12 @@ class Dashboard:
         self.root.destroy()
 
 
-def run():
+def run(update_health=None, update_result=None):
     SETTINGS_DIR.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(filename=SETTINGS_DIR / "assistant.log", level=logging.INFO,
                         encoding="utf-8", format="%(asctime)s %(levelname)s %(message)s")
     windows.enable_dpi()
     root = tk.Tk()
-    Dashboard(root)
+    app = Dashboard(root)
+    complete_startup(app, update_health, update_result)
     root.mainloop()

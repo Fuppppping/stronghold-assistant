@@ -2,7 +2,7 @@
 import tkinter as tk
 
 from . import windows
-from .ui import TEAL, GOLD, PANEL
+from .ui import TEAL, GOLD
 
 KEY_COLOR = "#010203"
 
@@ -27,20 +27,35 @@ class Overlay:
             self.shown = False
         self.previous = None
 
-    def show(self, rect, source_size, callouts, banner=""):
-        state = (rect, source_size, tuple(callouts), banner)
+    def show(self, rect, source_size, callouts, banner="", scene=""):
+        state = (rect, source_size, tuple(callouts), banner, scene)
         if state == self.previous:
             return
         self.previous = state
         left, top, right, bottom = rect
         width, height = right - left, bottom - top
-        font_size = min(18, max(10, round(height / 105)))
-        label_offset = round(font_size * 2.8)
+        self.draw(width, height, source_size, callouts, banner, scene)
+        if not self.shown:
+            self.window.deiconify()
+            self.shown = True
+        windows.move_overlay(self.hwnd, rect)
+
+    def draw(self, width, height, source_size, callouts, banner="", scene=""):
+        # Negative Tk sizes are physical pixels: Windows scaling must not enlarge
+        # these labels into a second HUD. Reserve the top 18% for game counters.
+        font_size = min(17, max(9, round(height / 140)))
+        label_offset = round(font_size * 2.0)
+        protected_top = round(height * .18)
         self.canvas.delete("all")
         scale_x, scale_y = width / source_size[0], height / source_size[1]
         for hit, note in callouts:
             x1, y1, x2, y2 = [round(v * (scale_x if i % 2 == 0 else scale_y))
                               for i, v in enumerate(hit.box)]
+            # During combat/preparation only annotate bottom shop cards. Unit
+            # names over the board should never turn into battlefield labels.
+            if scene in {"", "调度中心"} and y1 < height * .70:
+                continue
+            note = note.split(" · ")[0]
             color = GOLD if hit.kind == '装备' else TEAL
             if note.startswith("核心"):
                 color = GOLD
@@ -49,27 +64,45 @@ class Overlay:
                 title = f"{hit.name} · {note}"
             else:
                 title = hit.name + " · " + note
-            span = min(12, max(5, (x2-x1)//6))
+            span = min(8, max(4, (x2-x1)//8))
             for x, y, dx, dy in ((x1-2,y1-2,1,1),(x2+3,y1-2,-1,1),(x1-2,y2+3,1,-1),(x2+3,y2+3,-1,-1)):
-                self.canvas.create_line(x+span*dx,y,x,y,x,y+span*dy,fill=color,width=2)
-            self.label(x1, max(0, y1 - label_offset), title, color, width, font_size)
+                if y >= protected_top:
+                    self.canvas.create_line(x+span*dx,y,x,y,x,y+span*dy,fill=color,width=1, tags="callout")
+            self.label(x1, max(protected_top + 5, y1 - label_offset), title, color, width, font_size)
         if banner:
-            self.label(22, max(18, round(height * .13)), banner, TEAL, width, font_size,
-                       wrap=round(width * .46))
-        if not self.shown:
-            self.window.deiconify()
-            self.shown = True
-        windows.move_overlay(self.hwnd, rect)
+            # A narrow transparent rail at the upper left, below game counters.
+            # Full unabridged advice stays in the dashboard.
+            self.label(round(width * .008), round(height * .19), banner, TEAL, width, font_size,
+                       wrap=round(width * .14), max_height=round(height * .25), tag="plan")
 
-    def label(self, x, y, text, color, width, font_size, wrap=None):
-        text_id = self.canvas.create_text(x + 9, y + 3, text=text, fill=color,
-                                          width=wrap or min(round(width * .32), 580),
-                                          anchor="nw", font=("Microsoft YaHei UI", font_size, "bold"))
+    def label(self, x, y, text, color, width, font_size, wrap=None, max_height=None, bottom=None, tag="callout"):
+        lines = [line[:80] + ("…" if len(line) > 80 else "") for line in text.splitlines()[:7]]
+        text_id = self.canvas.create_text(x + 7, y + 3, text="\n".join(lines), fill=color,
+                                          width=wrap or min(round(width * .23), 480), tags=tag,
+                                          anchor="nw", font=("Microsoft YaHei UI", -font_size))
+        if max_height:
+            # Keep the guide within its reserved rail even for imported essays.
+            while self.canvas.bbox(text_id)[3] - self.canvas.bbox(text_id)[1] > max_height - 10:
+                index = max(range(len(lines)), key=lambda i: len(lines[i]))
+                if len(lines[index]) > 12:
+                    lines[index] = lines[index].rstrip("…")[:-5] + "…"
+                elif len(lines) > 1:
+                    lines.pop()
+                else:
+                    break
+                self.canvas.itemconfigure(text_id, text="\n".join(lines))
+        if bottom:
+            self.canvas.move(text_id, 0, bottom - self.canvas.bbox(text_id)[3] - 4)
         bx1, by1, bx2, by2 = self.canvas.bbox(text_id)
-        if bx2 + 9 > width:
-            shift = width - bx2 - 9
+        if bx2 + 7 > width:
+            shift = width - bx2 - 7
             self.canvas.move(text_id, shift, 0)
             bx1, by1, bx2, by2 = self.canvas.bbox(text_id)
-        bg = self.canvas.create_polygon(bx1-8,by1-4,bx2+2,by1-4,bx2+8,by1+2,bx2+8,by2+4,
-                                         bx1-8,by2+4,fill=PANEL,outline=color)
-        self.canvas.tag_lower(bg, text_id)
+        # A one-pixel text shadow improves contrast without covering game pixels
+        # with an opaque panel. The window itself remains color-key transparent.
+        text_x, text_y = self.canvas.coords(text_id)
+        shadow = self.canvas.create_text(text_x + 1, text_y + 1,
+                                        text=self.canvas.itemcget(text_id, "text"), fill="#000000",
+                                        width=wrap or min(round(width * .23), 480), tags=tag,
+                                        anchor="nw", font=("Microsoft YaHei UI", -font_size))
+        self.canvas.tag_lower(shadow, text_id)
