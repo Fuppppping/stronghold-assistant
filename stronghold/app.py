@@ -19,16 +19,9 @@ from .overlay import Overlay
 from .pc_input import operate_shop
 from .vision import Recognizer
 from .stock import Holding
+from .ui import (BG, PANEL, ALT, LINE, FG, SECONDARY, TEAL, GOLD, RED, FONT,
+                 TerminalHeader, NavItem, SectionPanel, Metric, ScrollColumn)
 
-BG = "#0e1720"
-PANEL = "#162330"
-ALT = "#1e3040"
-FG = "#e6edf5"
-SECONDARY = "#a6bacb"
-TEAL = "#5ce2ce"
-GOLD = "#ffcf86"
-RED = "#ff9a9d"
-FONT = ("Microsoft YaHei UI", 10)
 SCENES = ("自动识别", "调度中心", "盟约选择", "策略轮选", "自选编队", "装备选择", "队友阵容")
 SETTINGS_DIR = Path(os.environ.get("STRONGHOLD_STATE") or
                     Path(os.environ.get("LOCALAPPDATA", ".")) / "StrongholdAssistant")
@@ -110,9 +103,9 @@ class Scanner(Thread):
 class Dashboard:
     def __init__(self, root):
         self.root = root
-        root.title("卫戍协议助手 0.3.1")
-        root.geometry("1120x860")
-        root.minsize(900, 740)
+        root.title("卫戍协议助手 0.3.2 · 规程终端")
+        root.geometry("1280x900")
+        root.minsize(1080, 800)
         root.configure(bg=BG)
         root.option_add("*Font", FONT)
         self.season = Season()
@@ -159,12 +152,17 @@ class Dashboard:
         self.configure_styles()
         self.build()
         self.overlay = Overlay(root)
+        root.bind_all('<Map>', self.style_window, add='+')
         self.scanner = Scanner(self.season)
         self.scanner.start()
         self.refresh_windows()
         self.update_views()
         root.protocol("WM_DELETE_WINDOW", self.close)
         root.after(150, self.tick)
+
+    def style_window(self, event):
+        if isinstance(event.widget, (tk.Tk, tk.Toplevel)):
+            windows.terminal_window(event.widget.winfo_id())
 
     @property
     def guide(self):
@@ -182,28 +180,42 @@ class Dashboard:
         style.configure("Card.TFrame", background=PANEL)
         style.configure("TLabel", background=BG, foreground=FG)
         style.configure("Card.TLabel", background=PANEL, foreground=FG)
-        style.configure("Title.TLabel", font=("Microsoft YaHei UI", 23, "bold"))
+        style.configure("Title.TLabel", font=("Microsoft YaHei UI", 18, "bold"))
         style.configure("Sub.TLabel", foreground=SECONDARY)
         style.configure("Accent.TLabel", foreground=TEAL)
-        style.configure("TButton", padding=(10, 6), borderwidth=0, background=ALT, foreground=FG)
-        style.map("TButton", background=[("active", "#2a4356")])
-        style.configure("Primary.TButton", background=TEAL, foreground="#0a2024")
+        style.configure("TButton", padding=(12, 7), borderwidth=0, background=ALT, foreground=FG,
+                        focusthickness=1, focuscolor=TEAL)
+        style.map("TButton", background=[("active", "#2b493b"), ("disabled", PANEL)],
+                  foreground=[("disabled", "#53685d")])
+        style.configure("Primary.TButton", background=TEAL, foreground="#0a2017", font=("Microsoft YaHei UI",10,"bold"))
         style.map("Primary.TButton", background=[("active", "#8ef1e1")])
-        style.configure("TNotebook", background=BG, borderwidth=0)
-        style.configure("TNotebook.Tab", padding=(18, 9), background=PANEL)
+        style.configure("TNotebook", background=BG, borderwidth=0, bordercolor=BG, lightcolor=BG,darkcolor=BG)
+        style.configure("TNotebook.Tab", padding=(14, 8), background=PANEL)
         style.map("TNotebook.Tab", background=[("selected", ALT)], foreground=[("selected", TEAL)])
-        style.configure("Treeview", background=PANEL, fieldbackground=PANEL, rowheight=27, borderwidth=0)
-        style.configure("Treeview.Heading", background=ALT, relief="flat")
-        style.map("Treeview", background=[("selected", "#275467")], foreground=[("selected", FG)])
-        style.configure("TCombobox", arrowsize=15, borderwidth=0, selectbackground=PANEL, selectforeground=FG)
+        style.configure("Workspace.TNotebook", background=BG, borderwidth=0, tabmargins=0,
+                        bordercolor=BG,lightcolor=BG,darkcolor=BG)
+        style.layout("Workspace.TNotebook.Tab", [])
+        style.configure("Treeview", background=PANEL, fieldbackground=PANEL, rowheight=32, borderwidth=0,
+                        bordercolor=PANEL,lightcolor=PANEL,darkcolor=PANEL)
+        style.configure("Treeview.Heading", background=ALT, foreground=SECONDARY, relief="flat",
+                        padding=(7,7), font=("Microsoft YaHei UI",9,"bold"))
+        style.map("Treeview", background=[("selected", "#28483a")], foreground=[("selected", FG)])
+        style.configure("Vertical.TScrollbar", background=ALT, troughcolor=PANEL, borderwidth=0,
+                        arrowcolor=SECONDARY, arrowsize=11)
+        style.configure("Horizontal.TScrollbar", background=ALT, troughcolor=PANEL, borderwidth=0,
+                        arrowcolor=SECONDARY, arrowsize=11)
+        style.configure("TCombobox", arrowsize=15, borderwidth=0, selectbackground=PANEL, selectforeground=FG,
+                        bordercolor=LINE,lightcolor=LINE,darkcolor=LINE,arrowcolor=TEAL)
         style.map("TCombobox", fieldbackground=[("readonly", PANEL)], foreground=[("readonly", FG)])
-        style.configure("TEntry", borderwidth=0, padding=5)
+        style.configure("TEntry", borderwidth=0, padding=7, insertcolor=TEAL)
         style.configure("TCheckbutton", background=BG, padding=4)
         style.map("TCheckbutton", background=[("active", ALT)])
         self.root.option_add("*TCombobox*Listbox.background", PANEL)
         self.root.option_add("*TCombobox*Listbox.foreground", FG)
 
     def label(self, parent, text="", **kw):
+        if isinstance(parent, tk.Frame):
+            kw.setdefault('background', parent.cget('background'))
         return ttk.Label(parent, text=text, **kw)
 
     def button(self, parent, text, cmd, primary=False):
@@ -214,39 +226,69 @@ class Dashboard:
         host.pack(fill="both", expand=True, pady=(4, 0))
         tree = ttk.Treeview(host, columns=columns, show="headings", height=height, selectmode="browse")
         scroll = ttk.Scrollbar(host, orient="vertical", command=tree.yview)
-        tree.configure(yscrollcommand=scroll.set)
+        horizontal = ttk.Scrollbar(host, orient="horizontal", command=tree.xview)
+        tree.configure(yscrollcommand=scroll.set, xscrollcommand=horizontal.set)
         for col, heading, width in zip(columns, headings, widths):
             tree.heading(col, text=heading, anchor="w")
             tree.column(col, width=width, minwidth=min(60, width), stretch=(col == columns[-1]), anchor="w")
         tree.tag_configure("yes", foreground=TEAL)
         tree.tag_configure("no", foreground=RED)
         tree.tag_configure("maybe", foreground=SECONDARY)
-        tree.pack(side="left", fill="both", expand=True)
-        scroll.pack(side="right", fill="y")
+        tree.tag_configure("core", foreground=GOLD)
+        host.columnconfigure(0, weight=1)
+        host.rowconfigure(0, weight=1)
+        tree.grid(row=0, column=0, sticky="nsew")
+        scroll.grid(row=0, column=1, sticky="ns")
+        horizontal.grid(row=1, column=0, sticky="ew")
         return tree
 
     def build(self):
-        main = ttk.Frame(self.root, padding=(22, 16))
+        main = ttk.Frame(self.root, padding=(18, 12))
         main.pack(fill="both", expand=True)
-        mast = ttk.Frame(main)
-        mast.pack(fill="x")
-        self.label(mast, "STRONGHOLD PROTOCOL   /   SEQUENCE I", style="Accent.TLabel",
-                   font=("Consolas", 10, "bold")).pack(anchor="w")
-        self.label(mast, "卫戍协议助手", style="Title.TLabel").pack(anchor="w", pady=(1, 2))
-        self.label(mast, textvariable=self.status, style="Sub.TLabel", wraplength=850).pack(anchor="w", pady=(0, 12))
-        bar = ttk.Frame(main)
-        bar.pack(fill="x", pady=(0, 9))
-        self.window_box = ttk.Combobox(bar, textvariable=self.win_name, width=54, state="readonly")
-        self.window_box.pack(side="left", fill="x", expand=True)
+        self.terminal_header = TerminalHeader(main)
+        self.terminal_header.pack(fill='x', pady=(0,10))
+        footer = ttk.Frame(main)
+        footer.pack(side='bottom', fill='x', pady=(8,0))
+        self.footer_status = self.label(footer, textvariable=self.status, style="Sub.TLabel", font=("Microsoft YaHei UI",8))
+        self.footer_status.pack(side='left', fill='x', expand=True)
+        self.label(footer, 'LOCAL ASSISTANT  /  v0.3.2', style='Sub.TLabel', font=('Consolas',8)).pack(side='right')
+        body = ttk.Frame(main)
+        body.pack(fill='both', expand=True)
+        sidebar = ttk.Frame(body, width=172)
+        sidebar.pack(side='left', fill='y', padx=(0,16))
+        sidebar.pack_propagate(False)
+        self.label(sidebar, '终端工作区', style='Sub.TLabel', font=('Microsoft YaHei UI',9)).pack(anchor='w', padx=14,pady=(8,12))
+        self.nav_items = []
+        navigation = [('实时监测','LIVE MONITOR'),('可用干员','OPERATOR POOL'),('禁用卡池','BAN / SHARED POOL'),
+                      ('阵容攻略','LINEUP / GUIDE'),('装备提醒','EQUIPMENT'),('采集设置','TERMINAL SETTINGS')]
+        for i, (title, caption) in enumerate(navigation):
+            item = NavItem(sidebar, i+1, title, caption, lambda i=i:self.navigate(i))
+            item.pack(fill='x', pady=2)
+            self.nav_items.append(item)
+            self.root.bind(f'<Control-Key-{i+1}>', lambda _, i=i:self.navigate(i))
+        self.label(sidebar, 'SEQUENCE Ⅰ\n\n规程 · 序列 Ⅰ\n简中客户端\n\nCtrl + 1–6 切换', style='Sub.TLabel',
+                   font=('Microsoft YaHei UI',8), justify='left').pack(side='bottom',anchor='w',padx=14,pady=18)
+        workspace = ttk.Frame(body)
+        workspace.pack(side='left', fill='both', expand=True)
+        heading = ttk.Frame(workspace)
+        heading.pack(fill='x', pady=(1,12))
+        self.page_title = self.label(heading, style='Title.TLabel')
+        self.page_title.pack(side='left')
+        self.page_caption = self.label(heading, style='Sub.TLabel', font=('Consolas',9))
+        self.page_caption.pack(side='right',pady=(9,0))
+        bar = ttk.Frame(workspace)
+        bar.pack(fill="x", pady=(0, 12))
+        self.window_box = ttk.Combobox(bar, textvariable=self.win_name, width=24, state="readonly")
         self.window_box.bind("<<ComboboxSelected>>", self.pick_window)
-        self.button(bar, "自动找窗口", self.auto_window).pack(side="left", padx=(8, 4))
         self.run_button = self.button(bar, "暂停识别", self.toggle, True)
-        self.run_button.pack(side="left", padx=(4, 0))
+        self.run_button.pack(side="right", padx=(8, 0))
+        self.button(bar, "自动找窗口", self.auto_window).pack(side="right", padx=(8, 0))
+        self.window_box.pack(side="left", fill="x", expand=True)
 
-        tabs = ttk.Notebook(main)
+        tabs = self.tabs = ttk.Notebook(workspace, style='Workspace.TNotebook')
         tabs.pack(fill="both", expand=True)
         self.monitor, self.pool, self.evidence, self.guides, self.gear, self.settings = [
-            ttk.Frame(tabs, padding=12) for _ in range(6)]
+            ttk.Frame(tabs, padding=(0,0,0,0)) for _ in range(6)]
         for page, title in zip((self.monitor, self.pool, self.evidence, self.guides, self.gear, self.settings),
                                ("实时识别", "盟约与可用池", "BAN与共享池", "阵容与攻略", "装备提示", "采集设置")):
             tabs.add(page, text=title)
@@ -256,32 +298,127 @@ class Dashboard:
         self.build_guides()
         self.build_equipment()
         self.build_settings()
+        tabs.bind('<<NotebookTabChanged>>', self.page_changed)
+        self.page_changed()
+
+    def navigate(self, index):
+        self.tabs.select(index)
+        self.page_changed()
+
+    def page_changed(self, _=None):
+        index = self.tabs.index('current')
+        previous = getattr(self,'page_index',None)
+        self.page_index = index
+        titles = ('实时监测','盟约与可用干员','本局禁用与共享卡池','阵容与攻略','关键装备提醒','采集与浮层设置')
+        captions = ('LIVE / MONITOR','PACT / OPERATOR POOL','BAN / SHARED POOL','LINEUP / STRATEGY','EQUIPMENT / WATCHLIST','TERMINAL / CONFIG')
+        self.page_title.configure(text=titles[index])
+        self.page_caption.configure(text=captions[index])
+        for i,item in enumerate(self.nav_items):
+            item.select(i==index)
+        if index==3 and previous!=index and self.guide_id and self.guide_tree.exists(self.guide_id):
+            self.guide_tree.selection_set(self.guide_id)
+            self.guide_tree.see(self.guide_id)
+            self.guide_detail()
 
     def build_monitor(self):
+        metrics = ttk.Frame(self.monitor)
+        metrics.pack(fill='x', pady=(0,12))
+        self.metrics = []
+        for i, (title, color, text) in enumerate((('当前阶段',TEAL,True),('本局禁用',RED,False),('实时提醒',GOLD,False),('识别耗时',TEAL,False))):
+            metrics.columnconfigure(i, weight=1, uniform='metric')
+            metric = Metric(metrics,title,f'{i+1:02}',color,text)
+            metric.grid(row=0,column=i,sticky='ew',padx=(0,10 if i<3 else 0))
+            self.metrics.append(metric)
         line = ttk.Frame(self.monitor)
-        line.pack(fill="x")
+        line.pack(fill="x", pady=(0,10))
         self.label(line, textvariable=self.guide_text, style="Accent.TLabel",
-                   font=("Microsoft YaHei UI", 13, "bold")).pack(side="left")
-        self.button(line, "结束回放", self.end_preview).pack(side="right", padx=(6, 0))
+                   font=("Microsoft YaHei UI", 11, "bold")).pack(side="left")
+        self.end_preview_button = self.button(line, "结束回放", self.end_preview)
+        self.end_preview_button.pack(side="right", padx=(6, 0))
         self.button(line, "识别截图", self.open_image).pack(side="right")
-        self.scene_text = self.label(self.monitor, "等待客户端画面", style="Sub.TLabel")
-        self.scene_text.pack(anchor="w", pady=(8, 5))
-        self.advice_text = self.label(self.monitor, style="Accent.TLabel", wraplength=900)
-        self.advice_text.pack(anchor="w")
-        self.ban_brief = self.label(self.monitor, style="Sub.TLabel", wraplength=900)
-        self.ban_brief.pack(anchor="w", pady=(4, 0))
-        self.monitor_tree = self.tree(self.monitor, ("kind", "name", "hint"), ("类型", "识别结果", "阵容提示"),
-                                      (95, 210, 490), height=4)
-        self.raw_text = self.label(self.monitor, style="Sub.TLabel", wraplength=900)
-        self.raw_text.pack(anchor="w", pady=(7, 0))
-        self.button(self.monitor, "查看最近一帧", self.show_frame).pack(anchor="w", pady=(6, 0))
         controls = ttk.Frame(self.monitor)
-        controls.pack(fill="x", pady=(8, 0))
+        controls.pack(side='bottom',fill="x", pady=(10, 0))
         self.open_shop_button = self.button(controls, "展开商店", lambda: self.pc_shop("open"))
         self.close_shop_button = self.button(controls, "收起商店", lambda: self.pc_shop("close"))
         self.open_shop_button.pack(side="left")
         self.close_shop_button.pack(side="left", padx=(6, 8))
-        self.label(controls, textvariable=self.pc_status, style="Sub.TLabel", wraplength=580).pack(side="left")
+        self.label(controls, textvariable=self.pc_status, style="Sub.TLabel", font=('Microsoft YaHei UI',8),wraplength=350).pack(side="left")
+        self.button(controls,'识别诊断',self.show_diagnostics).pack(side='right')
+        ban = SectionPanel(self.monitor,'本局 BAN / EXCLUDED',RED)
+        ban.pack(side='bottom',fill='x',pady=(10,0))
+        self.button(ban.body,'完整名单 →',lambda:self.navigate(2)).pack(side='right',padx=(8,0))
+        self.ban_brief = self.label(ban.body, style="Sub.TLabel", wraplength=690)
+        self.ban_brief.pack(side='left',fill='x',expand=True)
+        center = ttk.Frame(self.monitor)
+        center.pack(fill='both',expand=True)
+        center.columnconfigure(0,weight=4,uniform='monitor')
+        center.columnconfigure(1,weight=5,uniform='monitor')
+        center.rowconfigure(0,weight=1)
+        self.plan_panel = SectionPanel(center,'当前攻略 / CURRENT PLAN')
+        self.plan_panel.grid(row=0,column=0,sticky='nsew',padx=(0,12))
+        self.button(self.plan_panel.body,'阵容详情 / 更换 →',self.open_current_guide).pack(side='bottom',anchor='w',pady=(10,0))
+        self.role_names = {}
+        role_box = tk.Frame(self.plan_panel.body,bg=PANEL)
+        role_box.pack(side='bottom',fill='x',pady=(10,0))
+        self.plan_scroll = ScrollColumn(self.plan_panel.body)
+        self.plan_scroll.pack(fill='both',expand=True)
+        body = self.plan_scroll.body
+        self.plan_name = self.label(body, foreground=FG,font=('Microsoft YaHei UI',12,'bold'),wraplength=360)
+        self.plan_name.pack(anchor='w',pady=(0,10))
+        self.advice_text = self.label(body, foreground=FG,wraplength=360,justify='left',font=('Microsoft YaHei UI',9))
+        self.advice_text.pack(anchor='w',pady=(0,10))
+        self.core_text = self.label(role_box,foreground=GOLD,wraplength=360,justify='left',font=('Microsoft YaHei UI',9))
+        self.core_text.pack(anchor='w',pady=(0,6))
+        self.optional_text = self.label(role_box,foreground=TEAL,wraplength=360,justify='left',font=('Microsoft YaHei UI',9))
+        self.optional_text.pack(anchor='w')
+        self.fit_text = self.label(body,foreground=SECONDARY,wraplength=360,justify='left',font=('Microsoft YaHei UI',9))
+        self.fit_text.pack(anchor='w')
+        self.context_text = self.label(body,foreground=TEAL,wraplength=360,justify='left',font=('Microsoft YaHei UI',9))
+        self.context_text.pack(anchor='w',pady=(12,0))
+        results = SectionPanel(center,'画面提醒 / LIVE SIGNALS',GOLD)
+        results.grid(row=0,column=1,sticky='nsew')
+        self.scene_text = self.label(results.body,style='Sub.TLabel',font=('Microsoft YaHei UI',8))
+        self.scene_text.pack(anchor='w',pady=(0,4))
+        self.monitor_tree = self.tree(results.body,('kind','name','hint'),('类型','识别结果','提示'),(65,120,260),height=4)
+        self.monitor_empty = self.label(self.monitor_tree,'等待可识别画面\n\n进入卫戍协议，或导入截图',background=PANEL,
+                                        foreground=SECONDARY,justify='center',font=('Microsoft YaHei UI',10))
+        self.raw_text = self.label(self.monitor,style='Sub.TLabel')
+        self.plan_scroll.canvas.bind('<Configure>',self.resize_monitor,add='+')
+        for widget in (self.plan_name,self.advice_text,self.core_text,self.optional_text,self.fit_text,self.context_text):
+            widget.bind('<MouseWheel>',self.plan_scroll.wheel)
+
+    def resize_monitor(self, _=None):
+        width = max(200,self.plan_scroll.canvas.winfo_width()-10)
+        for widget in (self.plan_name,self.advice_text,self.core_text,self.optional_text,self.fit_text,self.context_text):
+            widget.configure(wraplength=width)
+        self.ban_brief.configure(wraplength=max(350,self.monitor.winfo_width()-210))
+        self.format_role_labels()
+
+    def format_role_labels(self):
+        if not self.role_names:
+            return
+        limit = 3 if self.plan_panel.body.winfo_width() >= 350 else 2
+        for role,widget,title in [('core',self.core_text,'核心叠层'),('available',self.optional_text,'可用叠层')]:
+            names=self.role_names.get(role,[])
+            widget.configure(text=title+'  /  '+('、'.join(names[:limit])+('…' if len(names)>limit else '') if names else '本局暂无候选'))
+
+    def open_current_guide(self):
+        if self.guide_id and self.guide_tree.exists(self.guide_id):
+            self.guide_tree.selection_set(self.guide_id)
+            self.guide_tree.see(self.guide_id)
+            self.guide_detail()
+        self.navigate(3)
+
+    def show_diagnostics(self):
+        window = tk.Toplevel(self.root)
+        window.title('识别诊断')
+        window.geometry('800x560')
+        window.configure(bg=BG)
+        self.button(window,'查看最近一帧',self.show_frame).pack(side='bottom',anchor='e',padx=16,pady=12)
+        text = tk.Text(window,bg=PANEL,fg=FG,relief='flat',wrap='word',height=1,padx=16,pady=14,font=FONT)
+        text.pack(fill='both',expand=True,padx=12,pady=(12,0))
+        text.insert('1.0',self.status.get()+'\n\n'+self.pc_status.get()+'\n\nOCR 原文\n'+'\n'.join(self.reading.text))
+        text.configure(state='disabled')
 
     def build_pool(self):
         bar = ttk.Frame(self.pool)
@@ -319,12 +456,18 @@ class Dashboard:
                                     (220, 130, 340, 180), height=5)
         self.guide_tree.bind("<<TreeviewSelect>>", lambda _: self.guide_detail())
         self.guide_tree.bind("<Double-1>", lambda _: self.select_guide())
-        self.details = tk.Text(self.guides, height=8, relief="flat", wrap="word", background=PANEL,
+        details_panel = SectionPanel(self.guides,'攻略详情 / OPERATION NOTES')
+        details_panel.pack(fill='both',expand=True,pady=(12,0))
+        scroll = ttk.Scrollbar(details_panel.body,orient='vertical')
+        scroll.pack(side='right',fill='y')
+        self.details = tk.Text(details_panel.body, height=6, relief="flat", wrap="word", background=PANEL,
                                foreground=FG, padx=12, pady=9, font=FONT, state="disabled")
-        self.details.pack(fill="both", expand=True, pady=(8, 0))
+        self.details.pack(side='left',fill="both", expand=True)
+        self.details.configure(yscrollcommand=scroll.set)
+        scroll.configure(command=self.details.yview)
 
     def build_evidence(self):
-        tabs = ttk.Notebook(self.evidence)
+        tabs = self.evidence_tabs = ttk.Notebook(self.evidence)
         tabs.pack(fill="both", expand=True)
         ban, stock = ttk.Frame(tabs, padding=8), ttk.Frame(tabs, padding=8)
         tabs.add(ban, text="本局 BAN 名单")
@@ -762,6 +905,7 @@ class Dashboard:
 
     def recommendation_banner(self, ranked):
         context = self.scene_recommendation(ranked)
+        self.scene_hint = context
         if not self.guide:
             return context
         guide = self.guide
@@ -834,22 +978,58 @@ class Dashboard:
             self.strategy_advice = self.season.strategy_guide(
                 ranked, self.states, self.reading.hits, self.match.excluded, self.match.seen, self.fits)
         self.banner = self.recommendation_banner(ranked)
-        self.advice_text.configure(text=self.banner)
-        if self.guide:
-            self.guide_text.set(f"已选阵容  /  {self.guide['name']}")
-        else:
-            self.guide_text.set("在「阵容与攻略」选定一套阵容")
+        self.guide_text.set('本局追踪  /  ' + ('截图回放' if self.preview else '实时识别'))
         self.scene_text.configure(text=f"{self.reading.scene or '等待场景'}  ·  {len(self.reading.hits)} 条识别结果")
         self.raw_text.configure(text="OCR  /  " + " · ".join(self.reading.text[:24]) if self.reading.text else "")
         notices = dict(self.callouts())
-        rows = [(str(i), (hit.kind, hit.name, notices.get(hit, "")), "yes" if hit in notices else "")
+        rows = [(str(i), (hit.kind, hit.name, notices.get(hit, "")),
+                 "core" if notices.get(hit,'').startswith('核心') else "yes" if hit in notices else "")
                 for i, hit in enumerate(self.reading.hits)]
         self.fill(self.monitor_tree, rows)
+        self.update_monitor(ranked, notices)
         self.update_pool()
         self.update_bans()
         self.update_stock()
         self.update_guides(ranked)
         self.update_equipment()
+
+    def update_monitor(self, ranked, notices):
+        connected = bool(self.window)
+        mode = '截图回放' if self.preview else '识别已暂停' if not self.running else '客户端已接入' if connected else '等待客户端'
+        self.terminal_header.set_status(mode,self.preview or (connected and self.running))
+        stage = self.reading.scene or '等待画面'
+        self.metrics[0].set(stage if len(stage)<=6 else '等待确认','截图回放' if self.preview else '持续跟踪当前画面')
+        banned = self.season.banned(self.states,self.match.excluded,self.match.seen)
+        self.metrics[1].set(len(banned) if self.states or self.match.excluded else '—','已确认 + 盟约推算')
+        self.metrics[2].set(len(notices),'核心 / 可用 / 装备')
+        self.metrics[3].set(self.reading.elapsed_ms if self.frame else '—','ms · 区域复用' if self.reading.reused else 'ms · 当前画面')
+        self.end_preview_button.state(['!disabled'] if self.preview else ['disabled'])
+        self.context_text.configure(text=self.scene_hint)
+        if self.reading.hits:
+            self.monitor_empty.place_forget()
+        else:
+            self.monitor_empty.place(relx=.5,rely=.52,anchor='center')
+        advice = self.guide or self.strategy_advice or (ranked[0] if self.states and ranked else None)
+        if not advice:
+            self.role_names = {}
+            self.plan_name.configure(text='等待本局信息')
+            self.advice_text.configure(text='进入卫戍协议的「确认本局信息」，读取 BAN 后，为你推荐当前可用的阵容。')
+            self.core_text.configure(text='核心叠层  /  金色标记')
+            self.optional_text.configure(text='可用叠层  /  青绿标记')
+            self.fit_text.configure(text='也可从「阵容攻略」手动选定思路，提示会常驻在游戏浮层。')
+            return
+        fit = self.fits[advice['id']]
+        self.plan_name.configure(text=('' if self.guide else '建议 · ')+advice['name'])
+        self.advice_text.configure(text=advice.get('plan','按当前可用卡补齐核心，关注缺失的功能位。'))
+        for role, widget, title in [('core',self.core_text,'核心叠层'),('available',self.optional_text,'可用叠层')]:
+            names=[]
+            for item in advice.get('stacking',[]):
+                state=self.season.status(item['operator'],self.states,self.match.excluded,self.match.seen)
+                if item['role']==role and state is not False:
+                    names.append(item['operator']+('?' if state is None else ''))
+            self.role_names[role]=names
+        self.format_role_labels()
+        self.fit_text.configure(text=fit.label+'\n'+fit.reason,foreground=GOLD if fit.blocked_core or not fit.viable else SECONDARY)
 
     def update_bans(self):
         banned = self.season.banned(self.states, self.match.excluded, self.match.seen)
@@ -858,9 +1038,9 @@ class Dashboard:
         direct = sum(reason == "名单识别" for reason in banned.values())
         summary = f"本局禁用 {len(banned)} 名（名单识别 {direct} / 盟约推算 {len(banned)-direct}）· 可用性待确认 {unknown} 名"
         self.ban_summary.configure(text=summary)
-        names = "、".join(sorted(banned)[:12])
+        names = "、".join(sorted(banned)[:6])
         self.ban_brief.configure(text=f"BAN {len(banned)}  /  {names}"
-                                 + ("… 完整名单见「BAN与共享池」" if len(banned) > 12 else "")
+                                 + ("…" if len(banned) > 6 else "")
                                  if banned else "BAN  /  等待开局盟约结果，未确认项不会标成禁用")
         self.fill(self.ban_tree, [(name, (name, banned[name], " · ".join(
             self.season.operators.get(name, {}).get("pacts", []))), "no") for name in sorted(banned)])

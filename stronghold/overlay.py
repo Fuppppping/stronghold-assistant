@@ -2,6 +2,7 @@
 import tkinter as tk
 
 from . import windows
+from .ui import TEAL, GOLD, PANEL
 
 KEY_COLOR = "#010203"
 
@@ -40,18 +41,20 @@ class Overlay:
         for hit, note in callouts:
             x1, y1, x2, y2 = [round(v * (scale_x if i % 2 == 0 else scale_y))
                               for i, v in enumerate(hit.box)]
-            color = {"干员": "#57edd4", "装备": "#ffd087", "策略": "#9cb4ff", "盟约": "#9cb4ff"}[hit.kind]
-            self.canvas.create_rectangle(x1 - 2, y1 - 2, x2 + 3, y2 + 3, outline=color, width=2)
+            color = GOLD if hit.kind == '装备' else TEAL
             if note.startswith("核心"):
-                color = "#ffd087"
+                color = GOLD
                 title = f"★ {hit.name} · {note}"
             elif note.startswith("可用叠层"):
                 title = f"{hit.name} · {note}"
             else:
                 title = hit.name + " · " + note
+            span = min(12, max(5, (x2-x1)//6))
+            for x, y, dx, dy in ((x1-2,y1-2,1,1),(x2+3,y1-2,-1,1),(x1-2,y2+3,1,-1),(x2+3,y2+3,-1,-1)):
+                self.canvas.create_line(x+span*dx,y,x,y,x,y+span*dy,fill=color,width=2)
             self.label(x1, max(0, y1 - label_offset), title, color, width, font_size)
         if banner:
-            self.label(22, max(18, round(height * .13)), banner, "#57edd4", width, font_size,
+            self.label(22, max(18, round(height * .13)), banner, TEAL, width, font_size,
                        wrap=round(width * .46))
         if not self.shown:
             self.window.deiconify()
@@ -67,6 +70,6 @@ class Overlay:
             shift = width - bx2 - 9
             self.canvas.move(text_id, shift, 0)
             bx1, by1, bx2, by2 = self.canvas.bbox(text_id)
-        bg = self.canvas.create_rectangle(bx1 - 8, by1 - 2, bx2 + 8, by2 + 2,
-                                          fill="#101a24", outline=color)
+        bg = self.canvas.create_polygon(bx1-8,by1-4,bx2+2,by1-4,bx2+8,by1+2,bx2+8,by2+4,
+                                         bx1-8,by2+4,fill=PANEL,outline=color)
         self.canvas.tag_lower(bg, text_id)

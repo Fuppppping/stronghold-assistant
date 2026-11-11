@@ -161,6 +161,19 @@ def list_windows():
     return sorted(results, key=lambda item: (item.score, item.hwnd == active), reverse=True)
 
 
+def terminal_window(hwnd):
+    """Style only this application's caption; unsupported DWM attributes are ignored."""
+    try:
+        dwm = c.WinDLL('dwmapi')
+        set_attribute = signature(dwm, 'DwmSetWindowAttribute', [w.HWND,w.DWORD,c.c_void_p,w.DWORD], c.c_long)
+        handle = ancestor(hwnd, 2)
+        for attribute, value in ((20,1),(34,0x384029),(35,0x0f100a),(36,0xeff3ed)):
+            color = w.DWORD(value)
+            set_attribute(handle,attribute,c.byref(color),c.sizeof(color))
+    except (OSError,AttributeError):
+        pass
+
+
 def capture(hwnd):
     region = capture_bounds(hwnd)
     if region is None:
