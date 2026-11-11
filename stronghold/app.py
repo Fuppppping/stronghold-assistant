@@ -18,6 +18,7 @@ from .domain import MatchState, Reading, Season, alerts, key
 from .overlay import Overlay
 from .pc_input import operate_shop
 from .vision import Recognizer
+from .stock import Holding
 
 BG = "#0e1720"
 PANEL = "#162330"
@@ -28,7 +29,7 @@ TEAL = "#5ce2ce"
 GOLD = "#ffcf86"
 RED = "#ff9a9d"
 FONT = ("Microsoft YaHei UI", 10)
-SCENES = ("自动识别", "调度中心", "盟约选择", "策略轮选", "自选编队", "装备选择")
+SCENES = ("自动识别", "调度中心", "盟约选择", "策略轮选", "自选编队", "装备选择", "队友阵容")
 SETTINGS_DIR = Path(os.environ.get("STRONGHOLD_STATE") or
                     Path(os.environ.get("LOCALAPPDATA", ".")) / "StrongholdAssistant")
 
@@ -54,6 +55,12 @@ class ShopRequest:
     action: str
 
 
+@dataclass(frozen=True)
+class RosterRequest:
+    frame: object
+    slot: str
+
+
 class Scanner(Thread):
     def __init__(self, season):
         super().__init__(daemon=True)
@@ -77,7 +84,9 @@ class Scanner(Thread):
                     self.shop_responses.put(f"PC 单步操作失败 · {exc}")
                 continue
             try:
-                if isinstance(source, Path):
+                if isinstance(source, RosterRequest):
+                    frame = source.frame
+                elif isinstance(source, Path):
                     with Image.open(source) as image:
                         frame = image.convert("RGB")
                 elif isinstance(source, tuple):
@@ -86,7 +95,9 @@ class Scanner(Thread):
                     frame = windows.capture(source)
                 if recognizer is None:
                     recognizer = Recognizer(self.season)
-                reading = recognizer.inspect(frame, scene)
+                reading = recognizer.inspect(frame, "队友阵容" if isinstance(source, RosterRequest) else scene)
+                if isinstance(source, RosterRequest):
+                    reading.roster_slot = source.slot
                 self.responses.put((generation, reading, frame, None))
             except Exception as exc:
                 logging.exception("Capture or OCR failed")
@@ -96,9 +107,9 @@ class Scanner(Thread):
 class Dashboard:
     def __init__(self, root):
         self.root = root
-        root.title("卫戍协议助手")
-        root.geometry("1040x735")
-        root.minsize(850, 650)
+        root.title("卫戍协议助手 0.3.0")
+        root.geometry("1120x860")
+        root.minsize(900, 740)
         root.configure(bg=BG)
         root.option_add("*Font", FONT)
         self.season = Season()
@@ -113,6 +124,8 @@ class Dashboard:
             self.guide_id = ""
         self.enabled = set(settings.get("enabled", [])) & self.season.equipment.keys()
         self.muted = set(settings.get("muted", [])) & self.season.equipment.keys()
+        self.capacities = {int(k): v for k, v in settings.get("pool_capacity", {}).items()
+                           if str(k) in {"1", "2", "3", "4", "5", "6"} and type(v) is int and v > 0}
         self.show_overlay = tk.BooleanVar(value=settings.get("overlay", True))
         self.scene = tk.StringVar(value=SCENES[0])
         self.adb = tk.StringVar(value=settings.get("adb") or windows.find_adb())
@@ -229,13 +242,14 @@ class Dashboard:
 
         tabs = ttk.Notebook(main)
         tabs.pack(fill="both", expand=True)
-        self.monitor, self.pool, self.guides, self.gear, self.settings = [
-            ttk.Frame(tabs, padding=12) for _ in range(5)]
-        for page, title in zip((self.monitor, self.pool, self.guides, self.gear, self.settings),
-                               ("实时识别", "盟约与可用池", "阵容与攻略", "装备提示", "采集设置")):
+        self.monitor, self.pool, self.evidence, self.guides, self.gear, self.settings = [
+            ttk.Frame(tabs, padding=12) for _ in range(6)]
+        for page, title in zip((self.monitor, self.pool, self.evidence, self.guides, self.gear, self.settings),
+                               ("实时识别", "盟约与可用池", "BAN与共享池", "阵容与攻略", "装备提示", "采集设置")):
             tabs.add(page, text=title)
         self.build_monitor()
         self.build_pool()
+        self.build_evidence()
         self.build_guides()
         self.build_equipment()
         self.build_settings()
@@ -251,8 +265,10 @@ class Dashboard:
         self.scene_text.pack(anchor="w", pady=(8, 5))
         self.advice_text = self.label(self.monitor, style="Accent.TLabel", wraplength=900)
         self.advice_text.pack(anchor="w")
+        self.ban_brief = self.label(self.monitor, style="Sub.TLabel", wraplength=900)
+        self.ban_brief.pack(anchor="w", pady=(4, 0))
         self.monitor_tree = self.tree(self.monitor, ("kind", "name", "hint"), ("类型", "识别结果", "阵容提示"),
-                                      (95, 210, 490))
+                                      (95, 210, 490), height=4)
         self.raw_text = self.label(self.monitor, style="Sub.TLabel", wraplength=900)
         self.raw_text.pack(anchor="w", pady=(7, 0))
         self.button(self.monitor, "查看最近一帧", self.show_frame).pack(anchor="w", pady=(6, 0))
@@ -294,6 +310,7 @@ class Dashboard:
         self.button(bar, "选定阵容", self.select_guide, True).pack(side="left")
         self.button(bar, "导入攻略 JSON", self.import_guide).pack(side="left", padx=8)
         self.button(bar, "打开攻略来源", self.open_guide_source).pack(side="left")
+        self.button(bar, "JSON 格式与模板", self.guide_format).pack(side="left", padx=8)
         self.guide_tree = self.tree(self.guides, ("name", "viability", "strategies"),
                                     ("阵容 · 按当前可用池排序", "核心盟约", "推荐策略"), (220, 125, 440), height=5)
         self.guide_tree.bind("<<TreeviewSelect>>", lambda _: self.guide_detail())
@@ -301,6 +318,46 @@ class Dashboard:
         self.details = tk.Text(self.guides, height=8, relief="flat", wrap="word", background=PANEL,
                                foreground=FG, padx=12, pady=9, font=FONT, state="disabled")
         self.details.pack(fill="both", expand=True, pady=(8, 0))
+
+    def build_evidence(self):
+        tabs = ttk.Notebook(self.evidence)
+        tabs.pack(fill="both", expand=True)
+        ban, stock = ttk.Frame(tabs, padding=8), ttk.Frame(tabs, padding=8)
+        tabs.add(ban, text="本局 BAN 名单")
+        tabs.add(stock, text="队友阵容 / 共享卡池")
+        self.ban_summary = self.label(ban, wraplength=880)
+        self.ban_summary.pack(anchor="w")
+        self.ban_tree = self.tree(ban, ("name", "reason", "pacts"),
+                                  ("禁用干员", "依据", "所属盟约"), (160, 135, 500))
+        self.label(ban, "首帧盟约结果立即推算；向下滚动游戏名单会合并补读，未确认项不视为禁用。",
+                   style="Sub.TLabel", wraplength=880).pack(anchor="w", pady=6)
+        bar = ttk.Frame(stock)
+        bar.pack(fill="x")
+        self.stock_slot = tk.StringVar(value="面板1")
+        ttk.Combobox(bar, textvariable=self.stock_slot, values=("面板1", "面板2", "面板3", "面板4"),
+                     state="readonly", width=8).pack(side="left")
+        self.button(bar, "从当前队友面板读取", self.capture_roster).pack(side="left", padx=5)
+        self.button(bar, "清除此人记录", self.clear_roster).pack(side="left")
+        self.button(bar, "设置总池量", self.pool_capacity).pack(side="right")
+        self.stock_summary = self.label(stock, style="Sub.TLabel", wraplength=880)
+        self.stock_summary.pack(anchor="w", pady=5)
+        self.stock_tree = self.tree(stock, ("name", "tier", "used", "remaining"),
+                                    ("干员", "等阶", "已见占用下限", "共享池估算"), (155, 55, 125, 470), height=5)
+        self.stock_tree.bind("<<TreeviewSelect>>", self.choose_stock_operator)
+        edit = ttk.Frame(stock)
+        edit.pack(fill="x", pady=7)
+        self.stock_operator = tk.StringVar(value=next(iter(self.season.operators)))
+        ttk.Combobox(edit, textvariable=self.stock_operator, values=sorted(self.season.operators),
+                     state="readonly", width=14).pack(side="left")
+        self.stock_numbers = [tk.StringVar(value="0") for _ in range(3)]
+        for title, var in zip(("普通", "精锐", "星级待确认"), self.stock_numbers):
+            self.label(edit, title).pack(side="left", padx=(8, 3))
+            ttk.Spinbox(edit, from_=0, to=99, textvariable=var, width=3).pack(side="left")
+        self.button(edit, "保存此人持有量", self.save_holding).pack(side="left", padx=8)
+        self.label(stock, "面板1–4按队友总览从上到下编号；自动识别头像只计占用下限，星级可校正。\n"
+                   "记录按玩家覆盖，商店待售牌不扣卡池。默认总量待核实；普通1份、精锐暂按3份（星极2份）。\n"
+                   "星级不清只计1份下限。未见备战区、赠送牌与记录时差使余量只能估算，可手动校正。",
+                   style="Sub.TLabel", wraplength=880).pack(anchor="w")
 
     def build_equipment(self):
         bar = ttk.Frame(self.gear)
@@ -345,6 +402,7 @@ class Dashboard:
         try:
             save_json(SETTINGS_DIR / "settings.json", {
                 "guide": self.guide_id, "enabled": sorted(self.enabled), "muted": sorted(self.muted),
+                "pool_capacity": self.capacities,
                 "overlay": self.show_overlay.get(), "adb": self.adb.get(), "serial": self.serial.get(),
                 "use_adb": self.use_adb.get(),
             })
@@ -457,6 +515,103 @@ class Dashboard:
         self.save()
         self.update_views()
 
+    def guide_format(self):
+        window = tk.Toplevel(self.root)
+        window.title("攻略 JSON 格式 · 可直接复制并导入")
+        window.geometry("820x620")
+        sample = json.loads((Path(__file__).parent.parent / "data" / "guide.example.json").read_text(encoding="utf-8"))
+        text = tk.Text(window, height=1, wrap="word", bg=PANEL, fg=FG, padx=14, pady=12, font=FONT)
+        text.pack(fill="both", expand=True)
+        text.insert("end", "UTF-8 JSON 对象，名称必须使用游戏简中全名。\n"
+                    "必填：id（唯一）、name、targets（盟约→人数）、stages（至少一个阶段）。\n"
+                    "阶段：name、timing（可选）、plan（可选）、core（必拿）、operators（可选干员）。\n"
+                    "可选：plan（常驻思路）、stacking（叠层角色）、strategies（按优先级）、equipment（装备→备注）、sources。\n"
+                    "stacking.role：core=核心叠层，available=可用叠层；note 写触发条件或站位。\n"
+                    "策略、装备、干员、盟约均校验名称。下面是完整可导入模板：\n\n")
+        text.insert("end", json.dumps(sample, ensure_ascii=False, indent=2))
+        def export():
+            path = filedialog.asksaveasfilename(defaultextension=".json", initialfile="guide.example.json",
+                                              filetypes=[("攻略 JSON", "*.json")], parent=window)
+            if path:
+                save_json(Path(path), sample)
+        self.button(window, "另存模板 JSON", export, True).pack(pady=8)
+
+    def capture_roster(self):
+        if self.frame is None or self.active_job is not None:
+            self.stock_summary.configure(text="等待当前帧采集完成后再读取队友面板")
+            return
+        if self.reading.scene in {"调度中心", "自选编队", "盟约选择", "策略轮选"}:
+            self.stock_summary.configure(text="当前是商店或战前界面。打开游戏内队友阵容面板后再读取。")
+            return
+        self.submit(RosterRequest(self.frame.copy(), self.stock_slot.get()))
+
+    def clear_roster(self):
+        self.match.stock.forget(self.stock_slot.get())
+        self.update_stock()
+
+    def choose_stock_operator(self, _=None):
+        selected = self.stock_tree.selection()
+        if not selected:
+            return
+        name = selected[0]
+        self.stock_operator.set(name)
+        snap = self.match.stock.players.get(self.stock_slot.get())
+        item = next((item for item in snap.holdings if item.name == name), Holding(name)) if snap else Holding(name)
+        for var, value in zip(self.stock_numbers, (item.normal, item.elite, item.uncertain)):
+            var.set(str(value))
+
+    def save_holding(self):
+        try:
+            values = [int(var.get()) for var in self.stock_numbers]
+            if any(not 0 <= value <= 99 for value in values):
+                raise ValueError
+        except ValueError:
+            self.stock_summary.configure(text="普通、精锐、待确认数量需要是 0–99 的整数")
+            return
+        name, slot = self.stock_operator.get(), self.stock_slot.get()
+        self.match.stock.correct(slot, Holding(name, *values))
+        self.update_stock()
+
+    def pool_capacity(self):
+        window = tk.Toplevel(self.root)
+        window.title("自设每名干员总池量 · 未核实请留空")
+        self.label(window, "当前赛季总池量尚无可靠依据，默认留空。填写后仅用于估算上界。", wraplength=460).pack(padx=15, pady=10)
+        values = {}
+        for tier in range(1, 7):
+            row = ttk.Frame(window)
+            row.pack(padx=15, pady=4)
+            self.label(row, f"{tier} 阶每名干员份数", width=24).pack(side="left")
+            values[tier] = tk.StringVar(value=str(self.capacities.get(tier, "")))
+            ttk.Entry(row, textvariable=values[tier], width=8).pack(side="left")
+        def apply():
+            try:
+                result = {tier: int(var.get()) for tier, var in values.items() if var.get().strip()}
+                if any(not 1 <= value <= 999 for value in result.values()):
+                    raise ValueError
+            except ValueError:
+                messagebox.showerror("总池量", "填写 1–999 的整数，或留空", parent=window)
+                return
+            self.capacities = result
+            self.save()
+            self.update_stock()
+            window.destroy()
+        self.button(window, "保存", apply, True).pack(pady=12)
+
+    def update_stock(self):
+        ledger = self.match.stock
+        names = set(self.season.operators)
+        names.update(item.name for snap in ledger.players.values() for item in snap.holdings)
+        rows = []
+        for name in sorted(names, key=lambda name: (-ledger.occupied(name), name)):
+            tier = self.season.operators.get(name, {}).get("tier")
+            used = ledger.occupied(name)
+            rows.append((name, (name, tier or "自选", f"≥{used}", ledger.estimate(name, self.capacities.get(tier))),
+                         "yes" if used else "maybe"))
+        self.fill(self.stock_tree, rows)
+        snapshots = " / ".join(f"{slot} {time.strftime('%H:%M:%S', time.localtime(snap.updated))} · {snap.source}"
+                               for slot, snap in ledger.players.items())
+        self.stock_summary.configure(text=snapshots or "尚未记录队友。展开队友总览会自动读取；单人详情可选面板编号后读取，也可手动校正。")
+
     def equipment_action(self, mode):
         chosen = self.equipment_tree.selection()
         if not chosen:
@@ -550,7 +705,7 @@ class Dashboard:
 
         if (not self.preview and self.running and not self.pc_pending
                 and self.active_job is None and self.scanner.requests.empty()):
-            if now - self.last_scan > .85:
+            if now - self.last_scan > (.25 if self.reading.scene == "盟约选择" else .85):
                 self.last_scan = now
                 if self.window and windows.bounds(self.window.hwnd):
                     if self.use_adb.get():
@@ -576,6 +731,8 @@ class Dashboard:
         source = "截图回放" if self.preview else self.window.title
         self.status.set(f"{source}   /   {reading.scene or '等待卫戍协议界面'}")
         self.update_views()
+        if reading.roster_slot and not reading.holdings:
+            self.stock_summary.configure(text="此帧没有读到可靠干员姓名，原记录保留。头像阵容可先手动补录；未识别项不视为0。")
 
     def callouts(self):
         return alerts(self.reading, self.guide, self.enabled, self.muted,
@@ -597,6 +754,26 @@ class Dashboard:
             self.overlay.hide()
 
     def recommendation_banner(self, ranked):
+        context = self.scene_recommendation(ranked)
+        if not self.guide:
+            return context
+        guide = self.guide
+        lines = [f"当前攻略  {guide['name']}", "思路  " + guide.get("plan", "按阶段补齐核心，结合可用池选择替代。")]
+        for role, title in (("core", "核心叠层"), ("available", "可用叠层")):
+            names = []
+            for item in guide.get("stacking", []):
+                if item["role"] != role:
+                    continue
+                state = self.season.status(item["operator"], self.states, self.match.excluded, self.match.seen)
+                if state is not False:
+                    names.append(item["operator"] + ("?" if state is None else ""))
+            if names:
+                lines.append(title + "  " + "、".join(names[:6]) + ("…" if len(names) > 6 else ""))
+        if context:
+            lines.append(context)
+        return "\n".join(lines)
+
+    def scene_recommendation(self, ranked):
         if self.reading.scene == "盟约选择":
             if self.match.groups:
                 choices = []
@@ -656,8 +833,24 @@ class Dashboard:
                 for i, hit in enumerate(self.reading.hits)]
         self.fill(self.monitor_tree, rows)
         self.update_pool()
+        self.update_bans()
+        self.update_stock()
         self.update_guides(ranked)
         self.update_equipment()
+
+    def update_bans(self):
+        banned = self.season.banned(self.states, self.match.excluded, self.match.seen)
+        unknown = sum(self.season.status(name, self.states, self.match.excluded, self.match.seen) is None
+                      for name in self.season.operators)
+        direct = sum(reason == "名单识别" for reason in banned.values())
+        summary = f"本局禁用 {len(banned)} 名（名单识别 {direct} / 盟约推算 {len(banned)-direct}）· 可用性待确认 {unknown} 名"
+        self.ban_summary.configure(text=summary)
+        names = "、".join(sorted(banned)[:12])
+        self.ban_brief.configure(text=f"BAN {len(banned)}  /  {names}"
+                                 + ("… 完整名单见「BAN与共享池」" if len(banned) > 12 else "")
+                                 if banned else "BAN  /  等待开局盟约结果，未确认项不会标成禁用")
+        self.fill(self.ban_tree, [(name, (name, banned[name], " · ".join(
+            self.season.operators.get(name, {}).get("pacts", []))), "no") for name in sorted(banned)])
 
     def update_pool(self):
         labels = {True: ("可用", "yes"), False: ("禁用", "no"), None: ("未确认", "maybe")}
@@ -730,6 +923,13 @@ class Dashboard:
             return
         guide = self.season.lineups[choice[0]]
         lines = ["成型目标  " + " · ".join(f"{pact} ×{count}" for pact, count in guide["targets"].items())]
+        if guide.get("plan"):
+            lines.append("常驻思路  " + guide["plan"])
+        for item in guide.get("stacking", []):
+            state = self.season.status(item["operator"], self.states, self.match.excluded, self.match.seen)
+            label = "核心叠层" if item["role"] == "core" else "可用叠层"
+            suffix = "【本局禁用】" if state is False else "【可用性待确认】" if state is None else ""
+            lines.append(f"{label}  {item['operator']}{suffix}  {item.get('note', '')}")
         if guide["strategies"]:
             lines.append("策略顺位  " + " → ".join(guide["strategies"]))
         for stage in guide["stages"]:
@@ -739,6 +939,8 @@ class Dashboard:
             core = [name for name in stage.get("core", []) if viable(name)]
             other = [name for name in stage.get("operators", []) if name not in core and viable(name)]
             lines.append(f"{heading}  核心 {'、'.join(core) or '—'}")
+            if stage.get("plan"):
+                lines.append("      " + stage["plan"])
             if other:
                 lines.append("      可选  " + "、".join(other))
         if guide["equipment"]:

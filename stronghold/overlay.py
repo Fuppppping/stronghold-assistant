@@ -42,17 +42,25 @@ class Overlay:
                               for i, v in enumerate(hit.box)]
             color = {"干员": "#57edd4", "装备": "#ffd087", "策略": "#9cb4ff", "盟约": "#9cb4ff"}[hit.kind]
             self.canvas.create_rectangle(x1 - 2, y1 - 2, x2 + 3, y2 + 3, outline=color, width=2)
-            title = f"★ {hit.name}" if note == "核心干员" else hit.name
+            if note.startswith("核心"):
+                color = "#ffd087"
+                title = f"★ {hit.name} · {note}"
+            elif note.startswith("可用叠层"):
+                title = f"{hit.name} · {note}"
+            else:
+                title = hit.name + " · " + note
             self.label(x1, max(0, y1 - label_offset), title, color, width, font_size)
         if banner:
-            self.label(22, max(18, round(height * .13)), banner, "#57edd4", width, font_size)
+            self.label(22, max(18, round(height * .13)), banner, "#57edd4", width, font_size,
+                       wrap=round(width * .46))
         if not self.shown:
             self.window.deiconify()
             self.shown = True
         windows.move_overlay(self.hwnd, rect)
 
-    def label(self, x, y, text, color, width, font_size):
+    def label(self, x, y, text, color, width, font_size, wrap=None):
         text_id = self.canvas.create_text(x + 9, y + 3, text=text, fill=color,
+                                          width=wrap or min(round(width * .32), 580),
                                           anchor="nw", font=("Microsoft YaHei UI", font_size, "bold"))
         bx1, by1, bx2, by2 = self.canvas.bbox(text_id)
         if bx2 + 9 > width:

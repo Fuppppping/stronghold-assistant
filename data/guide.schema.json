@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "卫戍协议助手攻略",
+  "type": "object",
+  "required": ["id", "name", "targets", "stages"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "plan": {"type": "string"},
+    "targets": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "integer", "minimum": 1}},
+    "stages": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "required": ["name"], "properties": {
+        "name": {"type": "string"}, "timing": {"type": "string"}, "plan": {"type": "string"},
+        "core": {"$ref": "#/$defs/names"}, "operators": {"$ref": "#/$defs/names"}
+      }
+    }},
+    "stacking": {"type": "array", "items": {
+      "type": "object", "required": ["operator", "role"], "properties": {
+        "operator": {"type": "string"}, "role": {"enum": ["core", "available"]}, "note": {"type": "string"}
+      }
+    }},
+    "strategies": {"$ref": "#/$defs/names"},
+    "equipment": {"type": "object", "additionalProperties": {"type": "string"}},
+    "sources": {"type": "array", "items": {
+      "type": "object", "required": ["label", "url"], "properties": {
+        "label": {"type": "string"}, "url": {"type": "string", "pattern": "^https?://"}
+      }
+    }}
+  },
+  "$defs": {"names": {"type": "array", "items": {"type": "string"}}}
+}

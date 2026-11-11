@@ -9,7 +9,8 @@
         "不屈"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "4207_branch"
     },
     {
       "name": "艾丝黛尔",
@@ -19,7 +20,8 @@
         "独行"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "127_estell"
     },
     {
       "name": "幽灵鲨",
@@ -28,7 +30,8 @@
         "阿戈尔"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "143_ghost"
     },
     {
       "name": "野鬃",
@@ -38,7 +41,8 @@
         "助力"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "496_wildmn"
     },
     {
       "name": "慕斯",
@@ -47,7 +51,8 @@
         "维多利亚"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "185_frncat"
     },
     {
       "name": "角峰",
@@ -57,7 +62,8 @@
         "坚守"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "199_yak"
     },
     {
       "name": "灰喉",
@@ -66,7 +72,8 @@
         "精准"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "367_swllow"
     },
     {
       "name": "深靛",
@@ -75,7 +82,8 @@
         "伊比利亚"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "469_indigo"
     },
     {
       "name": "卡达",
@@ -84,7 +92,8 @@
         "奥术"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "328_cammou"
     },
     {
       "name": "摆渡人",
@@ -94,7 +103,8 @@
         "不屈"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "4166_varkis"
     },
     {
       "name": "夏栎",
@@ -103,7 +113,8 @@
         "助力"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "492_quercu"
     },
     {
       "name": "杰克",
@@ -112,7 +123,8 @@
         "突袭"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "347_jaksel"
     },
     {
       "name": "霜叶",
@@ -121,7 +133,8 @@
         "灵巧"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "193_frostl"
     },
     {
       "name": "拜松",
@@ -130,7 +143,8 @@
         "炎"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "325_bison"
     },
     {
       "name": "褐果",
@@ -139,7 +153,8 @@
         "聚合"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "4041_chnut"
     },
     {
       "name": "烈夏",
@@ -148,7 +163,8 @@
         "乌萨斯"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "194_leto"
     },
     {
       "name": "陨星",
@@ -157,7 +173,8 @@
         "迅捷"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "219_meteo"
     },
     {
       "name": "拉普兰德",
@@ -166,7 +183,8 @@
         "叙拉古"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "140_whitew"
     },
     {
       "name": "地灵",
@@ -176,7 +194,8 @@
         "独行"
       ],
       "price": 2,
-      "proto": ""
+      "proto": "",
+      "head": "183_skgoat"
     },
     {
       "name": "折光",
@@ -185,7 +204,8 @@
         "莱塔尼亚"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "499_kaitou"
     },
     {
       "name": "蓝毒",
@@ -194,7 +214,8 @@
         "伊比利亚"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "129_bluep"
     },
     {
       "name": "泡泡",
@@ -204,7 +225,8 @@
         "坚守"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "381_bubble"
     },
     {
       "name": "莎草",
@@ -214,7 +236,8 @@
         "聚合"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4139_papyrs"
     },
     {
       "name": "雪猎",
@@ -224,7 +247,8 @@
         "精准"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4211_snhunt"
     },
     {
       "name": "砾",
@@ -234,7 +258,8 @@
         "不屈"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "237_gravel"
     },
     {
       "name": "复奏",
@@ -245,7 +270,8 @@
         "奇迹"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4031_liesel"
     },
     {
       "name": "奥斯塔",
@@ -254,7 +280,8 @@
         "叙拉古"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "346_aosta"
     },
     {
       "name": "Miss.Christine",
@@ -264,7 +291,8 @@
         "奥术"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4198_christ"
     },
     {
       "name": "哈洛德",
@@ -274,7 +302,8 @@
         "谢拉格"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4114_harold"
     },
     {
       "name": "云迹",
@@ -284,7 +313,8 @@
         "奇迹"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4165_ctrail"
     },
     {
       "name": "蛇屠箱",
@@ -293,7 +323,8 @@
         "坚守"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "150_snakek"
     },
     {
       "name": "波登可",
@@ -303,7 +334,8 @@
         "迅捷"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "258_podego"
     },
     {
       "name": "承曦格雷伊",
@@ -313,7 +345,8 @@
         "灵巧"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "1027_greyy2"
     },
     {
       "name": "锡人",
@@ -322,7 +355,8 @@
         "投资人"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4151_tinman"
     },
     {
       "name": "宴",
@@ -331,7 +365,8 @@
         "不屈"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "337_utage"
     },
     {
       "name": "渡桥",
@@ -340,7 +375,8 @@
         "远见"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4147_mitm"
     },
     {
       "name": "矩",
@@ -349,7 +385,8 @@
         "炎"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4221_ju"
     },
     {
       "name": "星极",
@@ -358,7 +395,8 @@
         "奇迹"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "274_astesi"
     },
     {
       "name": "瑰盐",
@@ -368,7 +406,8 @@
         "聚合"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4163_rosesa"
     },
     {
       "name": "真理",
@@ -377,7 +416,8 @@
         "乌萨斯"
       ],
       "price": 1,
-      "proto": ""
+      "proto": "",
+      "head": "195_glassb"
     },
     {
       "name": "铸铁",
@@ -386,7 +426,8 @@
         "突袭"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "333_sidero"
     },
     {
       "name": "星源",
@@ -395,7 +436,8 @@
         "助力"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "135_halo"
     },
     {
       "name": "安哲拉",
@@ -405,7 +447,8 @@
         "助力"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "218_cuttle"
     },
     {
       "name": "车尔尼",
@@ -415,7 +458,8 @@
         "坚守"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4047_pianst"
     },
     {
       "name": "卡涅利安",
@@ -426,7 +470,8 @@
         "迅捷"
       ],
       "price": 3,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "426_billro"
     },
     {
       "name": "乌啾",
@@ -436,7 +481,8 @@
         "聚合"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4224_turdus"
     },
     {
       "name": "海沫",
@@ -446,7 +492,8 @@
         "不屈"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4066_highmo"
     },
     {
       "name": "旅骨",
@@ -456,7 +503,8 @@
         "精准"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "x796bccd3"
     },
     {
       "name": "风絮",
@@ -466,7 +514,8 @@
         "聚合"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4222_taraxa"
     },
     {
       "name": "极光",
@@ -475,7 +524,8 @@
         "谢拉格"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "422_aurora"
     },
     {
       "name": "耶拉",
@@ -485,7 +535,8 @@
         "奇迹"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4013_kjera"
     },
     {
       "name": "初雪",
@@ -495,7 +546,8 @@
         "协防干员"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "174_slbell"
     },
     {
       "name": "深巡",
@@ -505,7 +557,8 @@
         "坚守"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4137_udflow"
     },
     {
       "name": "斯卡蒂",
@@ -515,7 +568,8 @@
         "突袭"
       ],
       "price": 3,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "263_skadi"
     },
     {
       "name": "瑕光",
@@ -525,7 +579,8 @@
         "突袭"
       ],
       "price": 3,
-      "proto": "预备干员-重装"
+      "proto": "预备干员-重装",
+      "head": "423_blemsh"
     },
     {
       "name": "忍冬",
@@ -535,7 +590,8 @@
         "迅捷"
       ],
       "price": 3,
-      "proto": "郁金香"
+      "proto": "郁金香",
+      "head": "4026_vulpis"
     },
     {
       "name": "伺夜",
@@ -545,7 +601,8 @@
         "精准"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "427_vigil"
     },
     {
       "name": "水灯心",
@@ -556,7 +613,8 @@
         "灵巧"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4177_brigid"
     },
     {
       "name": "空弦",
@@ -566,7 +624,8 @@
         "远见"
       ],
       "price": 3,
-      "proto": "Stormeye"
+      "proto": "Stormeye",
+      "head": "332_archet"
     },
     {
       "name": "吉星",
@@ -575,7 +634,8 @@
         "奇迹"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4203_kichi"
     },
     {
       "name": "伊桑",
@@ -585,7 +645,8 @@
         "突袭"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "355_ethan"
     },
     {
       "name": "罗比菈塔",
@@ -595,7 +656,8 @@
         "助力"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "484_robrta"
     },
     {
       "name": "乌有",
@@ -604,7 +666,8 @@
         "炎"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "455_nothin"
     },
     {
       "name": "历阵锐枪芬",
@@ -614,7 +677,8 @@
         "远见"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "1036_fang2"
     },
     {
       "name": "凯瑟琳",
@@ -624,7 +688,8 @@
         "远见"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4162_cathy"
     },
     {
       "name": "盟约·辅助干员",
@@ -633,7 +698,8 @@
         "调和"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "x7767b876"
     },
     {
       "name": "风丸",
@@ -642,7 +708,8 @@
         "不屈"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4016_kazema"
     },
     {
       "name": "至简",
@@ -651,7 +718,8 @@
         "萨尔贡"
       ],
       "price": 1,
-      "proto": ""
+      "proto": "",
+      "head": "4054_malist"
     },
     {
       "name": "奥尔佳",
@@ -661,7 +729,8 @@
         "灵巧"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "xd3834af3"
     },
     {
       "name": "青枳",
@@ -671,7 +740,8 @@
         "迅捷"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "488_buildr"
     },
     {
       "name": "黑键",
@@ -681,7 +751,8 @@
         "精准"
       ],
       "price": 3,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "4046_ebnhlz"
     },
     {
       "name": "艾雅法拉",
@@ -691,7 +762,8 @@
         "奥术"
       ],
       "price": 3,
-      "proto": "预备干员-术师"
+      "proto": "预备干员-术师",
+      "head": "180_amgoat"
     },
     {
       "name": "赫拉格",
@@ -701,7 +773,8 @@
         "突袭"
       ],
       "price": 3,
-      "proto": "预备干员-近卫"
+      "proto": "预备干员-近卫",
+      "head": "188_helage"
     },
     {
       "name": "维伊",
@@ -711,7 +784,8 @@
         "奥术"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4226_veen"
     },
     {
       "name": "温蒂",
@@ -721,7 +795,8 @@
         "坚守"
       ],
       "price": 3,
-      "proto": "Misery"
+      "proto": "Misery",
+      "head": "400_weedy"
     },
     {
       "name": "流明",
@@ -731,7 +806,8 @@
         "聚合"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "4042_lumen"
     },
     {
       "name": "余",
@@ -741,7 +817,8 @@
         "坚守"
       ],
       "price": 3,
-      "proto": "Mechanist"
+      "proto": "Mechanist",
+      "head": "2026_yu"
     },
     {
       "name": "森蚺",
@@ -751,7 +828,8 @@
         "不屈"
       ],
       "price": 3,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "416_zumama"
     },
     {
       "name": "灵知",
@@ -761,7 +839,8 @@
         "迅捷"
       ],
       "price": 3,
-      "proto": "Raidian"
+      "proto": "Raidian",
+      "head": "206_gnosis"
     },
     {
       "name": "归溟幽灵鲨",
@@ -771,7 +850,8 @@
         "不屈"
       ],
       "price": 3,
-      "proto": "Misery"
+      "proto": "Misery",
+      "head": "1023_ghost2"
     },
     {
       "name": "水月",
@@ -781,7 +861,8 @@
         "灵巧"
       ],
       "price": 3,
-      "proto": "Misery"
+      "proto": "Misery",
+      "head": "437_mizuki"
     },
     {
       "name": "远牙",
@@ -791,7 +872,8 @@
         "精准"
       ],
       "price": 3,
-      "proto": "Stormeye"
+      "proto": "Stormeye",
+      "head": "430_fartth"
     },
     {
       "name": "玛恩纳",
@@ -800,7 +882,8 @@
         "卡西米尔"
       ],
       "price": 3,
-      "proto": "领主·Sharp"
+      "proto": "领主·Sharp",
+      "head": "4064_mlynar"
     },
     {
       "name": "涤火杰西卡",
@@ -810,7 +893,8 @@
         "坚守"
       ],
       "price": 3,
-      "proto": "Mechanist"
+      "proto": "Mechanist",
+      "head": "1034_jesca2"
     },
     {
       "name": "白铁",
@@ -820,7 +904,8 @@
         "助力"
       ],
       "price": 3,
-      "proto": "Raidian"
+      "proto": "Raidian",
+      "head": "4072_ironmn"
     },
     {
       "name": "斥罪",
@@ -830,7 +915,8 @@
         "不屈"
       ],
       "price": 3,
-      "proto": "Mechanist"
+      "proto": "Mechanist",
+      "head": "4065_judge"
     },
     {
       "name": "W",
@@ -839,7 +925,8 @@
         "迅捷"
       ],
       "price": 3,
-      "proto": "Stormeye"
+      "proto": "Stormeye",
+      "head": "113_cqbw"
     },
     {
       "name": "霍尔海雅",
@@ -849,7 +936,8 @@
         "精准"
       ],
       "price": 3,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "4027_heyak"
     },
     {
       "name": "山",
@@ -858,7 +946,8 @@
         "投资人"
       ],
       "price": 3,
-      "proto": "预备干员-近卫"
+      "proto": "预备干员-近卫",
+      "head": "264_f12yin"
     },
     {
       "name": "淬羽赫默",
@@ -867,7 +956,8 @@
         "助力"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "1031_slent2"
     },
     {
       "name": "赫德雷",
@@ -876,7 +966,8 @@
         "突袭"
       ],
       "price": 3,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "4088_hodrer"
     },
     {
       "name": "夜莺",
@@ -886,7 +977,8 @@
         "协防干员"
       ],
       "price": 3,
-      "proto": "Touch"
+      "proto": "Touch",
+      "head": "179_cgbird"
     },
     {
       "name": "仇白",
@@ -896,7 +988,8 @@
         "灵巧"
       ],
       "price": 3,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "4082_qiubai"
     },
     {
       "name": "异客",
@@ -906,7 +999,8 @@
         "奥术"
       ],
       "price": 3,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "472_pasngr"
     },
     {
       "name": "安洁莉娜",
@@ -916,7 +1010,8 @@
         "奇迹"
       ],
       "price": 3,
-      "proto": "Raidian"
+      "proto": "Raidian",
+      "head": "291_aglina"
     },
     {
       "name": "华法琳",
@@ -926,7 +1021,8 @@
         "聚合"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "171_bldsk"
     },
     {
       "name": "寒檀",
@@ -935,7 +1031,8 @@
         "远见"
       ],
       "price": 3,
-      "proto": ""
+      "proto": "",
+      "head": "341_sntlla"
     },
     {
       "name": "纯烬艾雅法拉",
@@ -946,7 +1043,8 @@
         "远见"
       ],
       "price": 4,
-      "proto": "Touch"
+      "proto": "Touch",
+      "head": "1016_agoat2"
     },
     {
       "name": "怒潮凛冬",
@@ -956,7 +1054,8 @@
         "奇迹"
       ],
       "price": 4,
-      "proto": "领主·Sharp"
+      "proto": "领主·Sharp",
+      "head": "1051_headb2"
     },
     {
       "name": "艾丽妮",
@@ -965,7 +1064,8 @@
         "伊比利亚"
       ],
       "price": 4,
-      "proto": "预备干员-近卫"
+      "proto": "预备干员-近卫",
+      "head": "4009_irene"
     },
     {
       "name": "棘刺",
@@ -975,7 +1075,8 @@
         "奥术"
       ],
       "price": 4,
-      "proto": "领主·Sharp"
+      "proto": "领主·Sharp",
+      "head": "293_thorns"
     },
     {
       "name": "黍",
@@ -985,7 +1086,8 @@
         "远见"
       ],
       "price": 4,
-      "proto": "Mechanist"
+      "proto": "Mechanist",
+      "head": "2025_shu"
     },
     {
       "name": "佩佩",
@@ -995,7 +1097,8 @@
         "灵巧"
       ],
       "price": 4,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "4058_pepe"
     },
     {
       "name": "圣聆初雪",
@@ -1005,7 +1108,8 @@
         "奥术"
       ],
       "price": 4,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "1046_sbell2"
     },
     {
       "name": "凛御银灰",
@@ -1016,7 +1120,8 @@
         "投资人"
       ],
       "price": 4,
-      "proto": "郁金香"
+      "proto": "郁金香",
+      "head": "1045_svash2"
     },
     {
       "name": "歌蕾蒂娅",
@@ -1025,7 +1130,8 @@
         "阿戈尔"
       ],
       "price": 4,
-      "proto": ""
+      "proto": "",
+      "head": "474_glady"
     },
     {
       "name": "乌尔比安",
@@ -1034,7 +1140,8 @@
         "阿戈尔"
       ],
       "price": 4,
-      "proto": "预备干员-近卫"
+      "proto": "预备干员-近卫",
+      "head": "4145_ulpia"
     },
     {
       "name": "薇薇安娜",
@@ -1045,7 +1152,8 @@
         "奥术"
       ],
       "price": 4,
-      "proto": "郁金香"
+      "proto": "郁金香",
+      "head": "4098_vvana"
     },
     {
       "name": "铃兰",
@@ -1054,7 +1162,8 @@
         "叙拉古"
       ],
       "price": 4,
-      "proto": "Raidian"
+      "proto": "Raidian",
+      "head": "358_lisa"
     },
     {
       "name": "贝洛内",
@@ -1064,7 +1173,8 @@
         "突袭"
       ],
       "price": 4,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "4037_demetr"
     },
     {
       "name": "维娜·维多利亚",
@@ -1074,7 +1184,8 @@
         "奇迹"
       ],
       "price": 4,
-      "proto": "领主·Sharp"
+      "proto": "领主·Sharp",
+      "head": "1019_siege2"
     },
     {
       "name": "迷迭香",
@@ -1084,7 +1195,8 @@
         "助力"
       ],
       "price": 4,
-      "proto": "Stormeye"
+      "proto": "Stormeye",
+      "head": "391_rosmon"
     },
     {
       "name": "隐德来希",
@@ -1094,7 +1206,8 @@
         "不屈"
       ],
       "price": 4,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "4010_etlchi"
     },
     {
       "name": "塞雷娅",
@@ -1104,7 +1217,8 @@
         "协防干员"
       ],
       "price": 4,
-      "proto": "Mechanist"
+      "proto": "Mechanist",
+      "head": "202_demkni"
     },
     {
       "name": "溯光星源",
@@ -1113,7 +1227,8 @@
         "奥术"
       ],
       "price": 4,
-      "proto": ""
+      "proto": "",
+      "head": "1047_halo2"
     },
     {
       "name": "老鲤",
@@ -1123,7 +1238,8 @@
         "炎"
       ],
       "price": 4,
-      "proto": "Misery"
+      "proto": "Misery",
+      "head": "322_lmlee"
     },
     {
       "name": "Mon3tr",
@@ -1132,7 +1248,8 @@
         "协防干员"
       ],
       "price": 4,
-      "proto": "Touch"
+      "proto": "Touch",
+      "head": "4179_monstr"
     },
     {
       "name": "可露希尔",
@@ -1141,7 +1258,8 @@
         "投资人"
       ],
       "price": 4,
-      "proto": "郁金香"
+      "proto": "郁金香",
+      "head": "4228_closur"
     },
     {
       "name": "“暴躁铁皮”",
@@ -1150,7 +1268,8 @@
         "协防干员"
       ],
       "price": 4,
-      "proto": ""
+      "proto": "",
+      "head": "xea462a74"
     },
     {
       "name": "鸿雪",
@@ -1160,7 +1279,8 @@
         "精准"
       ],
       "price": 4,
-      "proto": "Stormeye"
+      "proto": "Stormeye",
+      "head": "4055_bgsnow"
     },
     {
       "name": "焰尾",
@@ -1170,7 +1290,8 @@
         "迅捷"
       ],
       "price": 4,
-      "proto": "预备干员-先锋"
+      "proto": "预备干员-先锋",
+      "head": "420_flamtl"
     },
     {
       "name": "冻河",
@@ -1180,7 +1301,8 @@
         "迅捷"
       ],
       "price": 4,
-      "proto": "Stormeye"
+      "proto": "Stormeye",
+      "head": "x64833f5f"
     },
     {
       "name": "阿米娅",
@@ -1189,7 +1311,8 @@
         "奇迹"
       ],
       "price": 4,
-      "proto": ""
+      "proto": "",
+      "head": "002_amiya"
     },
     {
       "name": "引星棘刺",
@@ -1199,7 +1322,8 @@
         "迅捷"
       ],
       "price": 4,
-      "proto": "Misery"
+      "proto": "Misery",
+      "head": "1039_thorn2"
     },
     {
       "name": "烛煌",
@@ -1210,7 +1334,8 @@
         "迅捷"
       ],
       "price": 4,
-      "proto": "预备干员-术师"
+      "proto": "预备干员-术师",
+      "head": "1040_blaze2"
     },
     {
       "name": "浊心斯卡蒂",
@@ -1220,7 +1345,8 @@
         "聚合"
       ],
       "price": 4,
-      "proto": "Raidian"
+      "proto": "Raidian",
+      "head": "1012_skadi2"
     },
     {
       "name": "克莱门莎",
@@ -1229,7 +1355,8 @@
         "阿戈尔"
       ],
       "price": 4,
-      "proto": "领主·Sharp"
+      "proto": "领主·Sharp",
+      "head": "xbc2666fc"
     },
     {
       "name": "耀骑士临光",
@@ -1239,7 +1366,8 @@
         "突袭"
       ],
       "price": 4,
-      "proto": "预备干员-近卫"
+      "proto": "预备干员-近卫",
+      "head": "1014_nearl2"
     },
     {
       "name": "荒芜拉普兰德",
@@ -1248,7 +1376,8 @@
         "叙拉古"
       ],
       "price": 4,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "1038_whitw2"
     },
     {
       "name": "酒神",
@@ -1257,7 +1386,8 @@
         "维多利亚"
       ],
       "price": 4,
-      "proto": "Raidian"
+      "proto": "Raidian",
+      "head": "1042_phatm2"
     },
     {
       "name": "逻各斯",
@@ -1267,7 +1397,8 @@
         "远见"
       ],
       "price": 4,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "4133_logos"
     },
     {
       "name": "真言",
@@ -1276,7 +1407,8 @@
         "萨尔贡"
       ],
       "price": 4,
-      "proto": "预备干员-术师"
+      "proto": "预备干员-术师",
+      "head": "4204_mantra"
     },
     {
       "name": "妮芙",
@@ -1286,7 +1418,8 @@
         "远见"
       ],
       "price": 4,
-      "proto": "预备干员-术师"
+      "proto": "预备干员-术师",
+      "head": "4146_nymph"
     },
     {
       "name": "遥",
@@ -1296,7 +1429,8 @@
         "奇迹"
       ],
       "price": 4,
-      "proto": "Raidian"
+      "proto": "Raidian",
+      "head": "4202_haruka"
     },
     {
       "name": "魔王",
@@ -1305,7 +1439,8 @@
         "调和"
       ],
       "price": 4,
-      "proto": ""
+      "proto": "",
+      "head": "4134_cetsyr"
     },
     {
       "name": "史尔特尔",
@@ -1315,7 +1450,8 @@
         "不屈"
       ],
       "price": 4,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "350_surtr"
     },
     {
       "name": "锏",
@@ -1326,7 +1462,8 @@
         "莱塔尼亚"
       ],
       "price": 4,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "4116_blkkgt"
     },
     {
       "name": "机械师",
@@ -1336,7 +1473,8 @@
         "坚守"
       ],
       "price": 4,
-      "proto": ""
+      "proto": "",
+      "head": "4230_mcnist"
     },
     {
       "name": "塔露拉",
@@ -1347,7 +1485,8 @@
         "协防干员"
       ],
       "price": 4,
-      "proto": "Sharp"
+      "proto": "Sharp",
+      "head": "x32fdb746"
     },
     {
       "name": "夕",
@@ -1357,7 +1496,8 @@
         "奥术"
       ],
       "price": 4,
-      "proto": "Pith"
+      "proto": "Pith",
+      "head": "2015_dusk"
     },
     {
       "name": "蕾缪安",
@@ -1366,7 +1506,8 @@
         "精准"
       ],
       "price": 4,
-      "proto": "Stormeye"
+      "proto": "Stormeye",
+      "head": "4193_lemuen"
     },
     {
       "name": "缪尔赛思",
@@ -1375,7 +1516,8 @@
         "协防干员"
       ],
       "price": 4,
-      "proto": "郁金香"
+      "proto": "郁金香",
+      "head": "249_mlyss"
     },
     {
       "name": "帕拉斯",
@@ -1385,7 +1527,8 @@
         "助力"
       ],
       "price": 4,
-      "proto": "Mechanist"
+      "proto": "Mechanist",
+      "head": "485_pallas"
     }
   ],
   "pacts": [
@@ -2295,7 +2438,8 @@
             "青枳",
             "空弦",
             "渡桥"
-          ]
+          ],
+          "plan": "本阶段目标：3 乌萨斯 2 迅捷；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2313,7 +2457,8 @@
             "溯光星源",
             "冻河",
             "怒潮凛冬"
-          ]
+          ],
+          "plan": "本阶段目标：开奥术，找冻河；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2334,7 +2479,8 @@
             "霍尔海雅",
             "青枳",
             "折桠"
-          ]
+          ],
+          "plan": "本阶段目标：6 乌萨斯；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2358,6 +2504,98 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "先维持乌萨斯叠层，四本补冻河；接奥术、迅捷，再找塔露拉完成输出。",
+      "stacking": [
+        {
+          "operator": "折桠",
+          "role": "core",
+          "note": "触发：进入休整期时"
+        },
+        {
+          "operator": "乌啾",
+          "role": "core",
+          "note": "触发：进入休整期时"
+        },
+        {
+          "operator": "赫拉格",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "冻河",
+          "role": "core",
+          "note": "范围内击倒敌人叠乌萨斯与迅捷"
+        },
+        {
+          "operator": "烈夏",
+          "role": "available",
+          "note": "触发：战斗开始时"
+        },
+        {
+          "operator": "塔露拉",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "霍尔海雅",
+          "role": "core",
+          "note": "战斗开技能叠自身盟约；转职需装备"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2391,7 +2629,8 @@
             "承曦格雷伊",
             "Miss.Christine",
             "卡达"
-          ]
+          ],
+          "plan": "本阶段目标：3 莱塔尼亚 2 远见；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2409,7 +2648,8 @@
             "地灵",
             "折光",
             "空弦"
-          ]
+          ],
+          "plan": "本阶段目标：黑键 + 霍尔海雅；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2429,7 +2669,8 @@
             "纯烬艾雅法拉",
             "艾雅法拉",
             "车尔尼"
-          ]
+          ],
+          "plan": "本阶段目标：6 莱塔尼亚；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2449,6 +2690,98 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "低阶叠本家，配精准和奥术补道中；围绕黑键与霍尔海雅安排转职。",
+      "stacking": [
+        {
+          "operator": "地灵",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "折光",
+          "role": "core",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "复奏",
+          "role": "core",
+          "note": "触发：刷新时"
+        },
+        {
+          "operator": "黑键",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "薇薇安娜",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "纯烬艾雅法拉",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "霍尔海雅",
+          "role": "core",
+          "note": "战斗开技能叠自身盟约；转职需装备"
+        },
+        {
+          "operator": "空弦",
+          "role": "core",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "渡桥",
+          "role": "core",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2472,7 +2805,8 @@
             "安哲拉",
             "斯卡蒂",
             "歌蕾蒂娅"
-          ]
+          ],
+          "plan": "本阶段目标：5 阿戈尔；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2490,7 +2824,8 @@
             "深巡",
             "灵知",
             "蓝毒"
-          ]
+          ],
+          "plan": "本阶段目标：6 阿戈尔；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2506,7 +2841,8 @@
             "克莱门莎",
             "帕拉斯",
             "空弦"
-          ]
+          ],
+          "plan": "本阶段目标：吃高阶；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2526,6 +2862,88 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "低阶补齐阿戈尔人数，升级补歌蕾蒂娅；后期用浊心斯卡蒂与高阶输出收尾。",
+      "stacking": [
+        {
+          "operator": "幽灵鲨",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "安哲拉",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "斯卡蒂",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "歌蕾蒂娅",
+          "role": "core",
+          "note": "触发：进入休整期时"
+        },
+        {
+          "operator": "浊心斯卡蒂",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2548,7 +2966,8 @@
             "艾丝黛尔",
             "莎草",
             "至简"
-          ]
+          ],
+          "plan": "本阶段目标：跳本；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2565,7 +2984,8 @@
             "泡泡",
             "艾丝黛尔",
             "乌啾"
-          ]
+          ],
+          "plan": "本阶段目标：鸿雪 / 佩佩；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2581,7 +3001,8 @@
             "帕拉斯",
             "逻各斯",
             "W"
-          ]
+          ],
+          "plan": "本阶段目标：260 层；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2602,6 +3023,88 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "保住前期血量后升本，优先找到鸿雪、佩佩；用叠层支撑高阶输出。",
+      "stacking": [
+        {
+          "operator": "艾丝黛尔",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "泡泡",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "森蚺",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "佩佩",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "鸿雪",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2626,7 +3129,8 @@
             "灵知",
             "哈洛德",
             "华法琳"
-          ]
+          ],
+          "plan": "本阶段目标：找初雪；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2642,7 +3146,8 @@
             "耶拉",
             "初雪",
             "圣聆初雪"
-          ]
+          ],
+          "plan": "本阶段目标：外援叠层；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2658,7 +3163,8 @@
             "帕拉斯",
             "空弦",
             "魔王"
-          ]
+          ],
+          "plan": "本阶段目标：最后召巨人；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2678,6 +3184,108 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "先留本家叠层位，接外援与转职；后期补圣聆初雪，再补输出。",
+      "stacking": [
+        {
+          "operator": "雪猎",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "初雪",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "灵知",
+          "role": "core",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "极光",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "角峰",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "耶拉",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "圣聆初雪",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "凛御银灰",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "锏",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2701,7 +3309,8 @@
             "野鬃",
             "华法琳",
             "流明"
-          ]
+          ],
+          "plan": "本阶段目标：砾 + 瑕光；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2717,7 +3326,8 @@
             "砾",
             "焰尾",
             "薇薇安娜"
-          ]
+          ],
+          "plan": "本阶段目标：二星玛恩纳；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2735,7 +3345,8 @@
             "薇薇安娜",
             "魔王",
             "迷迭香"
-          ]
+          ],
+          "plan": "本阶段目标：6 卡西米尔；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2755,6 +3366,103 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "先利用再部署叠层，中期补玛恩纳和治疗；后期维持本家人数并换高阶输出。",
+      "stacking": [
+        {
+          "operator": "野鬃",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "砾",
+          "role": "core",
+          "note": "部署叠层；注意每场上限"
+        },
+        {
+          "operator": "瑕光",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "历阵锐枪芬",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "远牙",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "焰尾",
+          "role": "available",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "薇薇安娜",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "耀骑士临光",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2783,7 +3491,8 @@
             "温蒂",
             "空弦",
             "青枳"
-          ]
+          ],
+          "plan": "本阶段目标：3 伊比利亚 3 精准；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2799,7 +3508,8 @@
             "海沫",
             "冻河",
             "妮芙"
-          ]
+          ],
+          "plan": "本阶段目标：霍尔海雅；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2816,7 +3526,8 @@
             "霍尔海雅",
             "迷迭香",
             "鸿雪"
-          ]
+          ],
+          "plan": "本阶段目标：棘刺 / 引星棘刺；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2840,6 +3551,103 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "旅骨起步，配精准奥术稳住道中；棘刺系到来后按来牌选择迅捷分支。",
+      "stacking": [
+        {
+          "operator": "深靛",
+          "role": "available",
+          "note": "休整末：本家持续叠层"
+        },
+        {
+          "operator": "旅骨",
+          "role": "core",
+          "note": "休整末：自身与身前按售价叠层"
+        },
+        {
+          "operator": "流明",
+          "role": "available",
+          "note": "触发：战斗结束时"
+        },
+        {
+          "operator": "温蒂",
+          "role": "available",
+          "note": "触发：其他"
+        },
+        {
+          "operator": "海沫",
+          "role": "available",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "棘刺",
+          "role": "core",
+          "note": "休整末：按场上售价总和叠层"
+        },
+        {
+          "operator": "引星棘刺",
+          "role": "core",
+          "note": "休整末：叠伊比利亚与迅捷"
+        },
+        {
+          "operator": "霍尔海雅",
+          "role": "core",
+          "note": "战斗开技能叠自身盟约；转职需装备"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2865,7 +3673,8 @@
             "涤火杰西卡",
             "哈洛德",
             "水灯心"
-          ]
+          ],
+          "plan": "本阶段目标：铁三角；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2882,7 +3691,8 @@
             "阿米娅",
             "玛恩纳",
             "塞雷娅"
-          ]
+          ],
+          "plan": "本阶段目标：6 维多利亚；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2898,7 +3708,8 @@
             "涤火杰西卡",
             "慕斯",
             "白铁"
-          ]
+          ],
+          "plan": "本阶段目标：烛煌 + 酒神；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2919,6 +3730,103 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "前期装备与叠层位一起找，中期补六本家和治疗；后期用烛煌、酒神补输出。",
+      "stacking": [
+        {
+          "operator": "慕斯",
+          "role": "available",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "Miss.Christine",
+          "role": "core",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "涤火杰西卡",
+          "role": "core",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "凯瑟琳",
+          "role": "core",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "白铁",
+          "role": "available",
+          "note": "触发：进入休整期时"
+        },
+        {
+          "operator": "维娜·维多利亚",
+          "role": "core",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "烛煌",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "酒神",
+          "role": "core",
+          "note": "触发：进入休整期时"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -2942,7 +3850,8 @@
             "复奏",
             "奥斯塔",
             "忍冬"
-          ]
+          ],
+          "plan": "本阶段目标：复奏多抓；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -2958,7 +3867,8 @@
             "霍尔海雅",
             "寒檀",
             "夜莺"
-          ]
+          ],
+          "plan": "本阶段目标：空弦 + 伺夜；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -2975,7 +3885,8 @@
             "铃兰",
             "魔王",
             "夜莺"
-          ]
+          ],
+          "plan": "本阶段目标：6 叙拉古 3 精准；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -2999,6 +3910,113 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "利用刷新累积层数，配精准稳住战力；保持经济节奏，再换后期本家。",
+      "stacking": [
+        {
+          "operator": "拉普兰德",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "复奏",
+          "role": "core",
+          "note": "触发：刷新时"
+        },
+        {
+          "operator": "伺夜",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "安洁莉娜",
+          "role": "available",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "奥斯塔",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "忍冬",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "铃兰",
+          "role": "available",
+          "note": "触发：进入休整期时"
+        },
+        {
+          "operator": "荒芜拉普兰德",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "贝洛内",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "斥罪",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "空弦",
+          "role": "core",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     },
@@ -3021,7 +4039,8 @@
             "风絮",
             "乌有",
             "云迹"
-          ]
+          ],
+          "plan": "本阶段目标：攒经济；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "中期",
@@ -3035,7 +4054,8 @@
             "乌有",
             "风絮",
             "云迹"
-          ]
+          ],
+          "plan": "本阶段目标：6 炎；缺关键位时优先补战力与治疗。"
         },
         {
           "name": "成型",
@@ -3049,7 +4069,8 @@
             "老鲤",
             "夕",
             "烛煌"
-          ]
+          ],
+          "plan": "本阶段目标：叠层吃满；缺关键位时优先补战力与治疗。"
         }
       ],
       "strategies": [
@@ -3072,8 +4093,565 @@
         {
           "label": "白樱iridescent",
           "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "前期用经济与过渡卡稳场，中期补炎人数；让仇白等叠层位持续工作。",
+      "stacking": [
+        {
+          "operator": "拜松",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "矩",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "风絮",
+          "role": "available",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "余",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "仇白",
+          "role": "core",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "黍",
+          "role": "available",
+          "note": "触发：获得时"
+        },
+        {
+          "operator": "夕",
+          "role": "available",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "烛煌",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
+        }
+      ]
+    },
+    {
+      "id": "iberia-swift",
+      "name": "伊比利亚 · 迅捷分支",
+      "targets": {
+        "伊比利亚": 6,
+        "迅捷": 3
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R5 · 1–3 本",
+          "core": [
+            "旅骨",
+            "蓝毒"
+          ],
+          "operators": [
+            "深靛",
+            "蓝毒",
+            "瑰盐",
+            "海沫",
+            "旅骨",
+            "温蒂",
+            "空弦",
+            "青枳"
+          ],
+          "plan": "本阶段目标：3 伊比利亚 3 精准；缺关键位时优先补战力与治疗。"
+        },
+        {
+          "name": "中期",
+          "timing": "R6–R9 · 4–5 本",
+          "core": [
+            "冻河",
+            "妮芙"
+          ],
+          "operators": [
+            "霍尔海雅",
+            "旅骨",
+            "温蒂",
+            "流明",
+            "海沫",
+            "冻河",
+            "妮芙"
+          ],
+          "plan": "本阶段目标：霍尔海雅；缺关键位时优先补战力与治疗。"
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 5–6 本",
+          "core": [
+            "引星棘刺",
+            "棘刺"
+          ],
+          "operators": [
+            "引星棘刺",
+            "棘刺",
+            "艾丽妮",
+            "蓝毒",
+            "霍尔海雅",
+            "迷迭香",
+            "鸿雪"
+          ],
+          "plan": "本阶段目标：棘刺 / 引星棘刺；缺关键位时优先补战力与治疗。"
+        }
+      ],
+      "strategies": [
+        "变形同构"
+      ],
+      "equipment": {
+        "伊比利亚骨刺刀": "补伊比利亚",
+        "可靠怀表": "调整技能循环",
+        "迅捷作战粮": "棘刺",
+        "精准狙击镜": "蓝毒"
+      },
+      "sources": [
+        {
+          "label": "白绮Infinity",
+          "url": "https://www.bilibili.com/video/BV1k1WW6AEx7/"
+        },
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV1FnWn6XE5H/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "先按伊比利亚过渡；引星棘刺来得早时接迅捷，用冻河、妮芙补叠层和输出。",
+      "stacking": [
+        {
+          "operator": "深靛",
+          "role": "available",
+          "note": "休整末：本家持续叠层"
+        },
+        {
+          "operator": "旅骨",
+          "role": "core",
+          "note": "休整末：自身与身前按售价叠层"
+        },
+        {
+          "operator": "流明",
+          "role": "available",
+          "note": "触发：战斗结束时"
+        },
+        {
+          "operator": "温蒂",
+          "role": "available",
+          "note": "触发：其他"
+        },
+        {
+          "operator": "海沫",
+          "role": "available",
+          "note": "触发：休整期结束时"
+        },
+        {
+          "operator": "棘刺",
+          "role": "core",
+          "note": "休整末：按场上售价总和叠层"
+        },
+        {
+          "operator": "引星棘刺",
+          "role": "core",
+          "note": "休整末：叠伊比利亚与迅捷"
+        },
+        {
+          "operator": "霍尔海雅",
+          "role": "core",
+          "note": "战斗开技能叠自身盟约；转职需装备"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
+        },
+        {
+          "operator": "冻河",
+          "role": "core",
+          "note": "范围内击倒敌人叠乌萨斯与迅捷"
+        },
+        {
+          "operator": "妮芙",
+          "role": "core",
+          "note": "战斗中触发叠层"
+        }
+      ]
+    },
+    {
+      "id": "common-stacking",
+      "name": "通用 · 助力远见过渡",
+      "targets": {
+        "助力": 2,
+        "远见": 2
+      },
+      "plan": "先拿通用叠层与过渡卡保战力，再根据实际来牌转入可用核心盟约；这是一套过渡思路。",
+      "stages": [
+        {
+          "name": "起步",
+          "timing": "低阶",
+          "core": [
+            "渡桥",
+            "空弦"
+          ],
+          "operators": [
+            "青枳",
+            "星源",
+            "夏栎"
+          ]
+        },
+        {
+          "name": "转型",
+          "timing": "中后期",
+          "core": [],
+          "operators": [
+            "淬羽赫默",
+            "华法琳",
+            "塞雷娅",
+            "Mon3tr"
+          ]
+        }
+      ],
+      "stacking": [
+        {
+          "operator": "渡桥",
+          "role": "core",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "core",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
+        }
+      ],
+      "strategies": [],
+      "equipment": {
+        "盟约之币": "配合早期过渡与经济"
+      },
+      "sources": [
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ]
+    },
+    {
+      "id": "egir-assist",
+      "name": "阿戈尔 · 助力补层",
+      "targets": {
+        "阿戈尔": 6,
+        "助力": 2
+      },
+      "stages": [
+        {
+          "name": "前期",
+          "timing": "R1–R5 · 1–3 本",
+          "core": [
+            "斯卡蒂",
+            "深巡"
+          ],
+          "operators": [
+            "深巡",
+            "幽灵鲨",
+            "安哲拉",
+            "斯卡蒂",
+            "歌蕾蒂娅"
+          ],
+          "plan": "本阶段目标：5 阿戈尔；缺关键位时优先补战力与治疗。"
+        },
+        {
+          "name": "中期",
+          "timing": "R6–R9 · 3–4 本",
+          "core": [
+            "歌蕾蒂娅",
+            "淬羽赫默"
+          ],
+          "operators": [
+            "斯卡蒂",
+            "歌蕾蒂娅",
+            "乌尔比安",
+            "归溟幽灵鲨",
+            "水月",
+            "深巡",
+            "灵知",
+            "蓝毒"
+          ],
+          "plan": "本阶段目标：6 阿戈尔；缺关键位时优先补战力与治疗。"
+        },
+        {
+          "name": "成型",
+          "timing": "R10–R14 · 4–5 本",
+          "core": [
+            "浊心斯卡蒂",
+            "乌尔比安"
+          ],
+          "operators": [
+            "浊心斯卡蒂",
+            "乌尔比安",
+            "歌蕾蒂娅",
+            "克莱门莎",
+            "帕拉斯",
+            "空弦"
+          ],
+          "plan": "本阶段目标：吃高阶；缺关键位时优先补战力与治疗。"
+        }
+      ],
+      "strategies": [
+        "得闲饮茶"
+      ],
+      "equipment": {
+        "变形同构体": "帕拉斯",
+        "阿戈尔重刃": "补阿戈尔",
+        "炎国短刀": "额外输出",
+        "突袭手雷": "补突袭"
+      },
+      "sources": [
+        {
+          "label": "晓杰425",
+          "url": "https://www.bilibili.com/video/BV1FnWn6XEA5/"
+        },
+        {
+          "label": "白樱iridescent",
+          "url": "https://www.bilibili.com/opus/1268367330752069664"
+        },
+        {
+          "label": "白樱iridescent · 规程通用叠层与经济卡（11-09）",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        },
+        {
+          "label": "编辑分支 · 参考阿戈尔实战及通用叠层攻略",
+          "url": "https://www.bilibili.com/video/BV1ZBW46eEdW/"
+        }
+      ],
+      "plan": "保持六阿戈尔人数，优先淬羽赫默和助力外援；后期再补浊心斯卡蒂与输出位。",
+      "stacking": [
+        {
+          "operator": "幽灵鲨",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "安哲拉",
+          "role": "available",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "斯卡蒂",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "淬羽赫默",
+          "role": "available",
+          "note": "休整末：利用备战区干员叠层"
+        },
+        {
+          "operator": "歌蕾蒂娅",
+          "role": "core",
+          "note": "触发：进入休整期时"
+        },
+        {
+          "operator": "浊心斯卡蒂",
+          "role": "core",
+          "note": "触发：战斗中"
+        },
+        {
+          "operator": "渡桥",
+          "role": "available",
+          "note": "休整末：自身及身前叠层"
+        },
+        {
+          "operator": "空弦",
+          "role": "available",
+          "note": "休整末：为身前干员叠层"
+        },
+        {
+          "operator": "青枳",
+          "role": "available",
+          "note": "休整末：兼顾迅捷与身后干员"
+        },
+        {
+          "operator": "夏栎",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "星源",
+          "role": "available",
+          "note": "休整末：支援层数最多盟约，备战区可用"
+        },
+        {
+          "operator": "塞雷娅",
+          "role": "available",
+          "note": "休整末：复制身前相应特质"
+        },
+        {
+          "operator": "华法琳",
+          "role": "available",
+          "note": "让身前干员开技能时叠层"
+        },
+        {
+          "operator": "阿米娅",
+          "role": "available",
+          "note": "支援身前干员的战斗叠层"
+        },
+        {
+          "operator": "Mon3tr",
+          "role": "available",
+          "note": "支援周围八格的战斗叠层上限"
         }
       ]
     }
-  ]
+  ],
+  "updated": "2026-11-11"
 }

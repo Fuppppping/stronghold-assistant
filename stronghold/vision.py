@@ -9,6 +9,8 @@ from PIL import Image, ImageStat
 from rapidocr import RapidOCR
 
 from .domain import DATA, Hit, Reading, key
+from .stock import Holding
+from .portraits import PortraitReader
 
 WIDTH, HEIGHT = 1280, 720
 
@@ -58,6 +60,9 @@ class Recognizer:
         self.strategy_templates = self.load_strategies()
         roster = json.loads((DATA / "operator_names.json").read_text(encoding="utf-8"))
         self.roster_names = self.season.names["干员"] | {key(name): name for name in roster}
+        self.last_scene = "盟约选择"
+        self.ban_continuation = False
+        self.portraits = PortraitReader(season)
 
     def load_strategies(self):
         templates = {}
@@ -114,6 +119,10 @@ class Recognizer:
         region = game_region(image)
         frame = image.crop(region).convert("RGB").resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
         reading = self.read(frame, forced, roi)
+        if reading.scene:
+            self.last_scene = reading.scene
+            if reading.scene != "盟约选择":
+                self.ban_continuation = False
         x, y, x2, y2 = region
 
         def real_box(box):
@@ -127,7 +136,13 @@ class Recognizer:
         reading = Reading()
         if max(ImageStat.Stat(frame.resize((32, 18))).stddev) < 3:
             return reading
-        if not forced:
+        cards = self.portraits.cards(frame) if not forced or forced == "队友阵容" else []
+        team_hits, teams = self.portraits.team(frame, cards)
+        if teams and not forced:
+            reading.scene = "队友阵容"
+            reading.hits, reading.team_holdings = team_hits, teams
+            return reading
+        if not forced and self.last_scene not in {"盟约选择", "策略轮选", "自选编队", "队友阵容"}:
             buttons = self.ocr(frame, (980, 375, 1280, 560), 1.5)
             controls = " ".join(key(line.text) for line in buttons)
             visible_buttons = sum(button in controls for button in ("刷新", "冻结"))
@@ -146,15 +161,45 @@ class Recognizer:
         lines = self.ocr(frame, roi or (0, 0, WIDTH, HEIGHT), 1.1)
         reading.text = [line.text for line in lines]
         text = " ".join(key(line.text) for line in lines)
-        reading.setup = any(line.box[1] < 85 and "13确认本局信息" in key(line.text) for line in lines)
+        reading.setup = any(line.box[1] < 100 and re.search(r"(?:13)?确认本局信息", key(line.text))
+                            for line in lines)
+        reading.reset_hint = ("开始模拟" in text and any(mark in text for mark in (
+            "极速模拟", "标准模拟", "险境模拟", "规程等级"))) or any(
+                mark in text for mark in ("本次模拟已结束", "模拟终止", "返回协议主页"))
         info_panel = "本局信息" in text and ("核心盟约" in text or "附加盟约" in text)
         if not forced and "客户端版本已过时" in text:
             reading.scene = "游戏客户端需要更新"
+        elif forced == "队友阵容" or any(mark in text for mark in ("队友阵容", "队伍详情", "同盟干员")):
+            reading.scene = "队友阵容"
+            detail = self.ocr(frame, roi or (300, 85, 1260, 705), 1.6)
+            reading.hits, reading.holdings = self.read_holdings(detail)
+            if teams:
+                reading.hits, reading.team_holdings = team_hits, teams
+        elif not forced and "刷新" in text and ("冻结" in text or "收起" in text):
+            reading.scene = "调度中心"
+            reading.hits = self.hits(self.ocr(frame, (90, 655, 1150, 710), 1.8), ("装备", "干员"))
         elif forced == "盟约选择" or info_panel or any(anchor in text for anchor in (
             "盟约选择", "选择盟约", "盟约随机", "禁用干员", "不可用干员", "盟约结果", "确认本局信息", "可选型核心盟约组",
         )):
             reading.scene = "盟约选择"
             self.read_bans(frame, lines, reading, roi)
+            if any(re.search(r"禁用干员|不可用干员", key(line.text)) for line in lines):
+                # Small names at the bottom of the scrolling panel need a second, enlarged pass.
+                detail = self.ocr(frame, (350, 85, 1260, 705), 1.8)
+                self.read_bans(frame, detail, reading, None)
+                headings = [line for line in lines if re.search(r"禁用干员|不可用干员", key(line.text))]
+                top = min(line.box[3] for line in headings)+8
+                if top < 660:
+                    portraits = self.portraits.read(frame, self.portraits.cards(frame, (350, top, 1260, 705)))
+                    reading.hits.extend(portraits)
+                    reading.excluded.update(hit.name for hit in portraits)
+                    reading.verified_panel |= bool(portraits)
+            elif self.ban_continuation and reading.setup and not any(
+                    "核心盟约" in key(line.text) or "附加盟约" in key(line.text) for line in lines):
+                portraits = self.portraits.read(frame, self.portraits.cards(frame, (350, 90, 1260, 705)))
+                reading.hits.extend(portraits)
+                reading.excluded.update(hit.name for hit in portraits)
+                reading.verified_panel |= bool(portraits)
         elif forced == "策略轮选" or any(anchor in text for anchor in (
             "策略轮选", "选择策略", "策略选择", "请选择一项策略", "选择你的策略",
         )):
@@ -167,6 +212,24 @@ class Recognizer:
             reading.scene = "装备选择"
             reading.hits = self.hits(lines, ("装备",))
         return reading
+
+    def read_holdings(self, lines):
+        hits, counts = [], {}
+        for line in lines:
+            value = key(line.text)
+            name = self.roster_names.get(value)
+            if not name or line.confidence < .83:
+                continue
+            if any(hit.name == name and box_distance(hit.box, line.box) < 20 for hit in hits):
+                continue
+            hits.append(Hit("干员", name, line.box, line.confidence))
+            x, y = box_center(line.box)
+            labels = [key(label.text) for label in lines
+                      if abs(box_center(label.box)[0]-x) < 90
+                      and abs(box_center(label.box)[1]-y) < 42]
+            kind = 1 if "精锐" in labels else 0 if "普通" in labels else 2
+            counts.setdefault(name, [0, 0, 0])[kind] += 1
+        return hits, [Holding(name, *count) for name, count in counts.items()]
 
     def read_roster(self, lines):
         disabled = [line.box for line in lines if key(line.text) == "本局禁用"]
@@ -211,7 +274,14 @@ class Recognizer:
         status = None
         group_rows = {}
         group_boxes = {}
-        ban_scope = None
+        has_heading = any(re.search(r"禁用干员|不可用干员|不会出现的干员|干员禁用", key(line.text)) for line in lines)
+        has_pacts = any("核心盟约" in key(line.text) or "附加盟约" in key(line.text) for line in lines)
+        # The scroll title can move out of the viewport; only continue an already observed BAN section.
+        ban_scope = (350, 70, 1260, 705) if self.ban_continuation and not has_pacts and reading.setup else None
+        if has_heading:
+            self.ban_continuation = True
+        elif has_pacts:
+            self.ban_continuation = False
         pacts = self.season.names["盟约"]
         for line in sorted(lines, key=lambda line: (line.box[1] // 18, line.box[0])):
             value = key(line.text)
@@ -262,6 +332,8 @@ class Recognizer:
                 reading.groups = [left, right]
         if not reading.groups:
             reading.selected_group = None
+        if reading.excluded and has_heading:
+            reading.verified_panel = True
 
     def read_pact_panel(self, frame, lines, reading):
         headers = {}
