@@ -1,6 +1,30 @@
-# 卫戍协议助手
+# 卫戍协议助手 · Stronghold Assistant
 
 面向 Windows 的《明日方舟》卫戍协议·规程（序列 I）桌面助手。程序读取游戏画面，在前台游戏窗口上方显示鼠标穿透标记。数据和 OCR 模型随 Windows 版本提供，识别在本机运行。
+
+当前版本 **0.3.0**，支持简中官方 PC 客户端及可抓取画面的模拟器。该项目为玩家工具，由本仓库维护，与游戏官方、MAA、MaaFramework 和攻略作者均无隶属关系。
+
+## 下载
+
+前往 **[GitHub Releases 下载 Windows 体验包](https://github.com/Fuppppping/stronghold-assistant/releases/latest)**，解压整个压缩包后运行 `StrongholdAssistant.exe`，无需安装 Python。压缩包同时提供使用说明、攻略 JSON 模板及第三方许可文件。
+
+源代码下载使用仓库的 Code → Download ZIP，或 `git clone https://github.com/Fuppppping/stronghold-assistant.git`。仓库中的源码不包含 OCR 模型权重；Release 的 Windows 程序包含模型。
+
+## 功能
+
+| 功能 | 当前行为 |
+| --- | --- |
+| 客户端绑定 | 自动寻找官方 PC 客户端或模拟器，可手动选择窗口 |
+| 开局 BAN | 有效盟约首帧立即推算禁用姓名，滚动名单补读文字和标准头像，区分推算与直接识别 |
+| 本局状态 | 新局自动清空旧 BAN、已见卡和队友快照，保留个人装备偏好与选定攻略 |
+| 可用干员池 | 按核心、附加盟约分组，区分确认可用、禁用和待确认 |
+| 攻略与策略 | 内置 13 套阵容/分支，策略轮选提示，可导入自定义 JSON |
+| 穿透浮层 | 游戏前台显示非激活置顶提示，常驻攻略思路，区分核心与可用叠层角色 |
+| 装备提醒 | 跟随攻略、手动勾选或屏蔽，屏蔽优先 |
+| 队友记牌 | 识别总览头像，按玩家行覆盖快照，可手动校正星级；余量为估算 |
+| 离线回放 | 导入截图检查场景、识别结果与提示，无需操作游戏 |
+
+主要限制：头像模板覆盖固定池 143 名干员；皮肤、自选干员或模糊画面可能漏识别。当前赛季总池量未可靠核实，默认显示占用下限。联机实局识别仍需继续校准，当前没有自动回合识别或完整自动对局功能。
 
 ## 开始使用
 
@@ -47,7 +71,7 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe main.py
 ```
 
-离线诊断单帧，默认自动判断场景。`--scene` 可指定 `调度中心`、`盟约选择`、`策略轮选`、`自选编队` 或 `装备选择`。
+离线诊断单帧，默认自动判断场景。`--scene` 可指定 `调度中心`、`盟约选择`、`策略轮选`、`自选编队`、`装备选择` 或 `队友阵容`。
 `--output result.json` 将诊断结果保存到文件，免安装版本也可使用。
 
 ```powershell
@@ -55,7 +79,53 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m unittest discover -s tests
 ```
 
-打包需要先安装 `pyinstaller==6.22.3`，再在仓库根目录执行 `build.ps1`。本地设置、导入的攻略及运行日志在 `%LOCALAPPDATA%\StrongholdAssistant`，可用 `STRONGHOLD_STATE` 指定其他位置。
+打包需要先安装 `pyinstaller==6.22.3`，再在仓库根目录执行 `build.ps1`。构建环境的第三方声明可用 `python tools/collect_notices.py` 更新，发布时将根目录许可和 `licenses/` 一并提供。MaaFramework 的替换库方法与源码见 [第三方说明](THIRD_PARTY_NOTICES.md)。
+
+本地设置、导入的攻略及运行日志在 `%LOCALAPPDATA%\StrongholdAssistant`，可用 `STRONGHOLD_STATE` 指定其他位置。公开仓库不包含个人配置、账号截图或原始录屏。
+
+### 目录
+
+```text
+main.py                   GUI 与离线识别入口
+stronghold/app.py         桌面界面、抓屏线程与状态展示
+stronghold/vision.py      ROI OCR、场景与盟约识别
+stronghold/portraits.py   禁用名单及队友头像匹配
+stronghold/domain.py      本局状态、可用池、攻略排序与提醒
+stronghold/stock.py       按玩家记录持有量与估算余量
+stronghold/windows.py    Win32 窗口绑定和抓屏
+stronghold/overlay.py    置顶、非激活、鼠标穿透浮层
+stronghold/pc_input.py   MaaFramework 显式单步输入
+data/                    本期图鉴、识别模板与攻略 JSON Schema
+tests/                   规则、状态、攻略校验与输入保护测试
+licenses/                上游许可证和第三方声明原文
+```
+
+0.3.0 已通过 23 项自动测试和 8 组画面回放；PC 客户端的原有实机验证与本次回放范围在下方来源及 [更新记录](CHANGELOG.md) 中说明。复现规则测试无需个人截图。
+
+## 参考代码与组件来源
+
+本项目参考 MAA 的截图、ROI、模板识别和 PC 控制思路，使用 MAA 战斗图鉴中的简中名称作为字典；没有集成 MAA 主程序。实际单步输入调用的是 **MaaFramework**，应用的界面、本局状态、攻略整合和提醒逻辑在本仓库实现。
+
+| 项目 / 组件 | 用途 | 来源 |
+| --- | --- | --- |
+| MAA | 设计参考、PC 方案与干员名称字典；上游 AGPL-3.0 | [MAA 源码](https://github.com/MaaAssistantArknights/MaaAssistantArknights)、[battle_data.json](https://github.com/MaaAssistantArknights/MaaAssistantArknights/blob/dev-v2/resource/battle_data.json)、[PC 参考讨论](https://github.com/MaaAssistantArknights/MaaAssistantArknights/pull/18256) |
+| MaaFramework / MaaFw 5.15.0 | Win32 单步控制与截图接口；LGPL-3.0 | [固定版本源码](https://github.com/MaaXYZ/MaaFramework/tree/v5.15.0)、[Python 示例](https://github.com/MaaXYZ/MaaFramework/blob/v5.15.0/sample/python/demo1.py) |
+| RapidOCR 3.10.0 | 本地 OCR；Apache-2.0 | [RapidAI/RapidOCR](https://github.com/RapidAI/RapidOCR) |
+| PaddleOCR PP-OCRv6 | 文本检测、识别模型，RapidOCR 提供 ONNX 封装；Apache-2.0 | [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) |
+| ONNX Runtime 1.31.1 | CPU 推理；MIT | [microsoft/onnxruntime](https://github.com/microsoft/onnxruntime) |
+| OpenCV Headless 5.0.0.93 | 图像处理和模板匹配；Apache-2.0 | [OpenCV Python](https://github.com/opencv/opencv-python) |
+| NumPy 2.5.4 / Pillow 13.0.0 | 数组运算、抓屏、图像转换；BSD 系 / MIT-CMU 等 | [NumPy](https://github.com/numpy/numpy)、[Pillow](https://github.com/python-pillow/Pillow) |
+| Python 3.12 / tkinter / ctypes | 桌面 UI、窗口浮层、Windows 系统接口 | [CPython](https://github.com/python/cpython)、[Tcl/Tk](https://www.tcl.tk/)、[Win32 API](https://learn.microsoft.com/windows/win32/api/) |
+| PyInstaller 6.22.3 | Windows 打包；GPL 含 bootloader exception | [PyInstaller](https://github.com/pyinstaller/pyinstaller) |
+| PRTS / SquadPool | 本期干员、盟约、策略、装备及阵容资料；图标与头像来自游戏 | [PRTS 图鉴](https://prts.wiki/w/卫戍协议·规程/PRTS盟约记录)、[SquadPool](https://squad-pool.com/arknights-pacts) |
+
+完整间接依赖、模型来源与哈希、素材版权、参考与实际集成的区别，见 **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)** 和 **[DEPENDENCIES.json](DEPENDENCIES.json)**。攻略原作者及链接保留在每套阵容的 `sources` 中，可在应用里打开。
+
+## 许可
+
+原创应用代码和原创项目文档采用 [MIT](LICENSE)。PRTS 衍生文字按上游声明保留 **CC BY-NC-SA 3.0**；游戏名称、头像、美术及商标归鹰角网络及相应权利人；攻略表达归原作者。模型、第三方组件、游戏素材和攻略不因本仓库公开而统一改为 MIT。
+
+再分发体验包时保留第三方声明和许可证目录，具体内容见 [第三方说明](THIRD_PARTY_NOTICES.md)。
 
 ## 资料
 
