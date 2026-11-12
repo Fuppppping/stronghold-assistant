@@ -21,6 +21,7 @@ from .overlay import Overlay
 from .floating import FloatingAssistant
 from .cadence import ScanCadence
 from .planning import choose_stage, round_range
+from .recommendation import pivot_advice
 from .pc_input import operate_shop
 from .vision import Recognizer
 from .stock import Holding
@@ -125,6 +126,10 @@ class Dashboard:
             self.guide_id = ""
         self.phase_choice = tk.StringVar(value='自动')
         self.phase_caption = tk.StringVar(value='先选定阵容')
+        self.own_source = tk.StringVar(value='未指定')
+        self.own_status = tk.StringVar()
+        self.pivot_text = tk.StringVar()
+        self.owned_names = None
         self.enabled = set(settings.get("enabled", [])) & self.season.equipment.keys()
         self.muted = set(settings.get("muted", [])) & self.season.equipment.keys()
         self.capacities = {int(k): v for k, v in settings.get("pool_capacity", {}).items()
@@ -480,9 +485,22 @@ class Dashboard:
         self.button(bar, "导入攻略 JSON", self.import_guide).pack(side="left", padx=8)
         self.button(bar, "打开攻略来源", self.open_guide_source).pack(side="left")
         self.button(bar, "JSON 格式与模板", self.guide_format).pack(side="left", padx=8)
-        self.guide_tree = self.tree(self.guides, ("name", "viability", "reason", "strategies"),
-                                    ("阵容 · 按整套卡牌适配排序", "整套适配", "缺牌 / 替代依据", "推荐策略"),
-                                    (220, 130, 340, 180), height=5)
+        source = ttk.Frame(self.guides)
+        source.pack(fill='x',pady=(8,0))
+        self.label(source,'我方来源').pack(side='left',padx=(0,6))
+        selector = ttk.Combobox(source,textvariable=self.own_source,values=('未指定','面板1','面板2','面板3','面板4'),state='readonly',width=10)
+        selector.pack(side='left')
+        selector.bind('<<ComboboxSelected>>',self.change_own_source)
+        self.button(source,'查看 / 校正持有',self.show_owned_roster).pack(side='left',padx=8)
+        self.owned_summary = self.label(self.guides,textvariable=self.own_status,style='Sub.TLabel',wraplength=880)
+        self.owned_summary.pack(anchor='w',pady=(4,0))
+        self.pivot_summary = self.label(self.guides,textvariable=self.pivot_text,wraplength=880,foreground=TEAL,
+                                       font=('Microsoft YaHei UI',9))
+        self.pivot_summary.pack(anchor='w',pady=(4,6))
+        self.guides.bind('<Configure>',self.wrap_guide_context,add='+')
+        self.guide_tree = self.tree(self.guides, ("name", "viability", "held", "reason", "strategies"),
+                                    ("阵容 · 按适配与持有排序", "BAN适配", "持有加权", "依据 / 未记录项", "推荐策略"),
+                                    (220, 150, 85, 340, 160), height=5)
         self.guide_tree.bind("<<TreeviewSelect>>", lambda _: self.guide_detail())
         self.guide_tree.bind("<Double-1>", lambda _: self.select_guide())
         details_panel = SectionPanel(self.guides,'攻略详情 / OPERATION NOTES')
@@ -501,6 +519,7 @@ class Dashboard:
         ban, stock = ttk.Frame(tabs, padding=8), ttk.Frame(tabs, padding=8)
         tabs.add(ban, text="本局 BAN 名单")
         tabs.add(stock, text="队友阵容 / 共享卡池")
+        self.stock_tabs = tabs
         self.ban_summary = self.label(ban, wraplength=880)
         self.ban_summary.pack(anchor="w")
         self.ban_tree = self.tree(ban, ("name", "reason", "pacts"),
@@ -514,7 +533,9 @@ class Dashboard:
                      state="readonly", width=8).pack(side="left")
         self.button(bar, "从当前队友面板读取", self.capture_roster).pack(side="left", padx=5)
         self.button(bar, "清除此人记录", self.clear_roster).pack(side="left")
+        self.button(bar,'设为我方',self.mark_own_panel).pack(side='left',padx=5)
         self.button(bar, "设置总池量", self.pool_capacity).pack(side="right")
+        self.label(stock,textvariable=self.own_status,style='Sub.TLabel',wraplength=880).pack(anchor='w',pady=(4,0))
         self.stock_summary = self.label(stock, style="Sub.TLabel", wraplength=880)
         self.stock_summary.pack(anchor="w", pady=5)
         self.stock_tree = self.tree(stock, ("name", "tier", "used", "remaining"),
@@ -775,7 +796,27 @@ class Dashboard:
 
     def clear_roster(self):
         self.match.stock.forget(self.stock_slot.get())
-        self.update_stock()
+        self.update_views()
+
+    def change_own_source(self, _=None):
+        choice = self.own_source.get()
+        self.match.stock.own_slot = choice if choice in ('面板1','面板2','面板3','面板4') else ''
+        self.update_views()
+
+    def wrap_guide_context(self, event):
+        width = max(280,event.width-16)
+        self.owned_summary.configure(wraplength=width)
+        self.pivot_summary.configure(wraplength=width)
+
+    def show_owned_roster(self):
+        self.navigate(2)
+        self.stock_tabs.select(1)
+        if self.match.stock.own_slot:
+            self.stock_slot.set(self.match.stock.own_slot)
+
+    def mark_own_panel(self):
+        self.own_source.set(self.stock_slot.get())
+        self.change_own_source()
 
     def choose_stock_operator(self, _=None):
         selected = self.stock_tree.selection()
@@ -798,7 +839,7 @@ class Dashboard:
             return
         name, slot = self.stock_operator.get(), self.stock_slot.get()
         self.match.stock.correct(slot, Holding(name, *values))
-        self.update_stock()
+        self.update_views()
 
     def pool_capacity(self):
         window = tk.Toplevel(self.root)
@@ -956,8 +997,9 @@ class Dashboard:
                         self.submit(self.window.hwnd)
                 else:
                     self.status.set("等待客户端 · 打开明日方舟或模拟器，或从下拉框手动绑定")
-        if (self.current_plan.stage and not self.current_plan.manual
-                and self.match.progress.current_round() is None):
+        if ((self.current_plan.stage and not self.current_plan.manual
+                and self.match.progress.current_round() is None)
+                or self.owned_names != self.match.stock.own_names()):
             self.update_views()
         self.paint_overlay()
         if self.floating and self.floating.active:
@@ -1121,7 +1163,11 @@ class Dashboard:
         self.view_revision += 1
         visible = [hit.name for hit in self.reading.hits
                    if hit.kind == "干员" and self.reading.scene in {"调度中心", "自选编队"}]
-        ranked, self.fits = self.season.evaluate(self.states, self.match.excluded, visible, self.match.seen)
+        self.owned_names = self.match.stock.own_names()
+        ranked, self.fits = self.season.evaluate(self.states, self.match.excluded, visible, self.match.seen, self.owned_names)
+        self.own_source.set(self.match.stock.own_slot or '未指定')
+        self.own_status.set(self.match.stock.own_status())
+        self.pivot_text.set(pivot_advice(self.guide_id,ranked,self.fits,self.owned_names))
         self.strategy_advice = self.guide
         if not self.strategy_advice and self.reading.scene == "策略轮选":
             self.strategy_advice = self.season.strategy_guide(
@@ -1182,7 +1228,7 @@ class Dashboard:
                     names.append(item['operator']+('?' if state is None else ''))
             self.role_names[role]=names
         self.format_role_labels()
-        self.fit_text.configure(text=fit.label+'\n'+fit.reason,foreground=GOLD if fit.blocked_core or not fit.viable else SECONDARY)
+        self.fit_text.configure(text=fit.ranking_label+'\n'+fit.reason,foreground=GOLD if fit.blocked_core or not fit.viable else SECONDARY)
 
     def update_bans(self):
         banned = self.season.banned(self.states, self.match.excluded, self.match.seen)
@@ -1250,7 +1296,10 @@ class Dashboard:
             fit = self.fits[guide['id']]
             tag = "no" if not fit.viable else "maybe" if fit.blocked_core or fit.unknown_core or fit.pending_roles else "yes"
             selected = "✓  " if guide["id"] == self.guide_id else ""
-            rows.append((guide["id"], (selected + guide["name"], fit.label, fit.reason, " → ".join(guide["strategies"])), tag))
+            own = fit.ownership
+            reason = fit.reason+('；'+own.reason if own else '')
+            rows.append((guide["id"], (selected + guide["name"], fit.label, f'+{own.bonus}' if own else '—',
+                                      reason, " → ".join(guide["strategies"])), tag))
         self.fill(self.guide_tree, rows)
         if not self.guide_tree.selection() and rows:
             self.guide_tree.selection_set(self.guide_id or rows[0][0])
@@ -1264,6 +1313,13 @@ class Dashboard:
         lines = ["成型目标  " + " · ".join(f"{pact} ×{count}" for pact, count in guide["targets"].items())]
         fit = self.fits[guide['id']]
         lines.append("整套适配  " + fit.label + "；" + fit.reason)
+        lines.append('我方记录  '+self.match.stock.own_status())
+        if fit.ownership:
+            own = fit.ownership
+            lines.append(f'持有加权 +{own.bonus}；'+own.reason)
+            lines.append('未记录核心（不等于未拥有）  '+('、'.join(own.unrecorded_core) or '无'))
+            lines.append('已记录功能位  '+('、'.join(own.ready_roles) or '暂无'))
+        lines.append('转阵比较只用 BAN 与可见持有；未计经济与装备，攻略外的已有卡不等于必须卖出。')
         lines.append("分数是当前 BAN 与可用池的适配分，不是胜率；? 为待确认，功能位候选不代表等强替换。")
         for role in guide.get("requirements", []):
             candidates = [name for name in role['operators'] if self.season.status(

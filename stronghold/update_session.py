@@ -51,6 +51,8 @@ def restore_session(app, plan_file):
                                               snap["updated"], snap["source"])
     match.stock.manual = {slot: {name: Holding(**item) for name, item in items.items()}
                          for slot, items in raw["stock"]["manual"].items()}
+    own_slot = raw['stock'].get('own_slot','')
+    match.stock.own_slot = own_slot if own_slot in ('面板1','面板2','面板3','面板4') else ''
     progress = raw.get('progress', {})
     if isinstance(progress, dict):
         number, updated, manual = progress.get('round_number'), progress.get('updated', 0), progress.get('manual', {})

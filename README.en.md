@@ -40,6 +40,8 @@ Version 0.3.7 supplements system trust with certifi's Mozilla CA bundle for Wind
 
 ## Guides, development and attribution
 
+You can explicitly designate one observed panel as your roster. Only its fresh visible holdings affect lineup ranking; teammate panels and shop offers are not treated as yours. Ownership adds at most 20 ranking points and cannot bypass unavailable key roles. Pivot comparisons show reusable cards and roles not yet recorded, without switching guides automatically. The binding follows panel position, expires for scoring after 30 seconds without a new snapshot, and resets for a new match. Reassign it if panel order changes.
+
 Stage advice follows confirmed round numbers and explicit guide ranges. Eleven built-in guides provide those ranges; the other two require manual stage selection. Unknown or stale rounds fall back to the overall plan. Manual choices last for the current match and reset for a new run. Current-stage cards receive extra emphasis without hiding global cores or counting shop offers as owned cards.
 
 There are currently **13 built-in guides and branches**. Guide sources are retained in the application. See the [Chinese usage guide](README.md), [guide JSON format](攻略JSON格式.md), [example guide](guide.example.json), and [performance notes](PERFORMANCE.md) for details and limitations.

@@ -19,7 +19,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 | 你在做什么 | 助手能帮什么 |
 | --- | --- |
 | 开局选盟约 | 读到有效盟约后推算禁用干员，滚动 BAN 名单继续补读，并标明判断依据 |
-| 决定玩哪套 | 按整套卡的 BAN 情况检查核心、叠层和功能位，列出缺牌与替代候选 |
+| 决定玩哪套 | 按整套 BAN 检查核心与功能位；指定我方来源后，再参考已记录持有，并列出可沿用卡与转阵备选 |
 | 刷商店、选策略 | 选定攻略后，标出相关干员、推荐策略和关键装备；装备也能自行勾选或屏蔽 |
 | 边打边看攻略 | 用可拖动、可缩放的置顶悬浮窗看打法与叠层；内容区可穿透，顶栏始终可解锁 |
 | 看当前该拿什么 | 确认回合后，按攻略明确的回合区间显示本阶段思路与优先来牌；也可手动指定阶段 |
@@ -39,7 +39,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ![卫戍协议 BAN 识别：禁用干员、判断依据和所属盟约](docs/screenshots/02-ban-evidence.png)
 
-**阵容推荐看整套卡。** 缺关键位时说明原因，方便决定继续找牌还是换打法。
+**阵容推荐看整套卡与持有记录。** 下图含手动录入示例，展示持有加权、可沿用卡和转阵比较；不代表商店里的牌已经买到。
 
 ![卫戍协议阵容推荐：整套卡牌适配、关键位缺牌与攻略详情](docs/screenshots/03-lineup-guide.png)
 
@@ -49,7 +49,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ## 下载安装
 
-当前程序版本 **0.3.8**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
+当前程序版本 **0.3.9**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
 
 0.3.3 及更新版本可以在底栏「检查更新」升级；0.3.2 及更早版本需要先手动下载一次。新用户直接下载最新的 Windows 包即可。
 
@@ -99,6 +99,23 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 内置11条攻略有明确的回合区间；另外2条只写了本数或大致阶段，需要手动选择。回合显示“??”、识别不足或30秒未更新时，不猜阶段，退回整套思路。手动选择本局有效，不被后续识别覆盖，重开恢复自动。当前阶段的来牌会优先展示，其他阶段的核心与常驻叠层仍保留；商店来牌不会计作已拥有。
 
 有自己的打法，可以在「阵容攻略 → JSON 格式与模板」另存模板，改完再导入。先看 [攻略示例](guide.example.json)；完整字段写在 [攻略 JSON 格式](攻略JSON格式.md) 里。`plan` 是常驻思路，`stacking` 用来区分核心和可用叠层，`requirements` 用来写关键位和替代候选。
+
+## 继续还是转阵
+
+在「阵容攻略」或小窗「攻略」页，将你确认属于自己的那行设为「我方来源」。也可以在「队友阵容 / 共享卡池」选好面板后点「设为我方」。**没有看到自己的面板，或不确定是哪行，就保持「未指定」。** 助手目前按面板位置跟随，不会自动认出玩家身份；顺序改变时需要重新指定。
+
+指定后，排序会同时参考整套 BAN 和我方可见持有，分别显示基础适配分与持有加权。当前阵容之外，会列出最多两套有沿用基础的备选，说明能沿用哪些卡、哪些关键位尚未记录。只有一张通用打工卡时，不会因此建议转阵；是否切换仍由你选定攻略。
+
+「尚未记录」不等于没有：备战区和漏识别都可能未计入。「核心可用」表示卡池允许，不表示已经买到。与 BAN 冲突的持有会标为待核对，不会据此解除禁用。转阵比较暂不计算经济和装备，攻略外的已有卡也不等于必须卖掉。
+
+来源未指定、尚无记录或超过30秒未更新时，排序退回基础适配。重新读取我方面板即可恢复；重开或清除此面板会解除绑定。指定来源只是复用同一份记录，不会在共享卡池里重复扣卡。
+
+<details>
+<summary>持有加权怎么算</summary>
+
+按干员名字去重：攻略核心和核心叠层每名加6，上限16；其他攻略干员每名加1，上限4，总计最多20。重复卡与精锐星级不重复加分。关键位受禁仍先降级；基础分继续参考整套 BAN、可用池和少量当前来牌因素。加权不是胜率，也不是养成完成度。
+
+</details>
 
 ## 队友阵容和剩余卡池
 
@@ -153,10 +170,10 @@ py -3.12 -m venv .venv
 先改 `stronghold/__init__.py` 的版本号，打包最终的 Windows ZIP，并附上 `SOURCE_PROVENANCE.json`。然后生成更新清单：
 
 ```powershell
-python tools/make_update_manifest.py 0.3.8 StrongholdAssistant-v0.3.8-windows-x64.zip --notes release-notes.md --output update.json
+python tools/make_update_manifest.py 0.3.9 StrongholdAssistant-v0.3.9-windows-x64.zip --notes release-notes.md --output update.json
 ```
 
-把 ZIP 和 `update.json` 上传到对应的 `v0.3.8` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
+把 ZIP 和 `update.json` 上传到对应的 `v0.3.9` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
 
 更新通过本仓库的 HTTPS Release 清单分发。SHA-256 用来检查下载损坏，当前没有独立代码签名；源码运行可以检查和下载，自动安装仅支持打包程序。
 

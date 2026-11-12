@@ -23,6 +23,7 @@ class UpdateSessionTests(unittest.TestCase):
             match.progress.observe(8,replay=True)
             match.progress.manual['iberia'] = 1
             match.stock.correct("队友2", Holding("阿米娅", normal=2))
+            match.stock.own_slot = '面板1'
             app = SimpleNamespace(match=match, window=SimpleNamespace(hwnd=123, process="Arknights.exe"),
                                   update_views=lambda: None)
             def pid(hwnd, pointer):
@@ -32,6 +33,7 @@ class UpdateSessionTests(unittest.TestCase):
                 app.match = MatchState()
                 self.assertTrue(restore_session(app, task / "plan.json"))
                 self.assertEqual(app.match.auto, {"炎": True})
+                self.assertEqual(app.match.stock.own_slot,'面板1')
                 self.assertEqual(app.match.progress.round_number,8)
                 self.assertEqual(app.match.progress.manual,{'iberia':1})
                 self.assertEqual(app.match.excluded, {"棘刺"})
@@ -41,9 +43,11 @@ class UpdateSessionTests(unittest.TestCase):
                 self.assertEqual(app.match.stock.manual["队友2"]["阿米娅"].normal, 2)
                 current = json.loads((task/'session.json').read_text(encoding='utf8'))
                 old = dict(current,match={k:v for k,v in current['match'].items() if k!='progress'})
+                old['match'] = dict(old['match'],stock={k:v for k,v in old['match']['stock'].items() if k!='own_slot'})
                 (task/'session.json').write_text(json.dumps(old),encoding='utf8')
                 self.assertTrue(restore_session(app,task/'plan.json'))
                 self.assertIsNone(app.match.progress.round_number)
+                self.assertEqual(app.match.stock.own_slot,'')
                 self.assertEqual(app.match.progress.manual,{})
                 (task/'session.json').write_text(json.dumps(current),encoding='utf8')
                 app.window.hwnd = 124

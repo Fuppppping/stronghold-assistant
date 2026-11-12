@@ -251,21 +251,21 @@ class Season:
                 for name in self.operators if self.status(name, states, excluded, seen) is False} | {
                     name: "名单识别" for name in set(excluded)-set(seen) if name not in self.operators}
 
-    def rank(self, states, excluded=(), current=(), seen=()):
-        return self.evaluate(states, excluded, current, seen)[0]
+    def rank(self, states, excluded=(), current=(), seen=(), owned=None):
+        return self.evaluate(states, excluded, current, seen, owned)[0]
 
-    def evaluate(self, states, excluded=(), current=(), seen=()):
+    def evaluate(self, states, excluded=(), current=(), seen=(), owned=None):
         statuses = {name: self.status(name, states, excluded, seen) for name in self.operators}
         pool = self.grouped(states, excluded, seen, statuses)
-        fits = {guide['id']: assess(self, guide, states, excluded, seen, current, pool, statuses)
+        fits = {guide['id']: assess(self, guide, states, excluded, seen, current, pool, statuses, owned)
                 for guide in self.lineups.values()}
         def score(guide):
             fit = fits[guide['id']]
-            return (fit.viable, not fit.blocked_targets, fit.score, fit.confirmed_core/max(fit.total_core, 1))
+            return (fit.viable, not fit.blocked_targets, fit.rank_score, fit.confirmed_core/max(fit.total_core, 1))
         return sorted(self.lineups.values(), key=score, reverse=True), fits
 
-    def assess(self, guide, states, excluded=(), seen=(), current=(), pool=None):
-        return assess(self, guide, states, excluded, seen, current, pool)
+    def assess(self, guide, states, excluded=(), seen=(), current=(), pool=None, owned=None):
+        return assess(self, guide, states, excluded, seen, current, pool, owned=owned)
 
     def core_viable(self, guide, states, pool):
         return all(states.get(pact) is not False and len(pool[pact]) >= self.pacts[pact]["need"]

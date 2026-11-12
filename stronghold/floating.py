@@ -200,14 +200,30 @@ class FloatingAssistant:
         self.pc_note = self.label(self.pages[0],color=SECONDARY,size=11)
 
     def build_guides(self,parent):
-        bar = tk.Frame(parent,bg=BG)
+        bar = self.guide_bar = tk.Frame(parent,bg=BG)
         bar.pack(fill='x',pady=6)
-        self.button(bar,'选定阵容',self.choose_guide,True).pack(side='left')
-        self.button(bar,'看详情',self.guide_details).pack(side='left',padx=5)
-        self.button(bar,'导入 JSON',lambda:self.full_action(3,self.app.import_guide)).pack(side='left')
-        self.guide_tree = self.tree(parent,(('name','阵容'),('fit','当前适配')),(210,110))
+        self.guide_buttons = [self.button(bar,'选定阵容',self.choose_guide,True),
+                              self.button(bar,'看详情',self.guide_details),
+                              self.button(bar,'导入 JSON',lambda:self.full_action(3,self.app.import_guide))]
+        self.guide_columns = None
+        source = tk.Frame(parent,bg=BG)
+        source.pack(fill='x',pady=(0,3))
+        self.label(source,'我方来源',SECONDARY,size=11).pack(side='left',padx=(0,6))
+        self.own_selector = ttk.Combobox(source,textvariable=self.app.own_source,
+            values=('未指定','面板1','面板2','面板3','面板4'),state='readonly',width=8,
+            style='Stage.Float.TCombobox',font=('Microsoft YaHei UI',-12))
+        self.own_selector.pack(side='left')
+        self.own_selector.bind('<<ComboboxSelected>>',self.app.change_own_source)
+        self.button(source,'校正',lambda:self.full_action(2,self.app.show_owned_roster)).pack(side='left',padx=5)
+        status = self.label(parent,color=SECONDARY,size=11)
+        status.configure(textvariable=self.app.own_status)
+        status.pack(fill='x',pady=(0,4))
+        pivot = self.label(parent,color=TEAL)
+        pivot.configure(textvariable=self.app.pivot_text)
+        pivot.pack(fill='x',pady=(0,5))
+        self.guide_tree = self.tree(parent,(('name','阵容'),('fit','BAN适配'),('held','持有')),(180,110,60))
         self.guide_tree.bind('<Double-1>',lambda _:self.choose_guide())
-        self.label(parent,'分数看当前 BAN 适配，不是胜率。',SECONDARY,size=11).pack(fill='x',pady=5)
+        self.label(parent,'持有最多加权20；关键位受禁仍降级。不是胜率。',SECONDARY,size=11).pack(fill='x',pady=5)
 
     def build_pool(self,parent):
         self.pact = tk.StringVar(value='全部')
@@ -426,6 +442,19 @@ class FloatingAssistant:
             label.configure(wraplength=max(90,label.master.winfo_width()-24))
         self.phase_info.configure(wraplength=max(90,self.phase_row.winfo_width()-self.phase_selector.winfo_width()-10))
         self.layout_actions()
+        self.layout_guides()
+
+    def layout_guides(self):
+        columns = 2 if self.placement.width < 380 or (self.scale or 15) >= 18 else 3
+        if columns == self.guide_columns:
+            return
+        self.guide_columns = columns
+        for i in range(3):
+            self.guide_bar.columnconfigure(i,weight=1 if i<columns else 0)
+        for i,button in enumerate(self.guide_buttons):
+            button.grid_forget()
+            button.grid(row=i//columns,column=i%columns,sticky='ew',padx=(0,4),pady=(0,4),
+                        columnspan=2 if columns==2 and i==2 else 1)
 
     def layout_actions(self):
         columns = 2 if self.placement.width < 380 or (self.scale or 15) >= 18 else 4
@@ -545,7 +574,7 @@ class FloatingAssistant:
         self.plan.configure(text=app.plan_text(advice) if advice else '开局读出盟约后，在「攻略」页按本局卡池选阵容。')
         self.phase_info.configure(text=app.phase_caption.get())
         fit_info = app.fits.get(advice['id']) if advice else None
-        self.fit_note.configure(text=(fit_info.label+' · '+fit_info.reason) if fit_info else '已选阵容会持续跟踪，重开后偏好保留。')
+        self.fit_note.configure(text=(fit_info.ranking_label+' · '+fit_info.reason) if fit_info else '已选阵容会持续跟踪，重开后偏好保留。')
         for role,label,title in (('core',self.core,'核心'),('available',self.available,'可用')):
             names = []
             for item in advice.get('stacking',[]) if advice else []:
@@ -594,7 +623,9 @@ class FloatingAssistant:
         if page == 1:
             ranked = app.guide_tree.get_children()
             app.fill(self.guide_tree,[(identifier,(('✓ ' if identifier==app.guide_id else '')+app.season.lineups[identifier]['name'],
-                                     app.fits[identifier].label),'no' if not app.fits[identifier].viable else 'yes') for identifier in ranked])
+                                     app.fits[identifier].label,
+                                     f'+{app.fits[identifier].ownership.bonus}' if app.fits[identifier].ownership else '—'),
+                                     'no' if not app.fits[identifier].viable else 'yes') for identifier in ranked])
         elif page == 2:
             pact = self.pact.get()
             rows = []

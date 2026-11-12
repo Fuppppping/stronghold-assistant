@@ -117,6 +117,15 @@ class FloatingUiTests(unittest.TestCase):
             self.assertLessEqual(button.winfo_x()+button.winfo_width(),dock.action_bar.winfo_width())
             self.assertGreaterEqual(button.winfo_rooty(),dock.body.winfo_rooty())
             self.assertLessEqual(button.winfo_rooty()+button.winfo_height(),dock.body.winfo_rooty()+dock.body.winfo_height())
+        from stronghold.stock import Holding
+        self.app.match.stock.observe('面板1',[Holding('旅骨',normal=1),Holding('深靛',normal=1)])
+        self.app.own_source.set('面板1')
+        self.app.change_own_source()
+        dock.tabs.select(1)
+        self.root.update()
+        for button in dock.guide_buttons:
+            self.assertLessEqual(button.winfo_x()+button.winfo_width(),dock.guide_bar.winfo_width())
+        self.assertGreaterEqual(dock.guide_tree.winfo_height(),90)
 
     def test_running_panel_recovers_when_monitor_layout_changes(self):
         from stronghold.floating_layout import HEADER
@@ -283,3 +292,30 @@ class FloatingUiTests(unittest.TestCase):
             self.app.tick()
         self.assertIsNone(self.app.current_plan.stage)
         self.assertIn('回合待确认',self.app.phase_caption.get())
+
+    def test_own_source_is_shared_and_expiry_removes_weight_without_new_frames(self):
+        from stronghold.stock import Holding
+        self.app.match.stock.observe('面板1',[Holding('旅骨',normal=1)])
+        self.assertIsNone(self.app.fits['iberia'].ownership)
+        self.app.own_source.set('面板1')
+        self.app.floating.own_selector.event_generate('<<ComboboxSelected>>')
+        self.root.update()
+        self.assertEqual(self.app.owned_names,frozenset({'旅骨'}))
+        self.assertGreater(self.app.fits['iberia'].ownership.bonus,0)
+        self.assertEqual(self.app.guide_tree.item('iberia','values')[2],'+6')
+        self.app.match.stock.players['面板1'].updated -= 31
+        with patch.object(self.root,'after'):
+            self.app.tick()
+        self.assertIsNone(self.app.fits['iberia'].ownership)
+        self.assertIn('过期',self.app.own_status.get())
+        self.app.match.clear()
+        self.app.update_views()
+        self.assertEqual(self.app.own_source.get(),'未指定')
+
+    def test_owned_roster_entry_opens_matching_panel_without_switching_guide(self):
+        self.app.own_source.set('面板3')
+        self.app.change_own_source()
+        self.app.show_owned_roster()
+        self.assertEqual(self.app.stock_tabs.index('current'),1)
+        self.assertEqual(self.app.stock_slot.get(),'面板3')
+        self.assertEqual(self.app.guide_id,'iberia')

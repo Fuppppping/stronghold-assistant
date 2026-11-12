@@ -25,6 +25,26 @@ class Snapshot:
 class StockLedger:
     players: dict[str, Snapshot] = field(default_factory=dict)
     manual: dict[str, dict[str, Holding]] = field(default_factory=dict)
+    own_slot: str = ''
+
+    def own_names(self):
+        if not self.own_slot:
+            return None
+        snapshot = self.players.get(self.own_slot)
+        if not snapshot or not 0 <= time.time()-snapshot.updated <= 30:
+            return None
+        return frozenset(item.name for item in snapshot.holdings if item.copies() > 0)
+
+    def own_status(self):
+        if not self.own_slot:
+            return '我方未指定 · 排序仅按 BAN 与当前来牌'
+        if self.own_slot not in self.players:
+            return f'我方：{self.own_slot} · 等待读取或手动校正'
+        names = self.own_names()
+        if names is None:
+            return f'我方：{self.own_slot} · 记录过期，暂不参与排序'
+        source = '含手动校正' if self.manual.get(self.own_slot) else '面板识别'
+        return f'我方：{self.own_slot} · 可见 {len(names)} 名（{source}）；按位置跟随，顺序变化需重选'
 
     def observe(self, slot, holdings, source="画面识别 · 可见部分"):
         items = {item.name: item for item in holdings}
@@ -41,6 +61,8 @@ class StockLedger:
     def forget(self, slot):
         self.players.pop(slot, None)
         self.manual.pop(slot, None)
+        if self.own_slot == slot:
+            self.own_slot = ''
 
     def occupied(self, name):
         # 星极 needs two copies to promote, rather than the usual three.
