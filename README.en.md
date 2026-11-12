@@ -40,6 +40,8 @@ Version 0.3.7 supplements system trust with certifi's Mozilla CA bundle for Wind
 
 ## Guides, development and attribution
 
+Stage advice follows confirmed round numbers and explicit guide ranges. Eleven built-in guides provide those ranges; the other two require manual stage selection. Unknown or stale rounds fall back to the overall plan. Manual choices last for the current match and reset for a new run. Current-stage cards receive extra emphasis without hiding global cores or counting shop offers as owned cards.
+
 There are currently **13 built-in guides and branches**. Guide sources are retained in the application. See the [Chinese usage guide](README.md), [guide JSON format](攻略JSON格式.md), [example guide](guide.example.json), and [performance notes](PERFORMANCE.md) for details and limitations.
 
 Source setup, build instructions and the component table are in [README.md](README.md#从源码运行). This project references MAA's recognition and PC-control workflow and uses MaaFramework for explicit single-step PC input; it does not bundle the MAA application.

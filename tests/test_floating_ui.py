@@ -115,6 +115,8 @@ class FloatingUiTests(unittest.TestCase):
         for button in dock.action_buttons:
             self.assertGreater(button.winfo_width(),10)
             self.assertLessEqual(button.winfo_x()+button.winfo_width(),dock.action_bar.winfo_width())
+            self.assertGreaterEqual(button.winfo_rooty(),dock.body.winfo_rooty())
+            self.assertLessEqual(button.winfo_rooty()+button.winfo_height(),dock.body.winfo_rooty()+dock.body.winfo_height())
 
     def test_running_panel_recovers_when_monitor_layout_changes(self):
         from stronghold.floating_layout import HEADER
@@ -235,26 +237,49 @@ class FloatingUiTests(unittest.TestCase):
     def test_automatic_panel_restore_does_not_steal_keyboard_focus(self):
         from stronghold import windows
         dock = self.app.floating
-        probe = tk.Toplevel(self.root)
-        probe.title('助手焦点回归测试')
-        probe.geometry('180x80+700+100')
-        try:
-            for locked in (False,True):
-                with self.subTest(locked=locked):
-                    dock.placement.locked = locked
-                    dock.body.withdraw()
-                    self.root.update()
-                    probe.focus_force()
-                    self.root.update()
-                    foreground = windows.foreground()
-                    self.assertEqual(foreground,windows.ancestor(probe.winfo_id(),2))
-                    dock.apply_geometry()
-                    self.root.update()
-                    self.assertTrue(windows.visible(dock.body_hwnd))
-                    self.assertEqual(windows.foreground(),foreground)
-                    dock.placement.x += 10
-                    dock.apply_geometry()
-                    self.root.update()
-                    self.assertEqual(windows.foreground(),foreground)
-        finally:
-            probe.destroy()
+        for locked in (False,True):
+            with self.subTest(locked=locked):
+                dock.placement.locked = locked
+                dock.body.withdraw()
+                self.root.update()
+                # Preserve the user's actual foreground, without trying to
+                # acquire focus (which Windows may legitimately refuse).
+                foreground = windows.foreground()
+                self.assertTrue(foreground)
+                dock.apply_geometry()
+                self.root.update()
+                self.assertTrue(windows.visible(dock.body_hwnd))
+                self.assertEqual(windows.foreground(),foreground)
+                dock.placement.x += 10
+                dock.apply_geometry()
+                self.root.update()
+                self.assertEqual(windows.foreground(),foreground)
+
+    def test_stage_controls_share_manual_choice_and_reset_for_new_match(self):
+        from stronghold.domain import Reading
+        dock = self.app.floating
+        self.app.accept(Reading(scene='调度中心',round_number=1),Image.new('RGB',(1280,720)),None)
+        self.assertIn('R1',dock.phase_info.cget('text'))
+        self.assertIn('本阶段',dock.plan.cget('text'))
+        self.app.phase_choice.set('2 · 中期')
+        dock.phase_selector.event_generate('<<ComboboxSelected>>')
+        self.root.update()
+        self.assertEqual(self.app.phase_selector.get(),'2 · 中期')
+        self.assertEqual(self.app.current_plan.stage['name'],'中期')
+        self.app.accept(Reading(scene='调度中心',round_number=11),Image.new('RGB',(1280,720)),None)
+        self.assertEqual(self.app.current_plan.stage['name'],'中期')
+        self.assertEqual(self.app.match.stock.players,{})
+        self.app.match.clear()
+        self.app.update_views()
+        self.assertEqual(dock.phase_selector.get(),'自动')
+        self.assertIsNone(self.app.current_plan.stage)
+
+    def test_expired_round_removes_phase_emphasis_without_waiting_for_new_frame(self):
+        from stronghold.domain import Reading
+        self.app.accept(Reading(scene='调度中心',round_number=8),Image.new('RGB',(1280,720)),None)
+        self.assertEqual(self.app.current_plan.stage['name'],'中期')
+        self.app.match.progress.updated -= 31
+        with patch.object(self.root,'after'):
+            self.app.tick()
+        self.assertIsNone(self.app.current_plan.stage)
+        self.assertIn('回合待确认',self.app.phase_caption.get())

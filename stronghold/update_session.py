@@ -5,6 +5,7 @@ import time
 
 from .domain import MatchState
 from .stock import Holding, Snapshot
+from .planning import StageProgress
 from .update import atomic_json
 from .update_install import task_path
 
@@ -50,6 +51,14 @@ def restore_session(app, plan_file):
                                               snap["updated"], snap["source"])
     match.stock.manual = {slot: {name: Holding(**item) for name, item in items.items()}
                          for slot, items in raw["stock"]["manual"].items()}
+    progress = raw.get('progress', {})
+    if isinstance(progress, dict):
+        number, updated, manual = progress.get('round_number'), progress.get('updated', 0), progress.get('manual', {})
+        match.progress = StageProgress(
+            round_number=number if type(number) is int and 1 <= number <= 99 else None,
+            updated=updated if type(updated) in (int,float) else 0,
+            manual={name:index for name,index in manual.items() if isinstance(name,str) and type(index) is int and index >= 0}
+                   if isinstance(manual,dict) else {})
     app.match = match
     app.update_views()
     return True

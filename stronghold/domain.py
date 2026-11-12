@@ -7,6 +7,7 @@ import unicodedata
 
 from .stock import StockLedger
 from .recommendation import assess
+from .planning import StageProgress, round_range
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 
@@ -42,6 +43,7 @@ class Reading:
     elapsed_ms: int = 0
     capture_ms: int = 0
     reused: bool = False
+    round_number: int | None = None
 
 
 @dataclass
@@ -60,6 +62,7 @@ class MatchState:
     stock: StockLedger = field(default_factory=StockLedger)
     reset_frames: int = 0
     epoch: int = 1
+    progress: StageProgress = field(default_factory=StageProgress)
 
     @property
     def states(self):
@@ -92,6 +95,7 @@ class MatchState:
         if reading.scene == "调度中心":
             self.seen.update(hit.name for hit in reading.hits if hit.kind == "干员" and hit.confidence >= .83)
         if reading.scene != "盟约选择":
+            self.progress.observe(reading.round_number, replay)
             self.last_bans = None
             return
         signature = (reading.pacts, reading.excluded, reading.groups, reading.selected_group, reading.partial_groups)
@@ -170,6 +174,11 @@ class Season:
             for field_name in ("timing", "plan"):
                 if not isinstance(stage.get(field_name, ""), str):
                     raise ValueError(f"阶段 {field_name} 需要文字")
+            if 'rounds' in stage and round_range(stage) is None:
+                raise ValueError("阶段 rounds 需要 [起始回合, 结束回合]，范围1–99且不能倒置")
+        ranges = [r for stage in stages if (r := round_range(stage))]
+        if any(max(a[0], b[0]) <= min(a[1], b[1]) for i, a in enumerate(ranges) for b in ranges[i+1:]):
+            raise ValueError("阶段回合区间不能重叠")
         stacking = guide.get("stacking", [])
         requirements = guide.get("requirements", [])
         if not isinstance(requirements, list):
@@ -282,7 +291,7 @@ def priority(guide):
     return result
 
 
-def alerts(reading, guide, enabled, muted, states, season, excluded=(), strategy_guide=None):
+def alerts(reading, guide, enabled, muted, states, season, excluded=(), strategy_guide=None, stage=None):
     operators = priority(guide) if guide else {}
     stacking = {item["operator"]: item for item in guide.get("stacking", [])} if guide else {}
     gear = guide["equipment"] if guide else {}
@@ -297,6 +306,8 @@ def alerts(reading, guide, enabled, muted, states, season, excluded=(), strategy
                 note = (("核心叠层" if stack["role"] == "core" else "可用叠层")
                         + (" · " + stack["note"] if stack.get("note") else "")) if stack else (
                             "核心干员" if operators.get(hit.name) == 2 else "阵容干员")
+                if stage and hit.name in {*stage.get('core', []), *stage.get('operators', [])}:
+                    note += ' · 当前阶段优先'
         elif hit.kind == "装备" and reading.scene in {"调度中心", "装备选择"}:
             if hit.name not in muted and (hit.name in enabled or hit.name in gear):
                 note = gear.get(hit.name) or "关注装备"

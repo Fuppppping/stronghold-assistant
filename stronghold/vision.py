@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 import time
+import unicodedata
 
 import cv2
 import numpy as np
@@ -25,6 +26,25 @@ class Line:
     text: str
     box: tuple[int, int, int, int]
     confidence: float
+
+
+def read_round(lines):
+    """Require a reliable header label and an aligned number; reject ??/Roman text."""
+    values = set()
+    for line in lines:
+        if line.confidence < .88 or not (350 <= line.box[0] < 650 and line.box[3] <= 85):
+            continue
+        text = re.sub(r'\s+', '', unicodedata.normalize('NFKC', line.text))
+        direct = re.fullmatch(r'(?:回合(\d{1,2})|第?(\d{1,2})回合)', text)
+        if direct:
+            values.add(int(next(n for n in direct.groups() if n)))
+        elif text == '回合':
+            for number in lines:
+                if (number.confidence >= .88 and re.fullmatch(r'\d{1,2}', number.text.strip())
+                        and line.box[2]-2 <= number.box[0] <= line.box[2]+80
+                        and abs(sum(line.box[1::2])-sum(number.box[1::2])) <= 24):
+                    values.add(int(number.text.strip()))
+    return next(iter(values)) if len(values) == 1 and 1 <= next(iter(values)) <= 99 else None
 
 
 def game_region(image):
@@ -218,6 +238,7 @@ class Recognizer:
             lines = self.ocr(frame, roi or (90, 655, 1150, 710), 1.8)
             reading.text = [line.text for line in lines]
             reading.hits = self.hits(lines, ("装备", "干员"))
+            reading.round_number = read_round(self.ocr(frame, (410, 10, 570, 65), 3))
             return reading
 
         if not forced and not header:
@@ -240,6 +261,7 @@ class Recognizer:
         else:
             lines = self.ocr(frame, roi or (0, 0, WIDTH, HEIGHT), 1.1)
         reading.text = [line.text for line in lines]
+        reading.round_number = read_round(lines)
         text = " ".join(key(line.text) for line in lines)
         reading.setup = any(line.box[1] < 100 and re.search(r"(?:13)?确认本局信息", key(line.text))
                             for line in lines)
@@ -257,6 +279,7 @@ class Recognizer:
                 reading.hits, reading.team_holdings = team_hits, teams
         elif not forced and "刷新" in text and ("冻结" in text or "收起" in text):
             reading.scene = "调度中心"
+            reading.round_number = read_round(self.ocr(frame, (410, 10, 570, 65), 3))
             reading.hits = self.hits(self.ocr(frame, (90, 655, 1150, 710), 1.8), ("装备", "干员"))
         elif forced == "盟约选择" or info_panel or any(anchor in text for anchor in (
             "盟约选择", "选择盟约", "盟约随机", "禁用干员", "不可用干员", "盟约结果", "确认本局信息", "可选型核心盟约组",

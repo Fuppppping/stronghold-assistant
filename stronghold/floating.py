@@ -118,7 +118,8 @@ class FloatingAssistant:
         frame.pack(fill='x',pady=(0,8),padx=2)
         accent = tk.Frame(frame,bg=color,height=2)
         accent.pack(fill='x')
-        self.label(frame,title,color=SECONDARY,size=11).pack(anchor='w',padx=10,pady=(8,3))
+        if title:
+            self.label(frame,title,color=SECONDARY,size=11).pack(anchor='w',padx=10,pady=(8,3))
         return frame
 
     def button(self,parent,text,command,primary=False):
@@ -155,17 +156,26 @@ class FloatingAssistant:
         card = self.card(parent,'当前攻略 / 打法思路')
         self.plan_card = card
         self.guide_name = self.label(card,bold=True)
-        self.guide_name.pack(fill='x',padx=10,pady=(0,5))
+        self.guide_name.pack(fill='x',padx=10,pady=(0,3))
+        self.phase_row = tk.Frame(card,bg=PANEL)
+        self.phase_row.pack(fill='x',padx=10,pady=(0,4))
+        self.phase_selector = ttk.Combobox(self.phase_row,textvariable=self.app.phase_choice,width=8,state='readonly',style='Stage.Float.TCombobox')
+        self.phase_selector.pack(side='left')
+        self.phase_selector.bind('<<ComboboxSelected>>',self.app.change_phase)
+        self.phase_info = self.label(self.phase_row,color=TEAL,size=11)
+        self.phase_info.pack(side='left',fill='x',expand=True,padx=(7,0))
         self.plan = self.label(card)
-        self.plan.pack(fill='x',padx=10,pady=(0,7))
+        self.plan.pack(fill='x',padx=10,pady=(0,5))
         self.fit_note = self.label(card,color=SECONDARY,size=11)
-        self.fit_note.pack(fill='x',padx=10,pady=(0,9))
-        card = self.card(parent,'叠层清单',GOLD)
+        self.fit_note.pack(fill='x',padx=10,pady=(0,5))
+        card = self.card(parent,'',GOLD)
+        self.stacking_card = card
         self.core = self.label(card,color=GOLD)
-        self.core.pack(fill='x',padx=10,pady=(1,5))
+        self.core.pack(fill='x',padx=10,pady=(8,5))
         self.available = self.label(card,color=TEAL)
         self.available.pack(fill='x',padx=10,pady=(0,10))
         card = self.card(parent,'当前来牌 / 关键装备',TEAL)
+        card.pack_configure(before=self.stacking_card)
         self.alert_empty = self.label(card,'等待商店、装备或策略画面',SECONDARY)
         self.alert_empty.pack(fill='x',padx=10,pady=(0,10))
         self.alert_rows = []
@@ -180,15 +190,14 @@ class FloatingAssistant:
             note = self.label(content,color=SECONDARY,size=11)
             note.pack(fill='x')
             self.alert_rows.append((frame,icon,name,note))
-        row = self.action_bar = tk.Frame(parent,bg=BG)
-        row.pack(fill='x',pady=(1,8))
+        row = self.action_bar = tk.Frame(self.pages[0],bg=BG)
+        row.pack(side='bottom',fill='x',padx=8,pady=(1,8),before=self.scrollers[0])
         self.pause = self.button(row,'暂停',self.app.toggle)
         self.action_buttons = [self.pause,self.button(row,'选阵容',lambda:self.tabs.select(1),True),
                                self.button(row,'展开商店',lambda:self.shop('open')),
                                self.button(row,'收起',lambda:self.shop('close'))]
         self.action_columns = None
-        self.pc_note = self.label(parent,color=SECONDARY,size=11)
-        self.pc_note.pack(fill='x',padx=3,pady=(0,8))
+        self.pc_note = self.label(self.pages[0],color=SECONDARY,size=11)
 
     def build_guides(self,parent):
         bar = tk.Frame(parent,bg=BG)
@@ -415,6 +424,7 @@ class FloatingAssistant:
         for label,_,_ in self.labels:
             # Use the containing card, not the full window, for wrapped text.
             label.configure(wraplength=max(90,label.master.winfo_width()-24))
+        self.phase_info.configure(wraplength=max(90,self.phase_row.winfo_width()-self.phase_selector.winfo_width()-10))
         self.layout_actions()
 
     def layout_actions(self):
@@ -504,6 +514,8 @@ class FloatingAssistant:
         if size != self.scale:
             self.scale = size
             style = ttk.Style()
+            style.configure('Stage.Float.TCombobox',padding=(3,2))
+            self.phase_selector.configure(font=('Microsoft YaHei UI',-size))
             for name in ('Float.TButton','Float.Primary.TButton','Float.TCombobox','Float.TEntry'):
                 style.configure(name,font=('Microsoft YaHei UI',-size),padding=(7,6))
             style.configure('Float.Primary.TButton',background=TEAL,foreground=BG)
@@ -530,7 +542,8 @@ class FloatingAssistant:
         self.ban_count.configure(text=f'BAN {len(banned)}' if app.states or app.match.excluded else 'BAN 待确认')
         advice = app.guide or app.strategy_advice
         self.guide_name.configure(text=advice['name'] if advice else '先选一套想玩的阵容')
-        self.plan.configure(text=advice.get('plan','按来牌补齐关键位。') if advice else '开局读出盟约后，在「攻略」页按本局卡池选阵容。')
+        self.plan.configure(text=app.plan_text(advice) if advice else '开局读出盟约后，在「攻略」页按本局卡池选阵容。')
+        self.phase_info.configure(text=app.phase_caption.get())
         fit_info = app.fits.get(advice['id']) if advice else None
         self.fit_note.configure(text=(fit_info.label+' · '+fit_info.reason) if fit_info else '已选阵容会持续跟踪，重开后偏好保留。')
         for role,label,title in (('core',self.core,'核心'),('available',self.available,'可用')):
@@ -543,7 +556,8 @@ class FloatingAssistant:
             limit = 4 if role == 'core' else 5
             label.configure(text=title+'  '+('、'.join(names[:limit]) if names else '—')
                             +(f'  +{len(names)-limit}' if len(names)>limit else ''))
-        alerts = sorted(app.callouts(),key=lambda pair:(0 if pair[1].startswith('核心') else 1 if pair[0].kind=='装备' else 2))
+        alerts = sorted(app.callouts(),key=lambda pair:(0 if '当前阶段优先' in pair[1] else
+                        1 if pair[1].startswith('核心') else 2 if pair[0].kind=='装备' else 3))
         state = tuple((h.kind,h.name,note) for h,note in alerts[:6])
         if state != self.previous_alerts:
             self.previous_alerts = state
@@ -559,13 +573,18 @@ class FloatingAssistant:
                     icon.configure(image=picture or '',text='' if picture else '装' if kind=='装备' else '策',fg=color,
                                    font=('Microsoft YaHei UI',-14),width=30 if picture else 2,height=30 if picture else 1)
                     name.configure(text=title,fg=color)
-                    note.configure(text=detail)
-                    frame.pack(fill='x',padx=10,pady=(0,9))
+                    note.configure(text=(detail.split(' · ')[0]+(' · 本阶段优先' if '当前阶段优先' in detail else ''))
+                                   if kind=='干员' else detail)
+                    frame.pack(fill='x',padx=10,pady=(0,6))
                 else:
                     frame.pack_forget()
         self.pause.configure(text='暂停' if app.running else '继续')
         self.pc_feedback = self.pc_feedback or app.pc_pending
         self.pc_note.configure(text=app.pc_status.get() if self.pc_feedback else '')
+        if self.pc_feedback:
+            self.pc_note.pack(side='bottom',fill='x',padx=8,pady=(0,4),before=self.action_bar)
+        else:
+            self.pc_note.pack_forget()
         self.footnote.configure(text=('回放' if app.preview else '已暂停' if not app.running else '实时识别')
                                 +f' · 采集 {app.reading.capture_ms} / 识别 {app.reading.elapsed_ms} ms'
                                 +(' · 内容穿透中' if self.placement.locked else ''))

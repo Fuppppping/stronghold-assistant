@@ -55,7 +55,7 @@ class Overlay:
             # names over the board should never turn into battlefield labels.
             if scene in {"", "调度中心"} and y1 < height * .70:
                 continue
-            note = note.split(" · ")[0]
+            note = note.split(" · ")[0]+(' · 本阶段' if '当前阶段优先' in note else '')
             color = GOLD if hit.kind == '装备' else TEAL
             if note.startswith("核心"):
                 color = GOLD

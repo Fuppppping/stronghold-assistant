@@ -20,6 +20,7 @@ from .domain import MatchState, Reading, Season, alerts, key
 from .overlay import Overlay
 from .floating import FloatingAssistant
 from .cadence import ScanCadence
+from .planning import choose_stage, round_range
 from .pc_input import operate_shop
 from .vision import Recognizer
 from .stock import Holding
@@ -122,6 +123,8 @@ class Dashboard:
         self.guide_id = settings.get("guide", "")
         if self.guide_id not in self.season.lineups:
             self.guide_id = ""
+        self.phase_choice = tk.StringVar(value='自动')
+        self.phase_caption = tk.StringVar(value='先选定阵容')
         self.enabled = set(settings.get("enabled", [])) & self.season.equipment.keys()
         self.muted = set(settings.get("muted", [])) & self.season.equipment.keys()
         self.capacities = {int(k): v for k, v in settings.get("pool_capacity", {}).items()
@@ -175,6 +178,7 @@ class Dashboard:
         root.protocol("WM_DELETE_WINDOW", self.close)
         root.after(150, self.tick)
         self.floating = FloatingAssistant(self, settings.get("floating_layout"))
+        self.refresh_phase_controls()
         root.bind_all('<Control-Shift-F>',lambda _:self.leave_floating() if self.floating.active else self.enter_floating(),add='+')
         if settings.get("floating_mode", False):
             root.after(250,self.enter_floating)
@@ -385,6 +389,11 @@ class Dashboard:
         body = self.plan_scroll.body
         self.plan_name = self.label(body, foreground=FG,font=('Microsoft YaHei UI',12,'bold'),wraplength=360)
         self.plan_name.pack(anchor='w',pady=(0,10))
+        self.phase_selector = ttk.Combobox(body,textvariable=self.phase_choice,state='readonly')
+        self.phase_selector.pack(fill='x',pady=(0,4))
+        self.phase_selector.bind('<<ComboboxSelected>>',self.change_phase)
+        self.label(body,textvariable=self.phase_caption,foreground=TEAL,wraplength=360,
+                   font=('Microsoft YaHei UI',8)).pack(anchor='w',pady=(0,8))
         self.advice_text = self.label(body, foreground=FG,wraplength=360,justify='left',font=('Microsoft YaHei UI',9))
         self.advice_text.pack(anchor='w',pady=(0,10))
         self.core_text = self.label(role_box,foreground=GOLD,wraplength=360,justify='left',font=('Microsoft YaHei UI',9))
@@ -742,7 +751,7 @@ class Dashboard:
         text.pack(fill="both", expand=True)
         text.insert("end", "UTF-8 JSON 对象，名称必须使用游戏简中全名。\n"
                     "必填：id（唯一）、name、targets（盟约→人数）、stages（至少一个阶段）。\n"
-                    "阶段：name、timing（可选）、plan（可选）、core（必拿）、operators（可选干员）。\n"
+                    "阶段：name、rounds（可选，如[1,5]含首尾回合）、timing（可选）、plan（可选）、core（必拿）、operators（可选干员）。\n"
                     "可选：plan（常驻思路）、stacking（叠层角色）、requirements（关键功能位候选）、strategies、equipment、sources。\n"
                     "stacking.role：core=核心叠层，available=可用叠层；note 写触发条件或站位。\n"
                     "requirements：name 为功能位，operators 为替代候选，minimum 为至少可用人数（默认1）；候选不代表等强。\n"
@@ -947,6 +956,9 @@ class Dashboard:
                         self.submit(self.window.hwnd)
                 else:
                     self.status.set("等待客户端 · 打开明日方舟或模拟器，或从下拉框手动绑定")
+        if (self.current_plan.stage and not self.current_plan.manual
+                and self.match.progress.current_round() is None):
+            self.update_views()
         self.paint_overlay()
         if self.floating and self.floating.active:
             self.floating.refresh()
@@ -972,7 +984,52 @@ class Dashboard:
 
     def callouts(self):
         return alerts(self.reading, self.guide, self.enabled, self.muted,
-                      self.states, self.season, self.match.excluded, self.strategy_advice)
+                      self.states, self.season, self.match.excluded, self.strategy_advice,
+                      self.current_plan.stage)
+
+    def plan_for(self, guide):
+        return choose_stage(guide, self.match.progress)
+
+    def change_phase(self, _=None):
+        if not self.guide:
+            return
+        values = ['自动', *[f"{i+1} · {s['name']}" for i,s in enumerate(self.guide['stages'])]]
+        choice = self.phase_choice.get()
+        if choice not in values:
+            return
+        if choice == '自动':
+            self.match.progress.manual.pop(self.guide_id, None)
+        else:
+            self.match.progress.manual[self.guide_id] = values.index(choice)-1
+        self.update_views()
+
+    def refresh_phase_controls(self):
+        values = ['自动', *[f"{i+1} · {s['name']}" for i,s in enumerate(self.guide['stages'])]] if self.guide else ['自动']
+        index = self.match.progress.manual.get(self.guide_id)
+        self.phase_choice.set(values[index+1] if type(index) is int and 0 <= index < len(values)-1 else '自动')
+        self.phase_caption.set(self.current_plan.caption)
+        selectors = [self.phase_selector]
+        if self.floating:
+            selectors.append(self.floating.phase_selector)
+        for selector in selectors:
+            state = 'readonly' if self.guide else 'disabled'
+            if tuple(selector['values']) != tuple(values) or str(selector['state']) != state:
+                selector.configure(values=values,state=state)
+
+    def plan_text(self, guide):
+        if not guide:
+            return ''
+        text = guide.get('plan','按当前可用卡补齐核心，关注缺失的功能位。')
+        stage = self.plan_for(guide).stage
+        if stage:
+            names = []
+            for name in dict.fromkeys([*stage.get('core',[]), *stage.get('operators',[])]):
+                status = self.season.status(name,self.states,self.match.excluded,self.match.seen)
+                if status is not False:
+                    names.append(name+('?' if status is None else ''))
+            text = stage.get('plan') or text
+            text += '\n优先关注  '+('、'.join(names[:6])+('…' if len(names)>6 else '') if names else '本阶段候选均受限，查看阵容详情')
+        return text
 
     def paint_overlay(self):
         if (self.preview or not self.running or not self.frame or not self.window
@@ -998,6 +1055,9 @@ class Dashboard:
             return context
         guide = self.guide
         lines = [f"当前攻略  {guide['name']}", "思路  " + guide.get("plan", "按阶段补齐核心，结合可用池选择替代。")]
+        if self.current_plan.stage:
+            lines.insert(1,self.current_plan.caption)
+            lines[2] = self.current_plan.stage.get('plan') or guide.get('plan','按本阶段名单补战力。')
         fit = self.fits[guide['id']]
         if fit.blocked_core or fit.missing_roles or fit.blocked_targets:
             lines.append("适配  " + fit.reason)
@@ -1066,6 +1126,8 @@ class Dashboard:
         if not self.strategy_advice and self.reading.scene == "策略轮选":
             self.strategy_advice = self.season.strategy_guide(
                 ranked, self.states, self.reading.hits, self.match.excluded, self.match.seen, self.fits)
+        self.current_plan = self.plan_for(self.guide or self.strategy_advice)
+        self.refresh_phase_controls()
         self.banner = self.recommendation_banner(ranked)
         self.guide_text.set('本局追踪  /  ' + ('截图回放' if self.preview else '实时识别'))
         self.scene_text.configure(text=f"{self.reading.scene or '等待场景'}  ·  {len(self.reading.hits)} 条识别结果")
@@ -1111,7 +1173,7 @@ class Dashboard:
             return
         fit = self.fits[advice['id']]
         self.plan_name.configure(text=('' if self.guide else '建议 · ')+advice['name'])
-        self.advice_text.configure(text=advice.get('plan','按当前可用卡补齐核心，关注缺失的功能位。'))
+        self.advice_text.configure(text=self.plan_text(advice))
         for role, widget, title in [('core',self.core_text,'核心叠层'),('available',self.optional_text,'可用叠层')]:
             names=[]
             for item in advice.get('stacking',[]):
@@ -1218,6 +1280,10 @@ class Dashboard:
             lines.append("策略顺位  " + " → ".join(guide["strategies"]))
         for stage in guide["stages"]:
             heading = "  ".join(filter(None, [stage["name"], str(stage.get("timing", ""))]))
+            if not stage.get('timing') and (interval := round_range(stage)):
+                heading += f'  R{interval[0]}–R{interval[1]}'
+            if stage is self.plan_for(guide).stage:
+                heading += '  ← 当前阶段'
             viable = lambda name: self.season.status(
                 name, self.states, self.match.excluded, self.match.seen) is not False
             core = [name for name in stage.get("core", []) if viable(name)]

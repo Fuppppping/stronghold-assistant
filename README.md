@@ -22,6 +22,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 | 决定玩哪套 | 按整套卡的 BAN 情况检查核心、叠层和功能位，列出缺牌与替代候选 |
 | 刷商店、选策略 | 选定攻略后，标出相关干员、推荐策略和关键装备；装备也能自行勾选或屏蔽 |
 | 边打边看攻略 | 用可拖动、可缩放的置顶悬浮窗看打法与叠层；内容区可穿透，顶栏始终可解锁 |
+| 看当前该拿什么 | 确认回合后，按攻略明确的回合区间显示本阶段思路与优先来牌；也可手动指定阶段 |
 | 看队友阵容 | 按面板记录可见持有量，可手动校正；剩余卡池只提供估算 |
 | 重开或更新程序 | 新局重置本局记录；个人偏好保留，程序更新先下载，再由你决定何时安装 |
 
@@ -48,7 +49,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ## 下载安装
 
-当前程序版本 **0.3.7**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
+当前程序版本 **0.3.8**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
 
 0.3.3 及更新版本可以在底栏「检查更新」升级；0.3.2 及更早版本需要先手动下载一次。新用户直接下载最新的 Windows 包即可。
 
@@ -93,7 +94,9 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ## 攻略与自定义
 
-目前内置 **13 条阵容和运营分支**。每条保留来源，可以点「打开攻略来源」看原视频。攻略的前、中、后期是参考节奏，助手暂时不会按回合自动切换阶段。
+目前内置 **13 条阵容和运营分支**。每条保留来源，可以点「打开攻略来源」看原视频。主窗口和悬浮窗可选择「自动」或手动指定阶段；自动模式在连续两帧确认回合后，按攻略中明确的回合区间切换，显示本阶段思路和优先关注干员。它是攻略节奏参考，不是必须照做的购买指令。
+
+内置11条攻略有明确的回合区间；另外2条只写了本数或大致阶段，需要手动选择。回合显示“??”、识别不足或30秒未更新时，不猜阶段，退回整套思路。手动选择本局有效，不被后续识别覆盖，重开恢复自动。当前阶段的来牌会优先展示，其他阶段的核心与常驻叠层仍保留；商店来牌不会计作已拥有。
 
 有自己的打法，可以在「阵容攻略 → JSON 格式与模板」另存模板，改完再导入。先看 [攻略示例](guide.example.json)；完整字段写在 [攻略 JSON 格式](攻略JSON格式.md) 里。`plan` 是常驻思路，`stacking` 用来区分核心和可用叠层，`requirements` 用来写关键位和替代候选。
 
@@ -150,10 +153,10 @@ py -3.12 -m venv .venv
 先改 `stronghold/__init__.py` 的版本号，打包最终的 Windows ZIP，并附上 `SOURCE_PROVENANCE.json`。然后生成更新清单：
 
 ```powershell
-python tools/make_update_manifest.py 0.3.7 StrongholdAssistant-v0.3.7-windows-x64.zip --notes release-notes.md --output update.json
+python tools/make_update_manifest.py 0.3.8 StrongholdAssistant-v0.3.8-windows-x64.zip --notes release-notes.md --output update.json
 ```
 
-把 ZIP 和 `update.json` 上传到对应的 `v0.3.7` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
+把 ZIP 和 `update.json` 上传到对应的 `v0.3.8` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
 
 更新通过本仓库的 HTTPS Release 清单分发。SHA-256 用来检查下载损坏，当前没有独立代码签名；源码运行可以检查和下载，自动安装仅支持打包程序。
 
