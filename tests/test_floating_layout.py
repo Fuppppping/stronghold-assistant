@@ -1,9 +1,31 @@
 import unittest
 
-from stronghold.floating_layout import Placement, HEADER, fit
+from stronghold.floating_layout import Placement, HEADER, fit, snap, follow
 
 
 class FloatingLayoutTests(unittest.TestCase):
+    def test_follow_preserves_offset_and_docked_edges_during_resize(self):
+        p = Placement(x=10,y=100,width=400,height=500)
+        moved = follow(p,(0,0,1280,720),(80,40,1360,760))
+        self.assertEqual((moved.x,moved.y),(90,140))
+        p = Placement(x=864,y=162,width=400,height=500)
+        moved = follow(p,(0,0,1280,720),(80,40,1680,940))
+        self.assertEqual((moved.x,moved.y),(1264,382))
+
+    def test_snap_does_not_pull_distant_panels_and_supports_outside_docking(self):
+        bounds = (100,100,1380,820)
+        self.assertEqual(snap(Placement(x=108,y=107),bounds).x,100)
+        self.assertEqual(snap(Placement(x=108,y=107),bounds).y,100)
+        self.assertEqual(snap(Placement(x=-294,y=180),bounds).x,-300)
+        self.assertEqual(snap(Placement(x=400,y=400),bounds).x,400)
+
+    def test_behavior_preferences_keep_backward_compatible_defaults(self):
+        p = Placement.load({'x':24,'y':180})
+        self.assertTrue(p.follow_game and p.auto_compact and p.snap_edges)
+        p = Placement.load({'follow_game':False,'auto_compact':False,'snap_edges':False})
+        self.assertFalse(p.follow_game or p.auto_compact or p.snap_edges)
+        self.assertEqual(Placement.load(p.dump()),p)
+
     def test_unplugged_monitor_recovers_whole_panel_to_work_area(self):
         p = fit(Placement(x=9000,y=-2000,width=500,height=700),[(0,0,1920,1040)])
         self.assertGreaterEqual(p.x,0)

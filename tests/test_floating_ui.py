@@ -4,6 +4,7 @@ import tempfile
 import tkinter as tk
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 
 from PIL import Image
 
@@ -125,3 +126,135 @@ class FloatingUiTests(unittest.TestCase):
             dock.refresh()
         self.assertLessEqual(dock.placement.x+dock.placement.width,1280)
         self.assertLessEqual(dock.placement.y+HEADER+dock.placement.height,680)
+
+    def test_following_client_does_not_accumulate_clamping_drift(self):
+        dock = self.app.floating
+        previous = self.app.window
+        rect = [(0,0,1280,900)]
+        self.app.preview = False
+        self.app.window = SimpleNamespace(hwnd=123)
+        try:
+            with patch('stronghold.floating.windows.is_window',return_value=True), \
+                 patch('stronghold.floating.windows.bounds',side_effect=lambda _:rect[0]), \
+                 patch('stronghold.floating.windows.foreground',return_value=123), \
+                 patch('stronghold.floating.windows.owned_window',return_value=False):
+                dock.track_client()
+                rect[0] = (80,40,1360,940)
+                dock.track_client()
+                self.assertEqual((dock.placement.x,dock.placement.y),(104,220))
+                rect[0] = (9000,40,10280,940)
+                dock.track_client()
+                rect[0] = (0,0,1280,900)
+                dock.track_client()
+                self.assertEqual((dock.placement.x,dock.placement.y),(24,180))
+        finally:
+            self.app.preview = True
+            self.app.window = previous
+
+    def test_background_compacts_only_content_and_preserves_manual_collapse(self):
+        from stronghold import windows
+        dock = self.app.floating
+        previous = self.app.window
+        self.app.preview = False
+        self.app.window = SimpleNamespace(hwnd=123)
+        try:
+            with patch('stronghold.floating.windows.is_window',return_value=True), \
+                 patch('stronghold.floating.windows.bounds',return_value=(0,0,1280,900)), \
+                 patch('stronghold.floating.windows.foreground',return_value=999) as foreground, \
+                 patch('stronghold.floating.windows.owned_window',return_value=False) as owned:
+                dock.track_client()
+                self.root.update_idletasks()
+                self.assertTrue(dock.auto_compacted)
+                self.assertTrue(windows.visible(dock.header_hwnd))
+                self.assertFalse(windows.visible(dock.body_hwnd))
+                self.assertFalse(dock.placement.collapsed)
+                foreground.return_value = dock.header_hwnd
+                owned.return_value = True
+                dock.track_client()
+                self.root.update_idletasks()
+                self.assertFalse(dock.auto_compacted)
+                self.assertTrue(windows.visible(dock.body_hwnd))
+                dock.toggle_collapse()
+                foreground.return_value = 123
+                owned.return_value = False
+                dock.track_client()
+                self.assertTrue(dock.placement.collapsed)
+                self.assertFalse(windows.visible(dock.body_hwnd))
+        finally:
+            self.app.preview = True
+            self.app.window = previous
+
+    def test_capture_tick_throttles_background_and_resumes_on_game_focus(self):
+        previous = self.app.window
+        self.app.preview = False
+        self.app.running = True
+        self.app.window = SimpleNamespace(hwnd=123)
+        self.app.last_windows = 100.0
+        self.app.last_scan = 100.0
+        self.app.last_foreground = 999
+        self.app.active_job = None
+        self.app.cadence.reset()
+        self.app.energy_saving.set(True)
+        clock = [100.5]
+        submitted = []
+        try:
+            with patch('stronghold.app.time.monotonic',side_effect=lambda:clock[0]), \
+                 patch('stronghold.app.windows.foreground',return_value=999) as foreground, \
+                 patch('stronghold.app.windows.bounds',return_value=(0,0,1280,900)), \
+                 patch.object(self.app,'submit',side_effect=submitted.append), \
+                 patch.object(self.app,'paint_overlay'),patch.object(self.app.floating,'refresh'), \
+                 patch.object(self.root,'after'):
+                self.app.tick()
+                self.assertEqual(submitted,[])
+                clock[0] = 101.6
+                self.app.tick()
+                self.assertEqual(submitted,[123])
+                foreground.return_value = 123
+                clock[0] = 101.7
+                self.app.tick()
+                self.assertEqual(submitted,[123,123])
+        finally:
+            self.app.preview = True
+            self.app.running = False
+            self.app.window = previous
+
+    def test_unchanged_panel_skips_rendering_but_new_match_data_refreshes(self):
+        dock = self.app.floating
+        dock.tabs.select(0)
+        self.root.update()
+        dock.last_render = None
+        with patch.object(dock.plan,'configure',wraps=dock.plan.configure) as configure:
+            dock.refresh()
+            first = configure.call_count
+            self.assertGreater(first,0)
+            dock.refresh()
+            self.assertEqual(configure.call_count,first)
+            self.app.update_views()
+            self.assertGreater(configure.call_count,first)
+
+    def test_automatic_panel_restore_does_not_steal_keyboard_focus(self):
+        from stronghold import windows
+        dock = self.app.floating
+        probe = tk.Toplevel(self.root)
+        probe.title('助手焦点回归测试')
+        probe.geometry('180x80+700+100')
+        try:
+            for locked in (False,True):
+                with self.subTest(locked=locked):
+                    dock.placement.locked = locked
+                    dock.body.withdraw()
+                    self.root.update()
+                    probe.focus_force()
+                    self.root.update()
+                    foreground = windows.foreground()
+                    self.assertEqual(foreground,windows.ancestor(probe.winfo_id(),2))
+                    dock.apply_geometry()
+                    self.root.update()
+                    self.assertTrue(windows.visible(dock.body_hwnd))
+                    self.assertEqual(windows.foreground(),foreground)
+                    dock.placement.x += 10
+                    dock.apply_geometry()
+                    self.root.update()
+                    self.assertEqual(windows.foreground(),foreground)
+        finally:
+            probe.destroy()

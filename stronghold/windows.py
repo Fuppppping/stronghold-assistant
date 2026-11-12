@@ -261,3 +261,12 @@ def work_areas():
         return True
     enumerate_monitors(None,None,collect,0)
     return areas
+
+
+def owned_window(hwnd):
+    """Include our dialogs when deciding whether the user is using the assistant."""
+    if not hwnd:
+        return False
+    pid = w.DWORD()
+    window_pid(hwnd,c.byref(pid))
+    return pid.value == os.getpid()

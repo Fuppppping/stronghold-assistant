@@ -48,7 +48,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ## 下载安装
 
-当前程序版本 **0.3.5**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
+当前程序版本 **0.3.6**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
 
 0.3.3 及更新版本可以在底栏「检查更新」升级；0.3.2 及更早版本需要先手动下载一次。新用户直接下载最新的 Windows 包即可。
 
@@ -69,8 +69,9 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 - **穿透**：点「穿透」后，内容区的点击会直接落到游戏；顶栏仍能拖动、解锁和返回主窗口。
 - **返回主窗**：点顶栏「主窗」。导入攻略、手动校正和高级采集设置也会回到主窗口处理。
 - **调外观**：在悬浮窗「设置」里调整字号与不透明度，也能恢复默认位置。
+- **跟随和吸附**：默认跟随游戏窗口移动，拖近边缘后松手会吸附。贴近右侧或底部时，游戏窗口缩放也会保留贴边位置；这些选项可以在小窗设置里关闭。
 
-切成悬浮窗后，识别继续运行，阵容和本局记录共用同一份数据。游戏卡片附近的小提示可以单独开关；固定在左上的文字思路会收进面板，避免重复显示。悬浮窗保持置顶，切到其他软件时也会保留，需要时可收起或返回主窗。
+切成悬浮窗后，识别继续运行，阵容和本局记录共用同一份数据。游戏卡片附近的小提示可以单独开关；固定在左上的文字思路会收进面板，避免重复显示。默认切出游戏时自动收起内容，只留可操作的顶栏；切回游戏或点击顶栏使用助手时恢复。手动收起会保留，游戏未找到时也不会藏住整个面板。关闭「切出游戏时收起内容」可让整窗常驻。
 
 在助手内按 `Ctrl + Shift + F` 也能切换模式。分辨率变化或断开副屏后，会把面板移回可见区域。
 
@@ -111,6 +112,8 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 - 换了皮肤后漏识别：当前头像模板覆盖固定池143名干员，自选干员和皮肤可能漏读。可以导入截图回放检查。
 - 提醒慢：主窗口底部会分别显示采集和识别耗时。已做区域复用和缓存，具体测试范围见 [性能说明](PERFORMANCE.md)。
 
+默认开启节能识别：后台降低采样，切回游戏时优先采集，开局盟约和策略选择页保留高频采样。需要固定高频时，可在采集设置或悬浮窗设置关闭该选项。采样间隔与一次识别本身的耗时是两回事。
+
 这版主要按简中、横屏和常见终端主题校准。它会读画面、给建议，不能自动打完整对局；PC 单步按钮也只会展开或收起商店。
 
 ## 设置与日志
@@ -146,10 +149,10 @@ py -3.12 -m venv .venv
 先改 `stronghold/__init__.py` 的版本号，打包最终的 Windows ZIP，并附上 `SOURCE_PROVENANCE.json`。然后生成更新清单：
 
 ```powershell
-python tools/make_update_manifest.py 0.3.5 StrongholdAssistant-v0.3.5-windows-x64.zip --notes release-notes.md --output update.json
+python tools/make_update_manifest.py 0.3.6 StrongholdAssistant-v0.3.6-windows-x64.zip --notes release-notes.md --output update.json
 ```
 
-把 ZIP 和 `update.json` 上传到对应的 `v0.3.5` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
+把 ZIP 和 `update.json` 上传到对应的 `v0.3.6` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
 
 更新通过本仓库的 HTTPS Release 清单分发。SHA-256 用来检查下载损坏，当前没有独立代码签名；源码运行可以检查和下载，自动安装仅支持打包程序。
 

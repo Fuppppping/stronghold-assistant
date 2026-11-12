@@ -1,12 +1,13 @@
 """Draggable companion UI sharing the dashboard's single capture and match state."""
 import tkinter as tk
 import time
+from dataclasses import replace
 from tkinter import ttk
 from PIL import Image, ImageTk
 
 from . import VERSION, windows
 from .domain import DATA, key
-from .floating_layout import Placement, HEADER, fit
+from .floating_layout import Placement, HEADER, fit, follow, snap
 from .ui import BG, PANEL, ALT, LINE, FG, SECONDARY, TEAL, GOLD, RED, ScrollColumn
 
 
@@ -22,6 +23,12 @@ class FloatingAssistant:
         self.pc_feedback = False
         self.display_areas = ()
         self.last_display_check = 0
+        self.auto_compacted = False
+        self.attachment = None
+        self.last_render = None
+        self.follow_game = tk.BooleanVar(master=app.root,value=self.placement.follow_game)
+        self.auto_compact = tk.BooleanVar(master=app.root,value=self.placement.auto_compact)
+        self.snap_edges = tk.BooleanVar(master=app.root,value=self.placement.snap_edges)
         self.header = tk.Toplevel(app.root, bg=BG)
         self.body = tk.Toplevel(app.root, bg=BG)
         self.header.title('卫戍助手 · 可拖动悬浮窗')
@@ -231,6 +238,9 @@ class FloatingAssistant:
         card = self.card(parent,'悬浮窗')
         self.label(card,'拖动顶栏移动，右下角拖动缩放。\n穿透只锁内容区，顶栏始终能点。',SECONDARY,size=12).pack(fill='x',padx=10,pady=(0,8))
         self.button(card,'恢复默认位置与尺寸',self.reset_position).pack(anchor='w',padx=10,pady=(0,10))
+        for text,var in (('跟随游戏窗口',self.follow_game),('切出游戏时收起内容',self.auto_compact),
+                         ('拖动后贴边吸附',self.snap_edges)):
+            ttk.Checkbutton(parent,text=text,variable=var,command=self.change_behavior).pack(anchor='w',pady=3)
         self.alpha = tk.DoubleVar(value=self.placement.opacity*100)
         self.label(card,'面板不透明度',size=12).pack(anchor='w',padx=10)
         slider = ttk.Scale(card,from_=55,to=100,variable=self.alpha,command=self.set_alpha)
@@ -246,6 +256,7 @@ class FloatingAssistant:
         self.font_caption = self.label(card,color=TEAL,size=11)
         self.font_caption.pack(fill='x',padx=10,pady=(0,8))
         ttk.Checkbutton(parent,text='保留卡片位置提示',variable=self.app.show_overlay,command=self.app.save).pack(anchor='w',pady=4)
+        ttk.Checkbutton(parent,text='后台/静止画面降低采样',variable=self.app.energy_saving,command=self.app.save).pack(anchor='w',pady=4)
         self.button(parent,'识别、窗口和 ADB 设置',lambda:self.full_action(5)).pack(fill='x',pady=6)
         self.button(parent,'检查 / 管理程序更新',lambda:self.full_action(5,self.app.updater.check)).pack(fill='x',pady=6)
         self.label(parent,f'v{VERSION} · 本地识别',SECONDARY,size=11).pack(anchor='w',pady=7)
@@ -253,11 +264,15 @@ class FloatingAssistant:
 
     def show(self):
         self.active = True
+        self.last_render = None
+        self.attachment = None
+        self.auto_compacted = False
         self.apply_geometry()
         self.refresh()
 
     def hide(self):
         self.active = False
+        self.auto_compacted = False
         self.header.withdraw()
         self.body.withdraw()
 
@@ -279,14 +294,17 @@ class FloatingAssistant:
         self.body.geometry(f'{p.width}x{p.height}')
         for window in (self.header,self.body):
             window.attributes('-alpha',p.opacity)
-        self.collapse_button.configure(text='展开' if p.collapsed else '收起')
+        self.collapse_button.configure(text='展开' if p.collapsed or self.auto_compacted else '收起')
+        self.heading.configure(text='卫戍助手 · 后台' if self.auto_compacted else '卫戍助手')
         self.lock_button.configure(text='解锁' if p.locked else '穿透',fg=GOLD if p.locked else SECONDARY)
         self.header.configure(bg=GOLD if p.locked else BG)
         if self.active:
-            self.header.deiconify()
-            if p.collapsed:
-                self.body.withdraw()
-            else:
+            if self.header.state() == 'withdrawn':
+                self.header.deiconify()
+            if p.collapsed or self.auto_compacted:
+                if self.body.state() != 'withdrawn':
+                    self.body.withdraw()
+            elif self.body.state() == 'withdrawn':
                 self.body.deiconify()
         self.header.update_idletasks()
         windows.floating_style(self.header)
@@ -295,9 +313,11 @@ class FloatingAssistant:
         windows.place_floating(self.body_hwnd,p.x,p.y+HEADER,p.width,p.height)
 
     def begin_drag(self,event):
+        self.attachment = None
         self.drag = ('move',event.x_root,event.y_root,self.placement.x,self.placement.y)
 
     def begin_resize(self,event):
+        self.attachment = None
         self.drag = ('resize',event.x_root,event.y_root,self.placement.width,self.placement.height)
 
     def move_drag(self,event):
@@ -314,7 +334,15 @@ class FloatingAssistant:
 
     def end_drag(self,_=None):
         if self.drag:
+            if self.drag[0] == 'move' and self.placement.snap_edges:
+                bounds = windows.bounds(self.app.window.hwnd) if self.app.window and not self.app.preview else None
+                if not bounds and self.display_areas:
+                    bounds = min(self.display_areas,key=lambda r:abs(r[0]-self.placement.x)+abs(r[1]-self.placement.y))
+                if bounds:
+                    self.placement = snap(self.placement,bounds)
+                    self.apply_geometry()
             self.drag = None
+            self.attachment = None
             self.app.save()
 
     def toggle_lock(self):
@@ -325,15 +353,54 @@ class FloatingAssistant:
         self.app.save()
 
     def toggle_collapse(self):
-        self.placement.collapsed = not self.placement.collapsed
+        self.placement.collapsed = False if self.auto_compacted else not self.placement.collapsed
+        self.auto_compacted = False
+        self.attachment = None
         self.apply_geometry()
+        self.refresh()
         self.app.save()
 
     def reset_position(self):
         self.placement = Placement()
+        self.attachment = None
+        self.auto_compacted = False
+        self.follow_game.set(self.placement.follow_game)
+        self.auto_compact.set(self.placement.auto_compact)
+        self.snap_edges.set(self.placement.snap_edges)
         self.apply_geometry()
         self.alpha.set(95)
         self.app.save()
+
+    def change_behavior(self):
+        self.placement.follow_game = self.follow_game.get()
+        self.placement.auto_compact = self.auto_compact.get()
+        self.placement.snap_edges = self.snap_edges.get()
+        self.attachment = None
+        self.track_client()
+        self.app.save()
+
+    def track_client(self):
+        app = self.app
+        target = app.window
+        attached = bool(target and windows.is_window(target.hwnd)) and not app.preview
+        bounds = windows.bounds(target.hwnd) if attached else None
+        if not attached:
+            self.attachment = None
+        if bounds and self.placement.follow_game and not self.drag:
+            if not self.attachment or self.attachment[0] != target.hwnd:
+                self.attachment = (target.hwnd,bounds,replace(self.placement))
+            else:
+                _,previous,placement = self.attachment
+                desired = fit(follow(placement,previous,bounds),self.display_areas)
+                if (desired.x,desired.y) != (self.placement.x,self.placement.y):
+                    self.placement = replace(self.placement,x=desired.x,y=desired.y)
+                    self.apply_geometry()
+        foreground = windows.foreground()
+        compact = bool(attached and self.placement.auto_compact and not windows.owned_window(foreground)
+                       and (foreground != target.hwnd or bounds is None))
+        if compact != self.auto_compacted:
+            self.auto_compacted = compact
+            self.apply_geometry()
 
     def set_alpha(self,value):
         self.placement.opacity = max(.55,min(1,float(value)/100))
@@ -416,8 +483,23 @@ class FloatingAssistant:
             self.last_display_check = now
             if tuple(windows.work_areas()) != self.display_areas:
                 self.apply_geometry()
+                self.attachment = None
                 self.app.save()
+        self.track_client()
         app = self.app
+        self.live_dot.configure(fg=RED if app.status.get().startswith('采集暂不可用') else
+                                TEAL if app.running and (app.window or app.preview) else GOLD)
+        if self.placement.collapsed or self.auto_compacted:
+            self.last_render = None
+            return
+        page = self.tabs.index('current')
+        stamp = (app.view_revision,page,app.overlay_scale.get(),app.running,app.preview,
+                 self.placement.locked,self.pact.get(),self.gear_search.get(),self.ban_mode.get(),
+                 app.status.get(),app.pc_status.get(),self.pc_feedback,
+                 int(now) if page==3 and self.ban_mode.get()=='共享卡池' else None)
+        if stamp == self.last_render:
+            return
+        self.last_render = stamp
         size = max(12,min(21,round(11*app.overlay_scale.get())))
         if size != self.scale:
             self.scale = size
@@ -436,7 +518,6 @@ class FloatingAssistant:
             for label,bold,fixed in self.labels:
                 label.configure(font=('Microsoft YaHei UI',-(fixed or size),'bold' if bold else 'normal'))
             self.wrap_labels()
-        self.live_dot.configure(fg=TEAL if app.running and (app.window or app.preview) else GOLD)
         self.stage.configure(text='回放 · '+(app.reading.scene or '等待画面') if app.preview else
                              '已暂停' if not app.running else app.reading.scene or ('等待画面' if app.window else '等待客户端'))
         status = app.status.get()

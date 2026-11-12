@@ -19,6 +19,7 @@ from .updates_ui import UpdateController, complete_startup
 from .domain import MatchState, Reading, Season, alerts, key
 from .overlay import Overlay
 from .floating import FloatingAssistant
+from .cadence import ScanCadence
 from .pc_input import operate_shop
 from .vision import Recognizer
 from .stock import Holding
@@ -126,6 +127,9 @@ class Dashboard:
         self.capacities = {int(k): v for k, v in settings.get("pool_capacity", {}).items()
                            if str(k) in {"1", "2", "3", "4", "5", "6"} and type(v) is int and v > 0}
         self.show_overlay = tk.BooleanVar(value=settings.get("overlay", True))
+        self.energy_saving = tk.BooleanVar(value=settings.get("energy_saving", True))
+        self.cadence = ScanCadence()
+        self.last_foreground = None
         scale = settings.get("overlay_scale", 1.35)
         scale = max(.8, min(2., scale)) if isinstance(scale, (int, float)) else 1.35
         self.overlay_scale = tk.DoubleVar(value=scale)
@@ -155,6 +159,7 @@ class Dashboard:
         self.live_match = None
         self.strategy_advice = None
         self.banner = ""
+        self.view_revision = 0
         self.confirmed_only = tk.BooleanVar(value=False)
         self.floating = None
         self.floating_enabled = tk.BooleanVar(value=False)
@@ -573,6 +578,8 @@ class Dashboard:
         self.label(parent, "默认自动识别。特殊皮肤或布局下可手动指定场景，或在盟约页校正。",
                    style="Sub.TLabel").pack(anchor="w", pady=8)
         self.updater.settings(parent)
+        ttk.Checkbutton(parent,text="后台和静止画面降低采样（节能识别）",variable=self.energy_saving,
+                        command=self.save).pack(anchor='w',pady=8)
 
     def save(self):
         try:
@@ -583,6 +590,7 @@ class Dashboard:
                 "overlay_scale": self.overlay_scale.get(),
                 "use_adb": self.use_adb.get(),
                 "auto_update_check": self.updater.auto.get(),
+                "energy_saving": self.energy_saving.get(),
                 "floating_mode": self.floating_enabled.get(),
                 "floating_layout": self.floating.placement.dump() if self.floating else {},
             })
@@ -655,6 +663,8 @@ class Dashboard:
         self.refresh_windows()
 
     def invalidate(self):
+        self.cadence.reset()
+        self.last_foreground = None
         self.generation += 1
         self.reading, self.frame = Reading(), None
         self.last_scan = 0
@@ -895,6 +905,13 @@ class Dashboard:
 
     def tick(self):
         now = time.monotonic()
+        foreground = windows.foreground()
+        active = bool(self.window and foreground == self.window.hwnd)
+        if foreground != self.last_foreground:
+            if active:
+                self.last_scan = 0
+                self.cadence.reset()
+            self.last_foreground = foreground
         if now - self.last_windows > 2.5 and not self.preview:
             self.refresh_windows()
         try:
@@ -917,7 +934,8 @@ class Dashboard:
 
         if (not self.preview and self.running and not self.pc_pending
                 and self.active_job is None and self.scanner.requests.empty()):
-            if now - self.last_scan > .25:
+            interval = self.cadence.interval(active,self.reading.scene,self.reading.reset_hint,self.energy_saving.get())
+            if now - self.last_scan > interval:
                 self.last_scan = now
                 if self.window and windows.bounds(self.window.hwnd):
                     if self.use_adb.get():
@@ -936,10 +954,12 @@ class Dashboard:
 
     def accept(self, reading, frame, error):
         if error:
+            self.cadence.failed()
             self.status.set(f"采集暂不可用 · {error}")
             self.reading, self.frame = Reading(), None
             self.update_views()
             return
+        self.cadence.observe(reading)
         self.reading, self.frame = reading, frame
         self.match.observe(reading, self.preview)
         source = "截图回放" if self.preview else self.window.title
@@ -1038,6 +1058,7 @@ class Dashboard:
         tree.yview_moveto(offset)
 
     def update_views(self):
+        self.view_revision += 1
         visible = [hit.name for hit in self.reading.hits
                    if hit.kind == "干员" and self.reading.scene in {"调度中心", "自选编队"}]
         ranked, self.fits = self.season.evaluate(self.states, self.match.excluded, visible, self.match.seen)

@@ -30,6 +30,10 @@ Ordinary recognition does not require administrator access. The explicit PC shop
 
 Font size, opacity, panel placement and equipment preferences are configurable. Settings, imported guides and logs are stored in `%LOCALAPPDATA%\StrongholdAssistant`.
 
+The floating panel follows the game window and can snap to its edges. Switching to another application automatically collapses the content, leaving an interactive header; returning to the game or using the assistant restores it. Manual collapse is preserved. These behaviors can be disabled in floating-panel settings.
+
+Adaptive sampling reduces background and unchanged-screen work while preserving priority for pact and strategy selection. Returning to the game triggers a fresh capture. The option can be disabled; failed captures still use bounded retry backoff. Sampling intervals are separate from OCR processing time.
+
 Version 0.3.3 and later support in-app updates. Earlier versions require one manual upgrade. Downloads are verified before installation; the updater backs up existing files and attempts rollback if the new application fails to start.
 
 ## Guides, development and attribution
