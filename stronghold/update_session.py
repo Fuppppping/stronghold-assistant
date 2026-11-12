@@ -41,6 +41,7 @@ def restore_session(app, plan_file):
         return False
     raw = data["match"]
     match = MatchState()
+    timed_records = raw['stock'].get('record_format') == 2
     for field in ("auto", "manual", "selected", "partial", "played", "in_setup", "epoch"):
         setattr(match, field, raw[field])
     for field in ("excluded", "seen", "incomplete"):
@@ -48,9 +49,16 @@ def restore_session(app, plan_file):
     match.groups = [set(group) for group in raw["groups"]]
     for slot, snap in raw["stock"]["players"].items():
         match.stock.players[slot] = Snapshot([Holding(**item) for item in snap["holdings"]],
-                                              snap["updated"], snap["source"])
+                                              snap["updated"] if timed_records else 0,
+                                              snap["source"] if timed_records else '旧版记录 · 时间待确认')
     match.stock.manual = {slot: {name: Holding(**item) for name, item in items.items()}
                          for slot, items in raw["stock"]["manual"].items()}
+    if timed_records:
+        timestamps = raw['stock'].get('manual_times',{})
+        if isinstance(timestamps,dict):
+            match.stock.manual_times = {slot:{name:stamp for name,stamp in items.items()
+                if name in match.stock.manual.get(slot,{}) and type(stamp) in (int,float) and stamp >= 0}
+                for slot,items in timestamps.items() if isinstance(items,dict)}
     own_slot = raw['stock'].get('own_slot','')
     match.stock.own_slot = own_slot if own_slot in ('面板1','面板2','面板3','面板4') else ''
     progress = raw.get('progress', {})

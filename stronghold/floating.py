@@ -242,7 +242,7 @@ class FloatingAssistant:
         selector.bind('<<ComboboxSelected>>',lambda _:self.refresh())
         self.ban_summary = self.label(parent,color=SECONDARY,size=11)
         self.ban_summary.pack(fill='x',pady=7)
-        self.ban_tree = self.tree(parent,(('name','禁用干员'),('reason','判断依据'),('note','所属盟约')),(100,100,150))
+        self.ban_tree = self.tree(parent,(('name','禁用干员'),('reason','判断依据'),('note','所属盟约'),('source','来源 / 时效')),(100,100,150,240))
         row = tk.Frame(parent,bg=BG)
         row.pack(fill='x',pady=6)
         self.button(row,'手动校正 / 总池量',lambda:self.full_action(2)).pack(side='left')
@@ -638,15 +638,19 @@ class FloatingAssistant:
             app.fill(self.pool_tree,rows)
         elif page == 3:
             if self.ban_mode.get() == '共享卡池':
+                view = app.match.stock.view()
+                self.ban_tree.configure(displaycolumns=('name','reason','source','note'))
                 self.ban_tree.heading('name',text='干员')
-                self.ban_tree.heading('reason',text='已见占用')
+                self.ban_tree.heading('reason',text='记录占用')
                 self.ban_tree.heading('note',text='剩余估算')
-                names = [name for name in app.season.operators if app.match.stock.occupied(name)]
-                self.ban_summary.configure(text=f'已记录 {len(app.match.stock.players)} 个面板 · 仅为可见占用下限')
-                app.fill(self.ban_tree,[(name,(name,f'≥{app.match.stock.occupied(name)}',
-                    app.match.stock.estimate(name,app.capacities.get(app.season.operators[name]['tier']))),'yes')
-                    for name in sorted(names,key=lambda name:-app.match.stock.occupied(name))])
+                names = [name for name in view.records if view.occupied(name)]
+                self.ban_summary.configure(text=f'已记录 {len(view.by_slot)} 个面板 · 含过期记录时暂停余量估算')
+                app.fill(self.ban_tree,[(name,(name,view.amount(name),
+                    view.estimate(name,app.capacities.get(app.season.operators.get(name,{}).get('tier'))),view.note(name)),
+                    'no' if name in view.stale_names else 'yes')
+                    for name in sorted(names,key=lambda name:-view.occupied(name))])
             else:
+                self.ban_tree.configure(displaycolumns=('name','reason','note'))
                 self.ban_tree.heading('name',text='禁用干员')
                 self.ban_tree.heading('reason',text='判断依据')
                 self.ban_tree.heading('note',text='所属盟约')

@@ -319,3 +319,44 @@ class FloatingUiTests(unittest.TestCase):
         self.assertEqual(self.app.stock_tabs.index('current'),1)
         self.assertEqual(self.app.stock_slot.get(),'面板3')
         self.assertEqual(self.app.guide_id,'iberia')
+
+    def test_undo_manual_card_uses_original_frame_and_keeps_controls_visible(self):
+        from stronghold.stock import Holding
+        self.app.leave_floating()
+        self.root.geometry('1080x800')
+        self.app.show_owned_roster()
+        self.app.match.stock.observe('面板1',[Holding('旅骨',normal=1)])
+        self.app.match.stock.correct('面板1',Holding('旅骨',elite=1))
+        self.app.stock_slot.set('面板1')
+        self.app.update_views()
+        self.app.stock_tree.selection_set('旅骨')
+        self.app.choose_stock_operator()
+        self.assertEqual([v.get() for v in self.app.stock_numbers],['0','1','0'])
+        self.app.undo_correction_button.invoke()
+        self.root.update()
+        self.assertEqual([v.get() for v in self.app.stock_numbers],['1','0','0'])
+        self.assertEqual(self.app.match.stock.occupied('旅骨'),1)
+        button = self.app.undo_correction_button
+        self.assertLessEqual(button.winfo_rooty()+button.winfo_height(),self.root.winfo_rooty()+self.root.winfo_height())
+
+    def test_stock_page_updates_expiry_while_paused_and_aggregates_once(self):
+        from stronghold.stock import Holding
+        ledger = self.app.match.stock
+        for slot in ('面板1','面板2','面板3','面板4'):
+            ledger.observe(slot,[Holding('旅骨',normal=1)])
+        with patch.object(ledger,'view',wraps=ledger.view) as view,patch.object(ledger,'records',wraps=ledger.records) as records:
+            self.app.update_stock()
+            self.assertEqual(view.call_count,1)
+            self.assertEqual(records.call_count,4)
+        self.app.leave_floating()
+        self.app.show_owned_roster()
+        self.root.update()
+        for snapshot in ledger.players.values():
+            snapshot.updated -= 31
+        self.app.last_stock_tick = -1
+        with patch.object(self.root,'after'):
+            self.app.tick()
+        values = self.app.stock_tree.item('旅骨','values')
+        self.assertIn('含旧记录',values[2])
+        self.assertIn('已过期',values[3])
+        self.assertIn('过期',values[4])

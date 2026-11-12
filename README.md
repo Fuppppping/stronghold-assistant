@@ -43,13 +43,17 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ![卫戍协议阵容推荐：整套卡牌适配、关键位缺牌与攻略详情](docs/screenshots/03-lineup-guide.png)
 
+**区分新确认和旧记录。** 下图是手动构造的离线样例：校正旅骨后，深靛仍保留为过期记录，余量暂停估算。
+
+![阵容记录的来源与时效：手动校正、过期提示和撤销入口](https://raw.githubusercontent.com/Fuppppping/stronghold-assistant/main/docs/screenshots/05-record-freshness.png)
+
 以上均为离线回放演示，不代表当前对局。游戏画面归鹰角网络及相关权利人所有。
 
 </details>
 
 ## 下载安装
 
-当前程序版本 **0.3.9**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
+当前程序版本 **0.3.10**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
 
 0.3.3 及更新版本可以在底栏「检查更新」升级；0.3.2 及更早版本需要先手动下载一次。新用户直接下载最新的 Windows 包即可。
 
@@ -108,7 +112,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 「尚未记录」不等于没有：备战区和漏识别都可能未计入。「核心可用」表示卡池允许，不表示已经买到。与 BAN 冲突的持有会标为待核对，不会据此解除禁用。转阵比较暂不计算经济和装备，攻略外的已有卡也不等于必须卖掉。
 
-来源未指定、尚无记录或超过30秒未更新时，排序退回基础适配。重新读取我方面板即可恢复；重开或清除此面板会解除绑定。指定来源只是复用同一份记录，不会在共享卡池里重复扣卡。
+来源未指定或尚无有效记录时，排序退回基础适配。超过30秒的卡片记录退出持有加权，其他有效记录继续参与。重新读取我方面板即可恢复；重开或清除此面板会解除绑定。指定来源只是复用同一份记录，不会在共享卡池里重复扣卡。
 
 <details>
 <summary>持有加权怎么算</summary>
@@ -122,6 +126,10 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 打开游戏里的队友总览，助手会按从上到下的「面板1–4」记录可见干员。重复看到同一面板时会覆盖旧快照，不会把商店里没买的卡算进去。星级看不清时只记占用下限，可以在「禁用卡池 → 队友阵容 / 共享卡池」手动校正。
 
 **余量是估算，不能当精确记牌器。** 当前版本的总池量还没可靠核实，默认只显示已见占用；你设置总池量后，才会给出余量范围。暂按普通1份、精锐3份计算，星极精锐按2份。没看到的备战区、赠送牌和记录时差都会影响结果；30秒没更新会提示过期。队友行顺序变了，需要清掉旧行再读。
+
+画面记录和手动校正分别计时。校正只覆盖当前卡，超过30秒停止覆盖；读取新画面不会给旧校正续期。你可以点「撤销本卡校正」，回到仍有效的识别结果。没有新近识别时，旧值只作历史供核对，不会当成当前持有；也不会因为没读到就自动记为0。
+
+「来源 / 时效」会显示来自哪个面板、画面识别还是手动校正、多久以前更新。含过期记录的占用会明确标记，并暂停数值余量估算。主窗口和悬浮窗都能查看；暂停识别时，时间提示仍会更新。旧版记录因没有独立校正时间，升级后先标为时间待确认，重新读取面板即可恢复。
 
 机制参考：[共享卡池实测](https://www.bilibili.com/video/BV1JWy3BkEpt/)、[本期官方演示](https://www.bilibili.com/video/BV18RHN64EZV?p=2)。
 
@@ -170,10 +178,10 @@ py -3.12 -m venv .venv
 先改 `stronghold/__init__.py` 的版本号，打包最终的 Windows ZIP，并附上 `SOURCE_PROVENANCE.json`。然后生成更新清单：
 
 ```powershell
-python tools/make_update_manifest.py 0.3.9 StrongholdAssistant-v0.3.9-windows-x64.zip --notes release-notes.md --output update.json
+python tools/make_update_manifest.py 0.3.10 StrongholdAssistant-v0.3.10-windows-x64.zip --notes release-notes.md --output update.json
 ```
 
-把 ZIP 和 `update.json` 上传到对应的 `v0.3.9` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
+把 ZIP 和 `update.json` 上传到对应的 `v0.3.10` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
 
 更新通过本仓库的 HTTPS Release 清单分发。SHA-256 用来检查下载损坏，当前没有独立代码签名；源码运行可以检查和下载，自动安装仅支持打包程序。
 

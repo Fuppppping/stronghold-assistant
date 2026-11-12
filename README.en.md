@@ -40,7 +40,9 @@ Version 0.3.7 supplements system trust with certifi's Mozilla CA bundle for Wind
 
 ## Guides, development and attribution
 
-You can explicitly designate one observed panel as your roster. Only its fresh visible holdings affect lineup ranking; teammate panels and shop offers are not treated as yours. Ownership adds at most 20 ranking points and cannot bypass unavailable key roles. Pivot comparisons show reusable cards and roles not yet recorded, without switching guides automatically. The binding follows panel position, expires for scoring after 30 seconds without a new snapshot, and resets for a new match. Reassign it if panel order changes.
+You can explicitly designate one observed panel as your roster. Only its fresh visible holdings affect lineup ranking; teammate panels and shop offers are not treated as yours. Ownership adds at most 20 ranking points and cannot bypass unavailable key roles. Pivot comparisons show reusable cards and roles not yet recorded, without switching guides automatically. The binding follows panel position and resets for a new match. Reassign it if panel order changes. Each record expires for scoring after 30 seconds; other fresh records remain eligible.
+
+Automatic observations and manual corrections have independent timestamps. Editing one card does not refresh the rest of the panel, and reading new frames does not renew an old correction. Corrections stop overriding after 30 seconds and can be undone. The record table shows source and age; stale history is retained for review and blocks numeric pool estimates. Sessions from older versions require fresh panel observations because they lack reliable per-correction timestamps.
 
 Stage advice follows confirmed round numbers and explicit guide ranges. Eleven built-in guides provide those ranges; the other two require manual stage selection. Unknown or stale rounds fall back to the overall plan. Manual choices last for the current match and reset for a new run. Current-stage cards receive extra emphasis without hiding global cores or counting shop offers as owned cards.
 

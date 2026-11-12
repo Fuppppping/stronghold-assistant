@@ -161,6 +161,7 @@ class Dashboard:
         self.active_job = None
         self.last_scan = 0
         self.last_windows = 0
+        self.last_stock_tick = -1
         self.frame = None
         self.preview = False
         self.match = MatchState()
@@ -538,8 +539,8 @@ class Dashboard:
         self.label(stock,textvariable=self.own_status,style='Sub.TLabel',wraplength=880).pack(anchor='w',pady=(4,0))
         self.stock_summary = self.label(stock, style="Sub.TLabel", wraplength=880)
         self.stock_summary.pack(anchor="w", pady=5)
-        self.stock_tree = self.tree(stock, ("name", "tier", "used", "remaining"),
-                                    ("干员", "等阶", "已见占用下限", "共享池估算"), (155, 55, 125, 470), height=5)
+        self.stock_tree = self.tree(stock, ("name", "tier", "used", "freshness", "remaining"),
+                                    ("干员", "等阶", "记录占用", "来源 / 时效", "共享池估算"), (140, 55, 155, 330, 350), height=5)
         self.stock_tree.bind("<<TreeviewSelect>>", self.choose_stock_operator)
         edit = ttk.Frame(stock)
         edit.pack(fill="x", pady=7)
@@ -551,6 +552,12 @@ class Dashboard:
             self.label(edit, title).pack(side="left", padx=(8, 3))
             ttk.Spinbox(edit, from_=0, to=99, textvariable=var, width=3).pack(side="left")
         self.button(edit, "保存此人持有量", self.save_holding).pack(side="left", padx=8)
+        correction = ttk.Frame(stock)
+        correction.pack(fill='x',pady=(0,6))
+        self.undo_correction_button = self.button(correction,'撤销本卡校正',self.undo_correction)
+        self.undo_correction_button.pack(side='left')
+        self.label(correction,'校正30秒后停用；撤销后恢复仍有效的画面记录。',
+                   style='Sub.TLabel',wraplength=580).pack(side='left',padx=8)
         self.label(stock, "面板1–4按队友总览从上到下编号；自动识别头像只计占用下限，星级可校正。\n"
                    "记录按玩家覆盖，商店待售牌不扣卡池。默认总量待核实；普通1份、精锐暂按3份（星极2份）。\n"
                    "星级不清只计1份下限。未见备战区、赠送牌与记录时差使余量只能估算，可手动校正。",
@@ -824,8 +831,8 @@ class Dashboard:
             return
         name = selected[0]
         self.stock_operator.set(name)
-        snap = self.match.stock.players.get(self.stock_slot.get())
-        item = next((item for item in snap.holdings if item.name == name), Holding(name)) if snap else Holding(name)
+        record = self.match.stock.records(self.stock_slot.get(),True).get(name)
+        item = record.holding if record else Holding(name)
         for var, value in zip(self.stock_numbers, (item.normal, item.elite, item.uncertain)):
             var.set(str(value))
 
@@ -840,6 +847,11 @@ class Dashboard:
         name, slot = self.stock_operator.get(), self.stock_slot.get()
         self.match.stock.correct(slot, Holding(name, *values))
         self.update_views()
+
+    def undo_correction(self):
+        self.match.stock.clear_correction(self.stock_slot.get(),self.stock_operator.get())
+        self.update_views()
+        self.choose_stock_operator()
 
     def pool_capacity(self):
         window = tk.Toplevel(self.root)
@@ -867,17 +879,20 @@ class Dashboard:
         self.button(window, "保存", apply, True).pack(pady=12)
 
     def update_stock(self):
+        self.last_stock_tick = int(time.monotonic())
         ledger = self.match.stock
+        view = ledger.view()
         names = set(self.season.operators)
-        names.update(item.name for snap in ledger.players.values() for item in snap.holdings)
+        names.update(view.records)
         rows = []
-        for name in sorted(names, key=lambda name: (-ledger.occupied(name), name)):
+        for name in sorted(names, key=lambda name: (-view.occupied(name), name)):
             tier = self.season.operators.get(name, {}).get("tier")
-            used = ledger.occupied(name)
-            rows.append((name, (name, tier or "自选", f"≥{used}", ledger.estimate(name, self.capacities.get(tier))),
-                         "yes" if used else "maybe"))
+            used = view.occupied(name)
+            rows.append((name, (name, tier or "自选", view.amount(name), view.note(name),
+                               view.estimate(name, self.capacities.get(tier))),
+                         "no" if name in view.stale_names else "yes" if used else "maybe"))
         self.fill(self.stock_tree, rows)
-        snapshots = " / ".join(f"{slot} {time.strftime('%H:%M:%S', time.localtime(snap.updated))} · {snap.source}"
+        snapshots = " / ".join(f"{slot} "+(time.strftime('%H:%M:%S', time.localtime(snap.updated)) if snap.updated>0 else '尚无新画面')+f" · {snap.source}"
                                for slot, snap in ledger.players.items())
         self.stock_summary.configure(text=snapshots or "尚未记录队友。展开队友总览会自动读取；单人详情可选面板编号后读取，也可手动校正。")
 
@@ -999,8 +1014,13 @@ class Dashboard:
                     self.status.set("等待客户端 · 打开明日方舟或模拟器，或从下拉框手动绑定")
         if ((self.current_plan.stage and not self.current_plan.manual
                 and self.match.progress.current_round() is None)
-                or self.owned_names != self.match.stock.own_names()):
+                or self.owned_names != self.match.stock.own_names()
+                or self.own_status.get() != self.match.stock.own_status()):
             self.update_views()
+        if (int(now) != self.last_stock_tick and self.root.state()!='withdrawn'
+                and self.tabs.index('current')==2 and self.stock_tabs.index('current')==1):
+            self.last_stock_tick = int(now)
+            self.update_stock()
         self.paint_overlay()
         if self.floating and self.floating.active:
             self.floating.refresh()
