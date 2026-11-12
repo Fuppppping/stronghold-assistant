@@ -1,30 +1,58 @@
-# 卫戍协议助手
+# 明日方舟卫戍协议助手 · Arknights Stronghold Assistant
 
-帮你看这一局能玩什么，选好阵容后，想找的干员和装备出现时提醒你。适用于简中《明日方舟》PC 客户端，也支持能正常抓屏的模拟器。
+**开局看 BAN，选好阵容，来牌时提醒。** 用于《明日方舟 Arknights》卫戍协议（Stronghold Protocol）的 Windows 游戏助手，支持本地画面识别、整套阵容推荐和可拖动的穿透悬浮窗。
 
-**[下载 Windows 版](https://github.com/Fuppppping/stronghold-assistant/releases/latest)** · 当前版本 **0.3.5** · 解压后直接运行，不用安装 Python。
+[![Latest release](https://img.shields.io/github/v/release/Fuppppping/stronghold-assistant?label=Release)](https://github.com/Fuppppping/stronghold-assistant/releases/latest)
+![Windows 10 / 11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4)
+![Game UI](https://img.shields.io/badge/Game%20UI-简体中文-59c99c)
 
-## 局中能帮什么
+**[下载 Windows 版](https://github.com/Fuppppping/stronghold-assistant/releases/latest)** · [快速上手](#快速上手) · [悬浮窗模式](#悬浮窗模式) · [常见问题](#常见问题) · [攻略 JSON](攻略JSON格式.md) · [反馈问题](https://github.com/Fuppppping/stronghold-assistant/issues)
 
-下面用离线回放演示，画面里的记录不是当前对局。
+简体中文 | [English](https://github.com/Fuppppping/stronghold-assistant/blob/main/README.en.md)
 
-**像游戏插件一样放在旁边。** 点主窗口底栏的「悬浮窗模式」，大窗口就会收起，换成可拖动的小面板。阵容思路、叠层清单、来牌和装备提醒一起看；面板位置可以自己摆。
+A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup recommendations, operator and equipment alerts, and a draggable click-through overlay. The current recognizer supports the **Simplified Chinese game UI**.
 
-![可拖动悬浮面板与游戏内来牌提示，使用离线回放演示](docs/screenshots/04-compact-overlay.png)
+![明日方舟卫戍协议助手：可拖动悬浮窗、阵容思路和游戏商店来牌提醒（离线回放演示）](docs/screenshots/04-compact-overlay.png)
 
-**商店里有想找的卡，提醒你别漏。** 金色看核心和关键装备，青绿看可用叠层。小窗里有监测、攻略、干员、BAN、装备和设置六页，可以直接选阵容、改装备提醒、查看队友卡池。长内容可以滚动。
+## 主要功能
 
-<img src="docs/screenshots/01-live-help.png" width="400" alt="悬浮窗近景：阵容思路、核心与可用叠层、装备和来牌提醒">
+| 你在做什么 | 助手能帮什么 |
+| --- | --- |
+| 开局选盟约 | 读到有效盟约后推算禁用干员，滚动 BAN 名单继续补读，并标明判断依据 |
+| 决定玩哪套 | 按整套卡的 BAN 情况检查核心、叠层和功能位，列出缺牌与替代候选 |
+| 刷商店、选策略 | 选定攻略后，标出相关干员、推荐策略和关键装备；装备也能自行勾选或屏蔽 |
+| 边打边看攻略 | 用可拖动、可缩放的置顶悬浮窗看打法与叠层；内容区可穿透，顶栏始终可解锁 |
+| 看队友阵容 | 按面板记录可见持有量，可手动校正；剩余卡池只提供估算 |
+| 重开或更新程序 | 新局重置本局记录；个人偏好保留，程序更新先下载，再由你决定何时安装 |
 
-**开局先看谁被 BAN。** 读到有效盟约后就会推算禁用干员；向下滚动游戏的 BAN 名单，还会继续补读。名单会写明是推算出来的，还是直接识别到的。
+画面识别在本机运行。当前支持简中官方 PC 客户端和可正常抓屏的模拟器；**它提供建议和提醒，暂不支持完整自动对局**。阵容适配分不是胜率，替代卡也不保证等强。
 
-![本局 BAN 名单和禁用依据](docs/screenshots/02-ban-evidence.png)
+<details>
+<summary>更多演示：悬浮窗近景、BAN 名单与阵容推荐</summary>
 
-**选阵容时，会把缺的关键卡列出来。** 推荐会检查整套卡的 BAN 情况，包括核心、叠层和功能位。分数只是当前卡池的适配程度，不是胜率；替代卡也不保证一样强。
+**局中看思路与来牌。** 金色强调核心和关键装备，青绿标记可用叠层。小窗有监测、攻略、干员、BAN、装备和设置六页。
 
-![阵容排序、缺牌和攻略详情](docs/screenshots/03-lineup-guide.png)
+<img src="docs/screenshots/01-live-help.png" width="400" alt="Arknights 卫戍协议悬浮窗：当前攻略、核心与可用叠层、装备及干员提醒">
 
-## 怎么用
+**开局先看禁用依据。** 名单区分「盟约推算」与「名单识别」，待确认项不会强行算成禁用。
+
+![卫戍协议 BAN 识别：禁用干员、判断依据和所属盟约](docs/screenshots/02-ban-evidence.png)
+
+**阵容推荐看整套卡。** 缺关键位时说明原因，方便决定继续找牌还是换打法。
+
+![卫戍协议阵容推荐：整套卡牌适配、关键位缺牌与攻略详情](docs/screenshots/03-lineup-guide.png)
+
+以上均为离线回放演示，不代表当前对局。游戏画面归鹰角网络及相关权利人所有。
+
+</details>
+
+## 下载安装
+
+当前程序版本 **0.3.5**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
+
+0.3.3 及更新版本可以在底栏「检查更新」升级；0.3.2 及更早版本需要先手动下载一次。新用户直接下载最新的 Windows 包即可。
+
+## 快速上手
 
 1. 完整解压下载的压缩包，运行 `StrongholdAssistant.exe`，再打开游戏。助手会寻找客户端；有多个窗口时可以手动选。
 2. 进入卫戍协议的「确认本局信息」，等助手读出盟约和 BAN。有误的盟约可以双击校正。
@@ -34,7 +62,7 @@
 
 左侧切换页面，也可以用 `Ctrl + 1–6`。普通识别不需要管理员权限；「展开商店 / 收起商店」这两个 PC 单步按钮需要以管理员身份运行助手。
 
-## 悬浮窗怎么用
+## 悬浮窗模式
 
 - **移动、缩放**：拖动顶栏移动，拖右下角缩放。位置、尺寸、不透明度和模式会记住。
 - **收起**：点顶栏「收起」只留一条标题栏，再点「展开」恢复。
@@ -46,13 +74,13 @@
 
 在助手内按 `Ctrl + Shift + F` 也能切换模式。分辨率变化或断开副屏后，会把面板移回可见区域。
 
-## 提示太大或太小？
+## 字号与外观
 
-打开「采集设置」，拖动「浮层字号」即可，范围是 **80%–200%**，调整后即时生效并记住。默认是 **135%**，比 0.3.3 大约增加三分之一；「恢复默认」可以一键重置。
+打开「采集设置」，拖动「浮层字号」即可，范围是 **80%–200%**，调整后即时生效并记住。默认是 **135%**；「恢复默认」可以一键重置。
 
 普通模式仍使用左上透明文字；悬浮窗模式把这些信息放进面板。可以在设置中关闭游戏卡片附近的小提示。
 
-## 更新
+## 程序更新
 
 启动后会在后台检查新版本，之后每 6 小时检查一次。发现更新只在底栏提示，不会在对局中替你安装。自动检查可以在设置中关闭。
 
@@ -76,7 +104,7 @@
 
 机制参考：[共享卡池实测](https://www.bilibili.com/video/BV1JWy3BkEpt/)、[本期官方演示](https://www.bilibili.com/video/BV18RHN64EZV?p=2)。
 
-## 识别不对时
+## 常见问题
 
 - 抓不到画面：把游戏切到前台，试试窗口化或无边框模式。模拟器也可以在采集设置里改用 ADB。
 - BAN 少了：向下滚动游戏名单，让助手继续读；无法确认的内容会保留为待确认。
@@ -85,9 +113,15 @@
 
 这版主要按简中、横屏和常见终端主题校准。它会读画面、给建议，不能自动打完整对局；PC 单步按钮也只会展开或收起商店。
 
-## 设置放在哪里
+## 设置与日志
 
 个人设置、导入攻略和日志都在 `%LOCALAPPDATA%\StrongholdAssistant`。更新缓存和备份放在其中的 `updates` 文件夹；确认程序正常并关闭所有助手后，可以清理旧任务来腾空间。源码运行可用 `STRONGHOLD_STATE` 改位置。
+
+## 问题反馈与参与
+
+遇到识别错误或界面问题，可以先看上面的常见问题，再到 [Issues](https://github.com/Fuppppping/stronghold-assistant/issues) 反馈。带上程序版本、PC 客户端或模拟器类型、分辨率，以及出错场景和复现步骤，会更容易定位。
+
+欢迎补充可复现的识别问题、修正攻略和提交改进。攻略请保留原作者与来源链接；模型、素材和第三方代码请遵守各自许可。版本变动见 [更新记录](CHANGELOG.md)，识别耗时和测试范围见 [性能说明](PERFORMANCE.md)。
 
 ## 从源码运行
 
