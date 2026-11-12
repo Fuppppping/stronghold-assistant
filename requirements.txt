@@ -4,3 +4,4 @@ Pillow==13.0.0
 numpy==2.5.4
 opencv-python-headless==5.0.0.93
 MaaFw==5.15.0
+certifi==2026.10.23

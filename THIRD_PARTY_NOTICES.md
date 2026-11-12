@@ -33,9 +33,10 @@ $env:MAAFW_BINARY_PATH = 'C:\MyMaaFramework\bin'
 | OpenCV Python Headless | 5.0.0.93 | 模板匹配、轮廓、颜色和图像预处理 | [opencv-python](https://github.com/opencv/opencv-python)、[OpenCV](https://github.com/opencv/opencv) · Apache-2.0；原生依赖声明见 `licenses/opencv-python-headless` |
 | NumPy | 2.5.4 | 数组计算 | [numpy/numpy](https://github.com/numpy/numpy) · BSD-3-Clause 及其附带子组件许可 |
 | Pillow | 13.0.0 | 抓屏、图像读取、裁剪、缩放 | [python-pillow/Pillow](https://github.com/python-pillow/Pillow) · MIT-CMU 及附带图像编解码库声明 |
+| certifi | 2026.10.23 | 更新连接的 Mozilla 根证书包，补充系统信任 | [certifi/python-certifi](https://github.com/certifi/python-certifi) · MPL-2.0；原始证书包与许可保留在安装组件中，许可另见 `licenses/certifi` |
 | PyInstaller | 6.22.3（构建工具） | Windows 打包与引导程序 | [pyinstaller/pyinstaller](https://github.com/pyinstaller/pyinstaller) · GPL-2.0-or-later，含 bootloader exception，原文见 `licenses/pyinstaller` |
 
-间接依赖包括 pyclipper、six、Shapely/GEOS、PyYAML、tqdm、OmegaConf、requests、colorlog、flatbuffers、packaging、protobuf、StrEnum、colorama、charset-normalizer、idna、urllib3、certifi。其本次安装版本、主页、许可证和原始声明均保留在 `DEPENDENCIES.json` 与 `licenses/`，不统一改为 MIT。
+间接依赖包括 pyclipper、six、Shapely/GEOS、PyYAML、tqdm、OmegaConf、requests、colorlog、flatbuffers、packaging、protobuf、StrEnum、colorama、charset-normalizer、idna、urllib3。其本次安装版本、主页、许可证和原始声明均保留在 `DEPENDENCIES.json` 与 `licenses/`，不统一改为 MIT。
 
 MaaFw 安装依赖中还包含 [MaaAgentBinary](https://github.com/MaaXYZ/MaaAgentBinary) 1.0.1（AGPL-3.0）。它提供 Android 触控代理；当前 PC 路径没有使用这些代理，Windows 打包参数没有收集其代理资源。开发环境的许可副本仍保留在 `licenses/maaagentbinary`。
 

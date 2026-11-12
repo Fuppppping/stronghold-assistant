@@ -204,6 +204,7 @@ class UpdateController:
                     continue
                 self.busy = False
                 if kind == "release":
+                    logging.info("Update check succeeded: latest=%s current=%s", value.version, VERSION)
                     if version_tuple(value.version) > version_tuple(VERSION):
                         self.release = value
                         self.summary.set(f"发现新版本 {value.version} · 当前 {VERSION}")

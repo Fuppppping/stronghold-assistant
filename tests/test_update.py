@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import os
+import ssl
 from pathlib import Path
 import tempfile
 from threading import Event
@@ -82,6 +83,32 @@ class UpdateTests(unittest.TestCase):
                     "https://user@github.com/a", "file:///C:/app.exe"):
             with self.subTest(url=url), self.assertRaises(ValueError):
                 up.transport_url(url)
+
+    def test_https_supplements_system_and_empty_stores_with_verified_roots(self):
+        for context in (ssl.create_default_context(), ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)):
+            original = set(context.get_ca_certs(binary_form=True))
+            with self.subTest(system_roots=len(original)), \
+                    patch.object(up.ssl, "create_default_context", return_value=context), \
+                    patch.object(up.urllib.request, "build_opener") as build:
+                up.open_url(up.FEED)
+                roots = set(context.get_ca_certs(binary_form=True))
+                self.assertTrue(roots)
+                self.assertTrue(original <= roots)
+                self.assertEqual(context.verify_mode, ssl.CERT_REQUIRED)
+                self.assertTrue(context.check_hostname)
+                handlers = build.call_args.args
+                self.assertTrue(any(isinstance(h, up.SafeRedirect) for h in handlers))
+                https = next(h for h in handlers if isinstance(h, up.urllib.request.HTTPSHandler))
+                self.assertIs(https._context, context)
+                request = build.return_value.open.call_args.args[0]
+                self.assertEqual(request.full_url, up.FEED)
+
+    def test_missing_ca_bundle_fails_without_opening_an_unverified_connection(self):
+        with patch.object(up.certifi, "where", return_value=str(self.root / "missing.pem")), \
+                patch.object(up.urllib.request, "build_opener") as build:
+            with self.assertRaises(OSError):
+                up.open_url(up.FEED)
+            build.assert_not_called()
 
     def test_reject_traversal_ads_and_windows_aliases(self):
         for name in ("../oops.exe", "/README.md", "licenses/../README.md", "licenses\\a",

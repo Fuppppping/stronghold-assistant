@@ -6,12 +6,15 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import shutil
+import ssl
 import stat
 from threading import Event
 import urllib.request
 from urllib.parse import urlsplit
 import uuid
 import zipfile
+
+import certifi
 
 REPOSITORY = "https://github.com/Fuppppping/stronghold-assistant"
 FEED = REPOSITORY + "/releases/latest/download/update.json"
@@ -68,7 +71,12 @@ def open_url(url):
     transport_url(url)
     request = urllib.request.Request(url, headers={"User-Agent": "StrongholdAssistant-Updater",
                                                   "Accept": "application/octet-stream"})
-    return urllib.request.build_opener(SafeRedirect()).open(request, timeout=25)
+    # Keep system trust (including managed Windows roots), then supplement it
+    # with Mozilla's CA bundle for machines with incomplete system stores.
+    context = ssl.create_default_context()
+    context.load_verify_locations(cafile=certifi.where())
+    return urllib.request.build_opener(SafeRedirect(), urllib.request.HTTPSHandler(context=context))\
+        .open(request, timeout=25)
 
 
 @dataclass(frozen=True)

@@ -48,7 +48,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ## 下载安装
 
-当前程序版本 **0.3.6**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
+当前程序版本 **0.3.7**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
 
 0.3.3 及更新版本可以在底栏「检查更新」升级；0.3.2 及更早版本需要先手动下载一次。新用户直接下载最新的 Windows 包即可。
 
@@ -111,6 +111,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 - BAN 少了：向下滚动游戏名单，让助手继续读；无法确认的内容会保留为待确认。
 - 换了皮肤后漏识别：当前头像模板覆盖固定池143名干员，自选干员和皮肤可能漏读。可以导入截图回放检查。
 - 提醒慢：主窗口底部会分别显示采集和识别耗时。已做区域复用和缓存，具体测试范围见 [性能说明](PERFORMANCE.md)。
+- 检查更新提示证书错误：0.3.7 已补充可信证书支持。旧版遇到该问题时，从发布页手动下载一次新版。
 
 默认开启节能识别：后台降低采样，切回游戏时优先采集，开局盟约和策略选择页保留高频采样。需要固定高频时，可在采集设置或悬浮窗设置关闭该选项。采样间隔与一次识别本身的耗时是两回事。
 
@@ -149,10 +150,10 @@ py -3.12 -m venv .venv
 先改 `stronghold/__init__.py` 的版本号，打包最终的 Windows ZIP，并附上 `SOURCE_PROVENANCE.json`。然后生成更新清单：
 
 ```powershell
-python tools/make_update_manifest.py 0.3.6 StrongholdAssistant-v0.3.6-windows-x64.zip --notes release-notes.md --output update.json
+python tools/make_update_manifest.py 0.3.7 StrongholdAssistant-v0.3.7-windows-x64.zip --notes release-notes.md --output update.json
 ```
 
-把 ZIP 和 `update.json` 上传到对应的 `v0.3.6` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
+把 ZIP 和 `update.json` 上传到对应的 `v0.3.7` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
 
 更新通过本仓库的 HTTPS Release 清单分发。SHA-256 用来检查下载损坏，当前没有独立代码签名；源码运行可以检查和下载，自动安装仅支持打包程序。
 
@@ -173,6 +174,7 @@ python tools/make_update_manifest.py 0.3.6 StrongholdAssistant-v0.3.6-windows-x6
 | NumPy 2.5.4 / Pillow 13.0.0 | 数组运算、抓屏、图像转换；BSD 系 / MIT-CMU 等 | [NumPy](https://github.com/numpy/numpy)、[Pillow](https://github.com/python-pillow/Pillow) |
 | Python 3.12 / tkinter / ctypes | 桌面 UI、窗口浮层、Windows 系统接口 | [CPython](https://github.com/python/cpython)、[Tcl/Tk](https://www.tcl.tk/)、[Win32 API](https://learn.microsoft.com/windows/win32/api/) |
 | PyInstaller 6.22.3 | Windows 打包；GPL 含 bootloader exception | [PyInstaller](https://github.com/pyinstaller/pyinstaller) |
+| certifi 2026.10.23 | 更新连接的 Mozilla 根证书包；MPL-2.0 | [certifi/python-certifi](https://github.com/certifi/python-certifi) |
 | PRTS / SquadPool | 本期干员、盟约、策略、装备及阵容资料；图标与头像来自游戏 | [PRTS 图鉴](https://prts.wiki/w/卫戍协议·规程/PRTS盟约记录)、[SquadPool](https://squad-pool.com/arknights-pacts) |
 
 完整的组件、模型、素材来源和许可证见 [第三方说明](THIRD_PARTY_NOTICES.md) 与 [依赖清单](DEPENDENCIES.json)。攻略作者和原链接保留在各条攻略的 `sources` 中；演示图来自本项目的离线回放，游戏画面归鹰角网络及相关权利人所有。

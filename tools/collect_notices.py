@@ -8,7 +8,7 @@ import sys
 from packaging.requirements import Requirement
 
 ROOT = Path(__file__).resolve().parent.parent
-DIRECT = ['rapidocr', 'onnxruntime', 'Pillow', 'numpy', 'opencv-python-headless', 'MaaFw']
+DIRECT = ['rapidocr', 'onnxruntime', 'Pillow', 'numpy', 'opencv-python-headless', 'MaaFw', 'certifi']
 FALLBACK = {'maafw': 'LGPL-3.0', 'maaagentbinary': 'AGPL-3.0', 'strenum': 'MIT',
             'omegaconf': 'BSD-3-Clause', 'colorama': 'BSD-3-Clause'}
 

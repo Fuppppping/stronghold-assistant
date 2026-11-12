@@ -36,6 +36,8 @@ Adaptive sampling reduces background and unchanged-screen work while preserving 
 
 Version 0.3.3 and later support in-app updates. Earlier versions require one manual upgrade. Downloads are verified before installation; the updater backs up existing files and attempts rollback if the new application fails to start.
 
+Version 0.3.7 supplements system trust with certifi's Mozilla CA bundle for Windows systems with incomplete certificate stores. Certificate and hostname verification remain enabled. If an older version reports a certificate error, download the latest package manually once.
+
 ## Guides, development and attribution
 
 There are currently **13 built-in guides and branches**. Guide sources are retained in the application. See the [Chinese usage guide](README.md), [guide JSON format](攻略JSON格式.md), [example guide](guide.example.json), and [performance notes](PERFORMANCE.md) for details and limitations.
