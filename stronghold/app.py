@@ -18,6 +18,7 @@ from . import VERSION
 from .updates_ui import UpdateController, complete_startup
 from .domain import MatchState, Reading, Season, alerts, key
 from .overlay import Overlay
+from .floating import FloatingAssistant
 from .pc_input import operate_shop
 from .vision import Recognizer
 from .stock import Holding
@@ -155,6 +156,8 @@ class Dashboard:
         self.strategy_advice = None
         self.banner = ""
         self.confirmed_only = tk.BooleanVar(value=False)
+        self.floating = None
+        self.floating_enabled = tk.BooleanVar(value=False)
         self.updater = UpdateController(self, SETTINGS_DIR, settings.get("auto_update_check", True))
         self.configure_styles()
         self.build()
@@ -166,6 +169,10 @@ class Dashboard:
         self.update_views()
         root.protocol("WM_DELETE_WINDOW", self.close)
         root.after(150, self.tick)
+        self.floating = FloatingAssistant(self, settings.get("floating_layout"))
+        root.bind_all('<Control-Shift-F>',lambda _:self.leave_floating() if self.floating.active else self.enter_floating(),add='+')
+        if settings.get("floating_mode", False):
+            root.after(250,self.enter_floating)
 
     def style_window(self, event):
         if isinstance(event.widget, (tk.Tk, tk.Toplevel)):
@@ -259,6 +266,7 @@ class Dashboard:
         self.footer_status = self.label(footer, textvariable=self.status, style="Sub.TLabel", font=("Microsoft YaHei UI",8))
         self.footer_status.pack(side='left', fill='x', expand=True)
         ttk.Button(footer, textvariable=self.updater.badge, command=self.updater.check).pack(side='right')
+        ttk.Button(footer, text='悬浮窗模式', command=self.enter_floating).pack(side='right',padx=7)
         body = ttk.Frame(main)
         body.pack(fill='both', expand=True)
         sidebar = ttk.Frame(body, width=172)
@@ -534,8 +542,9 @@ class Dashboard:
         self.label(parent, "采集方式", font=("Microsoft YaHei UI", 13, "bold")).pack(anchor="w", pady=(0, 8))
         self.label(parent, "默认读取游戏窗口。窗口在前台时会显示鼠标穿透提示。",
                    style="Sub.TLabel").pack(anchor="w")
-        ttk.Checkbutton(parent, text="开启游戏内置顶浮层", variable=self.show_overlay,
+        ttk.Checkbutton(parent, text="开启游戏内卡片与文字提示", variable=self.show_overlay,
                         command=self.save).pack(anchor="w", pady=7)
+        self.button(parent,"切换到可拖动悬浮窗",self.enter_floating).pack(anchor='w',pady=(0,8))
         row = ttk.Frame(parent)
         row.pack(fill="x", pady=(0, 10))
         self.label(row, textvariable=self.overlay_font_text, width=18).pack(side="left")
@@ -574,6 +583,8 @@ class Dashboard:
                 "overlay_scale": self.overlay_scale.get(),
                 "use_adb": self.use_adb.get(),
                 "auto_update_check": self.updater.auto.get(),
+                "floating_mode": self.floating_enabled.get(),
+                "floating_layout": self.floating.placement.dump() if self.floating else {},
             })
         except OSError as exc:
             self.status.set(f"无法保存设置 · {exc}")
@@ -585,6 +596,26 @@ class Dashboard:
     def reset_overlay_font(self):
         self.overlay_font_slider.set(135)
         self.save()
+
+    def enter_floating(self):
+        if not self.floating:
+            return
+        self.floating_enabled.set(True)
+        self.floating.show()
+        self.root.withdraw()
+        self.save()
+        self.paint_overlay()
+
+    def leave_floating(self):
+        if not self.floating:
+            return
+        self.floating.hide()
+        self.floating_enabled.set(False)
+        self.root.deiconify()
+        self.root.state('normal')
+        self.root.lift()
+        self.save()
+        self.paint_overlay()
 
     def refresh_windows(self):
         items = windows.list_windows()
@@ -899,6 +930,8 @@ class Dashboard:
                 else:
                     self.status.set("等待客户端 · 打开明日方舟或模拟器，或从下拉框手动绑定")
         self.paint_overlay()
+        if self.floating and self.floating.active:
+            self.floating.refresh()
         self.root.after(125, self.tick)
 
     def accept(self, reading, frame, error):
@@ -931,8 +964,9 @@ class Dashboard:
             self.overlay.hide()
             return
         callouts = self.callouts()
-        if callouts or self.banner:
-            self.overlay.show(region, self.frame.size, callouts, self.banner, self.reading.scene,
+        banner = "" if self.floating and self.floating.active else self.banner
+        if callouts or banner:
+            self.overlay.show(region, self.frame.size, callouts, banner, self.reading.scene,
                               self.overlay_scale.get())
         else:
             self.overlay.hide()
@@ -1026,6 +1060,8 @@ class Dashboard:
         self.update_stock()
         self.update_guides(ranked)
         self.update_equipment()
+        if self.floating and self.floating.active:
+            self.floating.refresh()
 
     def update_monitor(self, ranked, notices):
         connected = bool(self.window)

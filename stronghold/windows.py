@@ -225,3 +225,39 @@ def overlay_handle(toplevel):
 def move_overlay(hwnd, rect):
     x1, y1, x2, y2 = rect
     set_position(hwnd, HWND_TOPMOST, x1, y1, x2 - x1, y2 - y1, 0x10 | 0x40)
+
+
+def floating_style(toplevel, locked=False):
+    """Only the body is locked; the separate title bar always stays clickable."""
+    hwnd = ancestor(toplevel.winfo_id(), 2)
+    flags = get_style(hwnd, GWL_EXSTYLE) | 0x80000 | 0x80
+    flags = flags | 0x20 | 0x08000000 if locked else flags & ~(0x20 | 0x08000000)
+    set_style(hwnd, GWL_EXSTYLE, flags)
+    set_affinity(hwnd, 0x11)
+    set_position(hwnd, HWND_TOPMOST, 0, 0, 0, 0, 0x1 | 0x2 | 0x10 | 0x20)
+    return hwnd
+
+
+def place_floating(hwnd, x, y, width, height):
+    # Native desktop coordinates also support monitors left of the primary.
+    # Unlike Tk's -x geometry syntax these are absolute, not right-edge offsets.
+    set_position(hwnd, HWND_TOPMOST, x, y, width, height, 0x10)
+
+
+def work_areas():
+    class MonitorInfo(c.Structure):
+        _fields_ = [("size", w.DWORD), ("monitor", w.RECT), ("work", w.RECT), ("flags", w.DWORD)]
+    callback_type = c.WINFUNCTYPE(w.BOOL, w.HANDLE, w.HDC, c.POINTER(w.RECT), w.LPARAM)
+    get_info = signature(user32, 'GetMonitorInfoW', [w.HANDLE, c.POINTER(MonitorInfo)])
+    enumerate_monitors = signature(user32, 'EnumDisplayMonitors', [w.HDC,c.POINTER(w.RECT),callback_type,w.LPARAM])
+    areas = []
+    @callback_type
+    def collect(handle, dc, region, data):
+        info = MonitorInfo()
+        info.size = c.sizeof(info)
+        if get_info(handle, c.byref(info)):
+            r = info.work
+            areas.append((r.left,r.top,r.right,r.bottom))
+        return True
+    enumerate_monitors(None,None,collect,0)
+    return areas
