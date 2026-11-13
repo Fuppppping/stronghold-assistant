@@ -4,6 +4,7 @@ from collections import OrderedDict
 from copy import deepcopy
 import hashlib
 import json
+import math
 import re
 import time
 import unicodedata
@@ -19,6 +20,52 @@ from .portraits import PortraitReader
 from .strategy_grid import cells as strategy_cells
 
 WIDTH, HEIGHT = 1280, 720
+
+SCENE_REGIONS = {
+    '调度中心': ((90,655,1150,710),(900,85,1280,710),(350,0,1100,100)),
+    '盟约选择': ((0,100,1280,720),(350,0,1100,100)),
+    '策略轮选': ((320,95,1230,720),(350,0,1100,95)),
+    '自选编队': ((300,85,1280,720),(350,0,1100,95)),
+    '队友阵容': ((550,90,1268,680),(350,0,1100,95)),
+}
+
+
+def scene_regions(scene, roi=None):
+    return (roi,(0,0,WIDTH,100)) if roi else SCENE_REGIONS.get(scene,((0,0,WIDTH,HEIGHT),))
+
+
+def normalize_frame(image, region):
+    return image.crop(region).convert('RGB').resize((WIDTH,HEIGHT),Image.Resampling.LANCZOS)
+
+
+class ShopControls:
+    """Keep verified word pixels, not an assumed scene or a remembered button state."""
+    def __init__(self):
+        self.anchors = []
+
+    def matches(self, frame):
+        return bool(self.anchors) and all(frame.crop(rect).tobytes()==pixels for rect,pixels in self.anchors)
+
+    def remember(self, frame, lines):
+        self.anchors = []
+        words = {}
+        for line in lines:
+            word = key(line.text)
+            left,top,right,bottom = line.box
+            allowed = ((word in {'刷新','冻结'} and 980<=left<right<=1280 and 375<=top<bottom<=560)
+                       or (word=='收起' and 1110<=left<right<=1280 and 610<=top<bottom<=710))
+            if allowed and line.confidence>=.9:
+                words.setdefault(word,[]).append(line)
+        selected = []
+        for word in ('刷新','冻结','收起'):
+            if len(words.get(word,[]))==1:
+                selected.append(words[word][0])
+        if not any(key(line.text)=='刷新' for line in selected) or len(selected)<2:
+            return
+        for line in selected:
+            left,top,right,bottom = line.box
+            rect = (max(0,left-6),max(0,top-6),min(WIDTH,right+6),min(HEIGHT,bottom+6))
+            self.anchors.append((rect,frame.crop(rect).tobytes()))
 
 
 @dataclass(frozen=True)
@@ -50,7 +97,7 @@ def read_round(lines):
 def game_region(image):
     """Strip solid letterboxing before mapping to canonical game coordinates."""
     width, height = image.size
-    thumb = np.asarray(image.resize((128, 72), Image.Resampling.NEAREST))
+    thumb = np.asarray(image.resize((128, 72), Image.Resampling.NEAREST).convert('RGB'))
     dark = thumb.max(axis=2) < 15
     good_x = np.where(dark.mean(axis=0) < .97)[0]
     good_y = np.where(dark.mean(axis=1) < .97)[0]
@@ -97,24 +144,34 @@ class Recognizer:
         self.ocr_cache = OrderedDict()
         self.frame_key = None
         self.frame_reading = None
+        self.source_frame_key = None
+        self.shop_controls = ShopControls()
         if hasattr(self, 'portraits'):
             self.portraits.matches.clear()
 
     @staticmethod
     def scene_key(frame, scene, forced, roi):
-        regions = {
-            "调度中心": [(90, 655, 1150, 710), (900, 85, 1280, 710), (350, 0, 1100, 100)],
-            "盟约选择": [(0, 100, 1280, 720), (350, 0, 1100, 100)],
-            "策略轮选": [(320, 95, 1230, 720), (350, 0, 1100, 95)],
-            "自选编队": [(300, 85, 1280, 720), (350, 0, 1100, 95)],
-            "队友阵容": [(550, 90, 1268, 680), (350, 0, 1100, 95)],
-        }.get(scene, [(0, 0, WIDTH, HEIGHT)])
-        if roi:
-            regions = [roi, (0, 0, WIDTH, 100)]
         digest = hashlib.blake2b(digest_size=16)
-        for rect in regions:
+        for rect in scene_regions(scene,roi):
             digest.update(frame.crop(rect).tobytes())
         return scene, forced, roi, digest.digest()
+
+    @staticmethod
+    def source_key(image, region, scene, forced, roi):
+        if image.mode!='RGB':
+            return None
+        left,top,right,bottom = region
+        sx,sy = (right-left)/WIDTH,(bottom-top)/HEIGHT
+        # Pillow's Lanczos support is 3*max(1,scale) source pixels. Include
+        # a wider halo so changes beside an ROI cannot slip through filtering.
+        padx,pady = math.ceil(4*max(1,sx))+2,math.ceil(4*max(1,sy))+2
+        digest = hashlib.sha256()
+        for x1,y1,x2,y2 in scene_regions(scene,roi):
+            rect = (max(left,math.floor(left+x1*sx)-padx),max(top,math.floor(top+y1*sy)-pady),
+                    min(right,math.ceil(left+x2*sx)+padx),min(bottom,math.ceil(top+y2*sy)+pady))
+            if rect[0]<rect[2] and rect[1]<rect[3]:
+                digest.update(image.crop(rect).tobytes())
+        return image.size,region,scene,forced,roi,digest.digest()
 
     def load_strategies(self):
         templates = {}
@@ -176,20 +233,33 @@ class Recognizer:
 
     def inspect(self, image, forced="", roi=None):
         start = time.perf_counter()
+        roi = tuple(roi) if roi else None
         region = game_region(image)
-        frame = image.crop(region).convert("RGB").resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
-        cache_key = self.scene_key(frame, self.last_scene, forced, roi)
-        reused = cache_key == self.frame_key and self.frame_reading is not None
-        reading = deepcopy(self.frame_reading) if reused else self.read(frame, forced, roi)
+        source_key = self.source_key(image,region,self.last_scene,forced,roi) if self.frame_reading is not None else None
+        reused = source_key is not None and source_key==self.source_frame_key and self.frame_reading is not None
+        if reused:
+            reading = deepcopy(self.frame_reading)
+        else:
+            frame = normalize_frame(image,region)
+            cache_key = self.scene_key(frame,self.last_scene,forced,roi)
+            reused = cache_key==self.frame_key and self.frame_reading is not None
+            reading = deepcopy(self.frame_reading) if reused else self.read(frame,forced,roi)
         if reading.scene:
+            previous_scene = self.last_scene
             self.last_scene = reading.scene
             if reading.scene != "盟约选择":
                 self.ban_continuation = False
             if not reused:
                 self.frame_key = self.scene_key(frame, self.last_scene, forced, roi)
                 self.frame_reading = deepcopy(reading)
+            self.source_frame_key = (source_key if source_key is not None and previous_scene==self.last_scene else
+                                     self.source_key(image,region,self.last_scene,forced,roi))
+            if reading.scene!='调度中心':
+                self.shop_controls = ShopControls()
         else:
             self.frame_key, self.frame_reading = None, None
+            self.source_frame_key = None
+            self.shop_controls = ShopControls()
         x, y, x2, y2 = region
 
         def real_box(box):
@@ -224,15 +294,21 @@ class Recognizer:
                     reading.scene = "策略轮选"
                     reading.text = [line.text for line in header]
                     return reading
+        if not forced and self.last_scene=='调度中心' and not roi and self.shop_controls.matches(frame):
+            forced = '调度中心'
         if not forced:
+            self.shop_controls = ShopControls()
             buttons = self.ocr(frame, (980, 375, 1280, 560), 1.5)
+            control_lines = list(buttons)
             controls = " ".join(key(line.text) for line in buttons)
             visible_buttons = sum(button in controls for button in ("刷新", "冻结"))
             if visible_buttons == 1:
                 collapse = self.ocr(frame, (1110, 610, 1280, 710), 1.5)
+                control_lines += collapse
                 visible_buttons += any("收起" in key(line.text) for line in collapse)
             if visible_buttons == 2:
                 forced = "调度中心"
+                self.shop_controls.remember(frame,control_lines)
         if forced == "调度中心":
             reading.scene = forced
             lines = self.ocr(frame, roi or (90, 655, 1150, 710), 1.8)

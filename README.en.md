@@ -34,6 +34,8 @@ The floating panel follows the game window and can snap to its edges. Switching 
 
 Adaptive sampling reduces background and unchanged-screen work while preserving priority for pact and strategy selection. Returning to the game triggers a fresh capture. The option can be disabled; failed captures still use bounded retry backoff. Sampling intervals are separate from OCR processing time.
 
+Version 0.3.11 reduces repeated high-resolution resizing and redundant shop-button OCR. Cheap foreground repeats keep a 250 ms sampling target; more expensive repeats can slow to 500 ms. Local sample benchmarks, artificial-probe limits and reproducible comparisons are documented in [PERFORMANCE.md](PERFORMANCE.md); they are not end-to-end latency guarantees.
+
 Version 0.3.3 and later support in-app updates. Earlier versions require one manual upgrade. Downloads are verified before installation; the updater backs up existing files and attempts rollback if the new application fails to start.
 
 Version 0.3.7 supplements system trust with certifi's Mozilla CA bundle for Windows systems with incomplete certificate stores. Certificate and hostname verification remain enabled. If an older version reports a certificate error, download the latest package manually once.

@@ -281,7 +281,7 @@ class FloatingAssistant:
         self.font_caption = self.label(card,color=TEAL,size=11)
         self.font_caption.pack(fill='x',padx=10,pady=(0,8))
         ttk.Checkbutton(parent,text='保留卡片位置提示',variable=self.app.show_overlay,command=self.app.save).pack(anchor='w',pady=4)
-        ttk.Checkbutton(parent,text='后台/静止画面降低采样',variable=self.app.energy_saving,command=self.app.save).pack(anchor='w',pady=4)
+        ttk.Checkbutton(parent,text='节能识别（按前后台与耗时调节）',variable=self.app.energy_saving,command=self.app.save).pack(anchor='w',pady=4)
         self.button(parent,'识别、窗口和 ADB 设置',lambda:self.full_action(5)).pack(fill='x',pady=6)
         self.button(parent,'检查 / 管理程序更新',lambda:self.full_action(5,self.app.updater.check)).pack(fill='x',pady=6)
         self.label(parent,f'v{VERSION} · 本地识别',SECONDARY,size=11).pack(anchor='w',pady=7)

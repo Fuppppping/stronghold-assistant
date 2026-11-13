@@ -615,7 +615,7 @@ class Dashboard:
         self.label(parent, "默认自动识别。特殊皮肤或布局下可手动指定场景，或在盟约页校正。",
                    style="Sub.TLabel").pack(anchor="w", pady=8)
         self.updater.settings(parent)
-        ttk.Checkbutton(parent,text="后台和静止画面降低采样（节能识别）",variable=self.energy_saving,
+        ttk.Checkbutton(parent,text="节能识别（按前后台与耗时调节）",variable=self.energy_saving,
                         command=self.save).pack(anchor='w',pady=8)
 
     def save(self):

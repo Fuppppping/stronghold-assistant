@@ -8,10 +8,20 @@ class CadenceTests(unittest.TestCase):
         cadence = ScanCadence()
         self.assertEqual(cadence.interval(True),.25)
         for _ in range(3):
-            cadence.observe(Reading(reused=True))
+            cadence.observe(Reading(reused=True,elapsed_ms=60))
         self.assertEqual(cadence.interval(True,'调度中心'),.5)
         cadence.observe(Reading(reused=False))
         self.assertEqual(cadence.interval(True,'调度中心'),.25)
+
+    def test_cheap_static_frames_keep_fast_polling_and_include_capture_cost(self):
+        cadence = ScanCadence()
+        for capture,recognition,expected in ((25,15,.25),(25,16,.5),(80,1,.5),(0,None,.5)):
+            cadence.reset()
+            for _ in range(3):
+                cadence.observe(Reading(reused=True,capture_ms=capture,elapsed_ms=recognition))
+            self.assertEqual(cadence.interval(True,'调度中心'),expected)
+        cadence.failed()
+        self.assertFalse(cadence.cheap)
 
     def test_opening_and_strategy_priority_even_when_cached(self):
         cadence = ScanCadence(reused=8)

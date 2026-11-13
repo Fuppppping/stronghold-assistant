@@ -1,0 +1,218 @@
+{
+  "scope": "CPU recognition after warm-up; excludes capture, model loading and fixture construction",
+  "semantic_fields_equal": true,
+  "results": [
+    {
+      "version": "v0.3.10",
+      "sample": 1,
+      "kind": "static",
+      "size": [
+        3840,
+        2160
+      ],
+      "repeat": 8,
+      "changed_rect": null,
+      "milliseconds": [
+        76.3,
+        83.06,
+        84.5,
+        75.02,
+        73.92,
+        73.52,
+        75.06,
+        74.2
+      ],
+      "median_ms": 75.04,
+      "scene": "调度中心",
+      "hit_count": 4
+    },
+    {
+      "version": "v0.3.10",
+      "sample": 1,
+      "kind": "background-probe",
+      "size": [
+        3840,
+        2160
+      ],
+      "repeat": 8,
+      "changed_rect": [
+        985,
+        380,
+        1000,
+        395
+      ],
+      "milliseconds": [
+        236.4,
+        203.83,
+        199.45,
+        203.76,
+        219.31,
+        225.54,
+        210.08,
+        215.19
+      ],
+      "median_ms": 212.63,
+      "scene": "调度中心",
+      "hit_count": 4
+    },
+    {
+      "version": "v0.3.10",
+      "sample": 2,
+      "kind": "static",
+      "size": [
+        1280,
+        720
+      ],
+      "repeat": 8,
+      "changed_rect": null,
+      "milliseconds": [
+        4.7,
+        4.54,
+        4.41,
+        4.07,
+        4.15,
+        4.48,
+        3.98,
+        4.8
+      ],
+      "median_ms": 4.45,
+      "scene": "调度中心",
+      "hit_count": 6
+    },
+    {
+      "version": "v0.3.10",
+      "sample": 2,
+      "kind": "background-probe",
+      "size": [
+        1280,
+        720
+      ],
+      "repeat": 8,
+      "changed_rect": [
+        985,
+        380,
+        1000,
+        395
+      ],
+      "milliseconds": [
+        196.9,
+        173.98,
+        168.89,
+        165.79,
+        170.31,
+        153.42,
+        169.37,
+        163.59
+      ],
+      "median_ms": 169.13,
+      "scene": "调度中心",
+      "hit_count": 6
+    },
+    {
+      "version": "0.3.11",
+      "sample": 1,
+      "kind": "static",
+      "size": [
+        3840,
+        2160
+      ],
+      "repeat": 8,
+      "changed_rect": null,
+      "milliseconds": [
+        14.32,
+        13.23,
+        13.67,
+        12.87,
+        13.9,
+        13.67,
+        12.76,
+        12.9
+      ],
+      "median_ms": 13.45,
+      "scene": "调度中心",
+      "hit_count": 4
+    },
+    {
+      "version": "0.3.11",
+      "sample": 1,
+      "kind": "background-probe",
+      "size": [
+        3840,
+        2160
+      ],
+      "repeat": 8,
+      "changed_rect": [
+        985,
+        380,
+        1000,
+        395
+      ],
+      "milliseconds": [
+        108.45,
+        97.99,
+        100.78,
+        99.18,
+        97.89,
+        99.56,
+        99.71,
+        98.72
+      ],
+      "median_ms": 99.37,
+      "scene": "调度中心",
+      "hit_count": 4
+    },
+    {
+      "version": "0.3.11",
+      "sample": 2,
+      "kind": "static",
+      "size": [
+        1280,
+        720
+      ],
+      "repeat": 8,
+      "changed_rect": null,
+      "milliseconds": [
+        1.43,
+        1.27,
+        1.17,
+        1.14,
+        1.1,
+        1.18,
+        1.2,
+        1.12
+      ],
+      "median_ms": 1.17,
+      "scene": "调度中心",
+      "hit_count": 6
+    },
+    {
+      "version": "0.3.11",
+      "sample": 2,
+      "kind": "background-probe",
+      "size": [
+        1280,
+        720
+      ],
+      "repeat": 8,
+      "changed_rect": [
+        985,
+        380,
+        1000,
+        395
+      ],
+      "milliseconds": [
+        20.64,
+        19.61,
+        19.81,
+        23.23,
+        26.03,
+        24.11,
+        21.73,
+        20.34
+      ],
+      "median_ms": 21.19,
+      "scene": "调度中心",
+      "hit_count": 6
+    }
+  ]
+}

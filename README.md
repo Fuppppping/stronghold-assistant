@@ -53,7 +53,7 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 
 ## 下载安装
 
-当前程序版本 **0.3.10**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
+当前程序版本 **0.3.11**。在 [Releases](https://github.com/Fuppppping/stronghold-assistant/releases/latest) 下载 `StrongholdAssistant-v版本号-windows-x64.zip`，**完整解压**后运行 `StrongholdAssistant.exe`。Windows 发布包已经带好 OCR 模型，不用安装 Python。
 
 0.3.3 及更新版本可以在底栏「检查更新」升级；0.3.2 及更早版本需要先手动下载一次。新用户直接下载最新的 Windows 包即可。
 
@@ -138,10 +138,10 @@ A Windows companion for **Arknights Stronghold Protocol**: ban detection, lineup
 - 抓不到画面：把游戏切到前台，试试窗口化或无边框模式。模拟器也可以在采集设置里改用 ADB。
 - BAN 少了：向下滚动游戏名单，让助手继续读；无法确认的内容会保留为待确认。
 - 换了皮肤后漏识别：当前头像模板覆盖固定池143名干员，自选干员和皮肤可能漏读。可以导入截图回放检查。
-- 提醒慢：主窗口底部会分别显示采集和识别耗时。已做区域复用和缓存，具体测试范围见 [性能说明](PERFORMANCE.md)。
+- 提醒慢：0.3.11 减少了高分辨率重复帧的缩放和重复读按钮文字。本机4K静止样本复用约75→13毫秒；第一次处理、新牌完整识别和抓屏仍有开销，具体范围见 [性能说明](PERFORMANCE.md)。
 - 检查更新提示证书错误：0.3.7 已补充可信证书支持。旧版遇到该问题时，从发布页手动下载一次新版。
 
-默认开启节能识别：后台降低采样，切回游戏时优先采集，开局盟约和策略选择页保留高频采样。需要固定高频时，可在采集设置或悬浮窗设置关闭该选项。采样间隔与一次识别本身的耗时是两回事。
+默认开启节能识别：后台降低采样，切回游戏时优先采集；前台静止帧处理足够轻时保持快速检查，耗时较高时放缓。开局盟约和策略选择页保留优先采样。需要固定高频时，可在采集设置或悬浮窗设置关闭该选项。采样间隔与一次识别本身的耗时是两回事。
 
 这版主要按简中、横屏和常见终端主题校准。它会读画面、给建议，不能自动打完整对局；PC 单步按钮也只会展开或收起商店。
 
@@ -178,10 +178,10 @@ py -3.12 -m venv .venv
 先改 `stronghold/__init__.py` 的版本号，打包最终的 Windows ZIP，并附上 `SOURCE_PROVENANCE.json`。然后生成更新清单：
 
 ```powershell
-python tools/make_update_manifest.py 0.3.10 StrongholdAssistant-v0.3.10-windows-x64.zip --notes release-notes.md --output update.json
+python tools/make_update_manifest.py 0.3.11 StrongholdAssistant-v0.3.11-windows-x64.zip --notes release-notes.md --output update.json
 ```
 
-把 ZIP 和 `update.json` 上传到对应的 `v0.3.10` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
+把 ZIP 和 `update.json` 上传到对应的 `v0.3.11` 正式 Release，再设为最新版本。清单中的版本、大小、SHA-256 和包内来源信息要一致；不要上传后再替换包。更新客户端只接受已管理的程序、文档、演示图和许可路径，新增文件前要考虑旧客户端的兼容性。预发布版不会走这个更新通道。
 
 更新通过本仓库的 HTTPS Release 清单分发。SHA-256 用来检查下载损坏，当前没有独立代码签名；源码运行可以检查和下载，自动安装仅支持打包程序。
 
